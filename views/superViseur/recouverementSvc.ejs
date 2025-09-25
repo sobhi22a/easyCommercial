@@ -1,0 +1,214 @@
+<div id="pageRecouverementSvc" class="pageLayout">
+<!-- Modal -->
+<div class="modal fade" id="staticBackdrop" data-backdrop="static" data-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="staticBackdropLabel">Validation Client Prospect</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div id="ModalndiceOper" style="color: blue; size: 30px;"></div>
+        <div id="ModalNameClient"></div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Fermer</button>
+        <button type="button" id="ButtonValiderProspect" class="btn btn-primary">Valide</button>
+      </div>
+    </div>
+  </div>
+</div>
+  <div class="card">
+    <div class="card-body">
+      <div class="form-row">
+        <div class="col-sm-3">
+          <div class="input-group mb-2">
+            <div class="input-group-prepend">
+              <div class="input-group-text"><i class="fas fa-calendar"></i></div>
+            </div>
+            <input type="date" class="form-control form-control-sm" id="date111">
+          </div>
+        </div>
+        <div class="col-sm-5">
+          <div class="form-row">
+            <div class="col-7">
+              <div class="input-group mb-2">
+                <div class="input-group-prepend">
+                  <div class="input-group-text"><i class="fas fa-calendar"></i></div>
+                </div>
+                <input type="date" class="form-control form-control-sm" id="date112">
+              </div>
+            </div>
+            <div class="col">
+              <button class="btn btn-primary btn-sm" onclick="vueRecouv()"><i class="fas fa-search"></i></button>
+            </div>
+          </div>
+        </div>
+        <div class="col-sm-4">
+          <input type="text" id="recherche11" class="form-control form-control-sm" placeholder="Recherche ...">
+        </div>
+      </div>
+      <div class="table-responsive">
+        <div class="my-custom-scrollbarRecouv">
+          <table class="table table-bordered table-sm table-hover" id="myTblRecouv">
+            <thead class="thead-dark">
+              <tr style="font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif; font-size: smaller;">
+                <th scope="col">#</th>
+                <th scope="col">Indice</th>
+                <th scope="col">SViseur</th>
+                <th scope="col">Client</th>
+                <th scope="col">Status</th>
+                <th scope="col">Region</th>
+                <th scope="col">Prospect</th>
+                <th scope="col">LastOper</th>
+                <th scope="col">Date & Heure</th>
+              </tr>
+            </thead>
+            <tbody id="tblVueRecouv">
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+  function vueRecouv() {
+    chargement()
+    $.ajax({
+      url: 'easy/recouvOper/vueRecouv',
+      method: 'POST',
+      data: { ad_org: $('#ad_org').val(), 
+        id_user:  $('#id_user').val(), 
+        dateCreation1: $('#date111').val(), 
+        dateCreation2: $('#date112').val() },
+    }).then((reponse) => {
+      remplirTableDeploquage3(reponse);
+      chargementClose()
+    })
+  }
+  function remplirTableDeploquage3(data) {
+    chargement()
+    document.getElementById('tblVueRecouv').innerHTML = ""
+    for (var i = 0; i < data.length; i++) {
+      const [year, month, day] = data[i].dateCreation.split('T')[0].split('-');
+      const formattedDate = `${parseInt(day) + 1}-${month}-${year}`;
+
+      const prospectBadge = data[i].prosper == 0 
+            ? '<span class="badge badge-light">NON</span>' 
+            : '<span class="badge badge-warning">OUI</span>';
+      const statusBadge = getStatusBadge(data[i].valide);
+      const commandValider = data[i].prosper == 4 
+            ? '(Commande Valider)'
+            : ''
+      const buttonProspect = data[i].prosper == 1 
+            ? `
+              <button class="btn btn-success btn-sm" data-toggle="modal" 
+                id="validProspect1" data-target="#staticBackdrop" 
+                value="${data[i].idDemDep}_${data[i].bpartner_name}_${data[i].indiceOper}">
+                <i class="fas fa-user-cog"></i>
+              </button>
+              <button class="btn btn-danger btn-sm" data-toggle="modal" 
+                id="validProspect0" data-target="#staticBackdrop"
+                value="${data[i].idDemDep}_${data[i].bpartner_name}_${data[i].indiceOper}">
+                <i class="fas fa-user-cog"></i>
+              </button>`
+            : '';
+      document.getElementById('tblVueRecouv')
+        .insertAdjacentHTML('beforeend',
+          `<tr style="font-size: 16px; font-family: Verdana, sans-serif;" id='${i + 1}'>
+           <td>${i + 1}</td>
+           <td>${data[i].indiceOper}</td>
+           <td>${data[i].superViseurName}</td>
+           <td>${data[i].bpartner_name}</td>
+           <td>${statusBadge}_${commandValider}</td>
+           <td>${data[i].region}</td>
+           <td id='prosperID'>
+            ${prospectBadge}
+            ${buttonProspect}
+            </td>
+           <td>${data[i].bp_lastOper}</td>
+           <td>${formattedDate} || ${data[i].timeCreation}</td>
+         </tr>`
+        );
+    }
+    chargementClose()
+  }
+
+  function validProspectToUnlocked(idDemDep, isValidate) {
+    return new Promise((resole, reject) => {
+      chargement();
+      $.ajax({
+        url: 'easy/recouvOper/validProspectToUnlocked',
+        method: 'PATCH',
+        data: { idDemDep, isValidate },
+      }).then((reponse) => {
+        chargementClose()
+        vueRecouv();
+        resole(true)
+      }).fail((err) => {
+        alert(err.statusText)
+        resole(false)
+      })
+    })
+  }
+
+
+
+  function getStatusBadge(status) {
+    switch (status) {
+        case 'N':
+            return '<span class="badge badge-light">En Cours</span>';
+        case 'B':
+            return '<span class="badge badge-danger">Bloqué</span>';
+        case 'Y':
+            return '<span class="badge badge-success">Débloqué</span>';
+        default:
+            return '';
+    }
+}
+
+  $(document).ready(function () {
+    $("#recherche11").on("keyup", function () {
+      var value = $(this).val().toLowerCase();
+      $("#myTblRecouv tr").filter(function () {
+        $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+      });
+    });
+  });
+
+  
+const handleProspectClick = (buttonId, validationStatus) => {
+  const buttonVal = $(`#${buttonId}`).val();
+  const [idDemDep, client, oper] = buttonVal.split('_');
+
+  document.getElementById('ModalndiceOper').innerText = `Opérateur: ${oper}`;
+  document.getElementById('ModalNameClient').innerText = 
+    validationStatus === '1' 
+      ? `Souhaitez-vous valider le client prospect ${client} ?`
+      : `Voulez-vous refuser la validation du client prospect ${client} et envoyer le refus à VENTEGELEE ?`;
+  const confirmButton = document.getElementById('ButtonValiderProspect');
+  confirmButton.classList.remove('btn-success', 'btn-danger', 'btn-primary'); 
+  if (validationStatus === '1') {
+    confirmButton.classList.add('btn-success')
+    confirmButton.innerText = "VALIDE";
+  } else {
+    confirmButton.classList.add('btn-danger');
+    confirmButton.innerText = "Envoyé à VENTEGELEE";
+  }
+   confirmButton.value = `${idDemDep}_${validationStatus}`;
+};
+
+$(document).on('click', '#validProspect1', () => handleProspectClick('validProspect1', '1'));
+
+$(document).on('click', '#validProspect0', () => handleProspectClick('validProspect0', '0'));
+
+$(document).on('click', '#ButtonValiderProspect', async () => {
+  const value = $("#ButtonValiderProspect").val();
+  const [idDemDep, status] = value.split('_');
+  await validProspectToUnlocked(idDemDep, status);
+  $('#staticBackdrop').modal('hide');
+});
+</script>

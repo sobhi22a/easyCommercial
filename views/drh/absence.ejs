@@ -1,0 +1,149 @@
+<div id="pageAbsence" >
+  <div class="card">
+    <div class="card-body">
+        <div class="row">
+          <div class="col-sm-4">
+            <select id="emplacementEmployeur" class="form-control form-control-sm">
+              <option value="">Emplacement</option>
+              <option value="GROS">GROS</option>
+              <option value="SEIF">SEIF</option>
+              <option value="ATTIRYAK">ATTIRYAK</option>
+            </select>
+          </div>          
+          <div class="col-sm-4">
+            <input type="file" id="fileInput" class="form-control form-control-sm">
+          </div>
+          <div class="col-sm-2">
+            <button class="btn btn-success btn-sm" id="buttonId">Upload</button>
+          </div>
+          <div class="col-sm-2">
+          </div>
+        </div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-body">
+      <div class="form-row">
+        <div class="col-md-4">
+          <input type="date" class="form-control form-control-sm" id="dateA">
+        </div>
+        <div class="col-md-4">
+          <input type="date" class="form-control form-control-sm" id="dateB">
+        </div>
+        <div class="col-md-4">
+          <button class="btn btn-primary btn-sm" onclick="getListeAbsence()"><i class="fas fa-search"></i></button>
+        </div>
+      </div>
+      <div class="line"></div>
+      <table class="table table-sm table-striped">
+        <thead class="thead-dark">
+          <tr style="font-size: small;">
+            <th scope="col">Code</th>
+            <th scope="col">Employeur</th>
+            <th scope="col">Date Absence</th>
+            <th scope="col">S Abs</th>
+            <th scope="col">Justification Absence</th>
+            <th scope="col">Action</th>
+          </tr>
+        </thead>
+        <tbody id="tableAbsence">
+
+        </tbody>
+      </table>
+    </div>
+  </div>
+  
+</div>
+<script>
+   getListeAbsence()
+  function getListeAbsence(){
+    var dateA = $('#dateA').val()
+    var dateB = $('#dateB').val()
+    $.ajax({
+      url:'easy/getListeAbsence',
+      method:'POST',
+      data:{dateA:dateA,dateB:dateB},
+      success:(reponse)=>{
+        remplirTableAbsence(reponse)
+      }
+    })
+  }
+function remplirTableAbsence(data){
+  document.getElementById('tableAbsence').innerHTML=""
+    for(var i=0;i<data.length;i++){
+      document.getElementById( 'tableAbsence' )
+      .insertAdjacentHTML( 'beforeend',
+      `<tr style="font-size: 13px; font-family: Verdana, sans-serif;" id='${data[i].id_req}'>
+        <td>${data[i].AC_No}</td>
+        <td>${data[i].nomComplet}</td>
+        <td>${data[i].dateAbsence}</td>
+        <td>${data[i].nbrAbs}</td>
+        <td>${data[i].justifAbs}</td>
+       <td>
+        <button class="btn btn-danger btn-sm" onclick="suppAbsence(${data[i].idAbsence})"><i class="fas fa-trash-alt"></i></button>
+        <button class="btn btn-info btn-sm" hidden onclick="detaileAbcense(${data[i].idAbsence})"><i class="fas fa-info-circle"></i></button>
+      </td>
+     </tr>`
+  );
+}
+}
+  function suppAbsence(idAbsence){
+    conf = confirm("Voulez Vous Supprimer Cette Ligne ? :(")
+    if(conf==true){
+      $.ajax({
+        url:'easy/drhRoute/suppAbsence',
+        method:'DELETE',
+        data:{idAbsence:idAbsence},
+        success:function(reponse){
+            getListeAbsence()
+        }
+      })
+    }
+  }
+
+  function ListePointeuse(rowObject){
+    // let fileName = document.getElementById("fileInput").files[0].name
+     let emplacementEmployeur = document.getElementById('emplacementEmployeur').value
+     if(emplacementEmployeur!=''){
+    $.ajax({
+      url:'easy/drhRoute/absenceEmployeurs',
+      method:'POST',
+      data:{fileName:JSON.stringify(rowObject),emplacementEmployeur:emplacementEmployeur}
+      
+    })
+  }else{
+    alert('Emplacement Obligatoire الموقع إجباري')
+  }
+  }
+//   // convert excel 
+  let selectedFile;
+document.getElementById('fileInput').addEventListener("change", (event) => {
+    selectedFile = event.target.files[0];
+})
+
+let data=[{
+    "name":"jayanth",
+    "data":"scd",
+    "abc":"sdef"
+}]
+
+
+document.getElementById('buttonId').addEventListener("click", () => {
+    XLSX.utils.json_to_sheet(data, 'out.xlsx');
+    var rowObject;
+    if(selectedFile){
+        let fileReader = new FileReader();
+        fileReader.readAsBinaryString(selectedFile);
+        fileReader.onload = (event)=>{
+         let data = event.target.result;
+         let workbook = XLSX.read(data,{type:"binary"});
+         workbook.SheetNames.forEach(sheet => {
+              rowObject = XLSX.utils.sheet_to_row_object_array(workbook.Sheets[sheet]);
+              ListePointeuse(rowObject)
+            });
+        }
+    }
+});
+  // fin convert excel 
+
+</script>

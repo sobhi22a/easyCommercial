@@ -1,0 +1,722 @@
+<div id="pageRecouverement" id="y">
+  <!-- <div class="alert alert-success" role="alert" hidden id="majEff">
+    Mise a Jour Balance Effectuée
+  </div> -->
+  <div id="snackbar">
+    <h5 class="fw-bold mb-1"><i class="fas" id="iconToast"></i> <span id="statusToast"></span></h5>
+    <p class="text-muted mb-0" id="messageToast"></p>
+  </div>
+  <div class="shadow p-3 mb-5 bg-white rounded">
+    <div class="form-row">
+      <div class="col-sm-4">
+        <input type="text" class="form-control form-control-sm" placeholder="Recherche ..." id="rechercheClient" />
+      </div>
+      <div class="col-sm-3"></div>
+      <div class="col-sm-1">
+        <button class="btn btn-outline-secondary btn-sm" onclick="runPage()">
+          <i class="fas fa-redo-alt"></i>
+        </button>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="col-sm-8">
+        <div class="my-custom-scrollbar22d">
+          <table class="table table-sm table-hover table-bordered" style="font-size: small" id="tableClientParOper">
+            <thead class="thead-dark">
+              <tr>
+                <th scope="col">Oper</th>
+                <th scope="col" id="svrhidden" hidden>SVRecouv</th>
+                <th scope="col">ORG</th>
+                <th scope="col" style="width: 20%">Clients</th>
+                <th scope="col">Date</th>
+                <th scope="col">Région</th>
+                <th scope="col">Status</th>
+                <th scope="col">Prospect</th>
+                <th scope="col">LastComm</th>
+              </tr>
+            </thead>
+            <tbody id="tblDemande"></tbody>
+          </table>
+        </div>
+      </div>
+      <div class="col-sm-4">
+        <div class="center-body" id="loaderInfoCientRecouv" hidden>
+          <div class="loader-circle-21"><span></span></div>
+        </div>
+        <div class="my-custom-scrollbar22d" id="cardLoaderInfoCientRecouv">
+          <u> Les Commandes En Cours : <br /> </u>
+          <table class="table table-bordered table-sm">
+            <thead>
+              <tr>
+                <th scope="col">BCC</th>
+                <th scope="col">Montant</th>
+              </tr>
+            </thead>
+            <tbody id="Encours11"></tbody>
+          </table>
+          <table class="table table-bordered table-sm">
+            <thead>
+              <tr>
+                <th scope="col">Nbr Commandes :</th>
+                <th scope="col"><span id="countInvoice"></span></th>
+              </tr>
+            </thead>
+          </table>
+
+          <table class="table table-bordered table-sm">
+            <thead>
+              <tr>
+                <th scope="col">Date Création Client :</th>
+                <td scope="col"><span id="dateCreationClient"></span></td>
+              </tr>
+              <tr>
+                <th scope="col">Age Client :</th>
+                <td scope="col"><span id="ageClient"></span></td>
+              </tr>
+            </thead>
+          </table>
+          <!-- <u style="background-color: bisque;"> Les Paiements Non Affecter :  <br> </u>
+      <span id="nbrPaiementNon"></span><br> -->
+          <table class="table table-bordered table-sm">
+            <thead>
+              <tr>
+                <th scope="col">Les Paiements Non Affecter :</th>
+                <th scope="col"><span id="nbrPaiementNon"></span></th>
+              </tr>
+            </thead>
+            <tbody id="lesPaiement"></tbody>
+          </table>
+          <!-- <u style="background-color: bisque;"> Les Créances  :  <br> </u>
+       &nbsp;&nbsp;-> ATTIRYAK : <span id="attiryak"></span> <br>
+       &nbsp;&nbsp;-> SEIF : <span id="seif"></span> <br>
+       &nbsp;&nbsp;-> PALMA : <span id="palma"></span> <br> -->
+          Les Créances :
+          <div class="form-row">
+            <div class="col-sm-6">
+              <div class="card">
+                <div class="card-body">
+                  <u>
+                    <h5 class="card-title">Attiryak</h5>
+                  </u>
+                  <span id="attiryak"></span>
+                </div>
+              </div>
+            </div>
+            <div class="col-sm-6">
+              <div class="card">
+                <div class="card-body">
+                  <u>
+                    <h5 class="card-title">Seif</h5>
+                  </u>
+                  <span id="seif"></span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div style="padding: 10px"></div>
+          <div class="form-row">
+            <div class="col-sm-6">
+              <div class="card">
+                <div class="card-body">
+                  <u>
+                    <h5 class="card-title">Palma</h5>
+                  </u>
+                  <span id="palma"></span>
+                </div>
+              </div>
+            </div>
+            <div class="col-sm-6">
+              <div class="card">
+                <div class="card-body">
+                  <u>
+                    <h5 class="card-title">OrgBL</h5>
+                  </u>
+                  <span id="orgBL"></span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="card-group">
+            <div class="card-body">
+              RC: <span id="xx_rc"></span> <br />
+              NIF: <span id="xx_nif"></span><br />
+              AI: <span id="xx_ai"></span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- 2eme partie -->
+  <div class="card-group">
+    <div class="card">
+      <div>
+        <div class="form-row">
+          <div class="form-group col-md-6">
+            <label for="bpartner_name">Client</label>
+            <input
+              type="text"
+              class="form-control form-control-sm"
+              id="bpartner_name"
+              readonly
+              style="background-color: rgb(221, 221, 221)"
+            />
+            <input type="text" id="idDemDeploque" hidden readonly />
+            <input type="text" id="bp_bartner_id" hidden readonly />
+            <input type="text" id="clientProspect11" hidden readonly />
+          </div>
+
+          <div class="form-group col-md-3">
+            <label for="indiceOper">Oper</label>
+            <input
+              type="text"
+              class="form-control form-control-sm"
+              id="indiceOper11"
+              readonly
+              style="background-color: rgb(221, 221, 221)"
+            />
+            <input type="text" id="iDOperDem" hidden readonly />
+          </div>
+          <div class="form-group col-md-3" id="hiddenLastOper">
+            <label for="indiceLastOper">Last Oper</label>
+            <input
+              type="text"
+              class="form-control form-control-sm"
+              id="indiceLastOper"
+              readonly
+              style="background-color: rgb(221, 221, 221)"
+            />
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group col-md-4">
+            <select class="form-control form-control-sm" id="operationType">
+              <option value="">Action ...</option>
+              <option value="B">Bloqué</option>
+              <option id="hiddenDebloque" value="Y" hidden>Débloqué</option>
+              <option id="hiddenReafect" value="R" hidden>Réafecté</option>
+              <option id="CommandValide" value="4" hidden>Commande Validé</option>
+            </select>
+          </div>
+
+          <div class="form-group col-md-4" hidden>
+            <select class="form-control form-control-sm" id="indiceReafect">
+              <option value="">Liste Oérateurs...</option>
+              <option></option>
+            </select>
+          </div>
+          <div class="form-group col-md-4" hidden id="hiddenIndiceOperReafect">
+            <input
+              type="text"
+              class="form-control form-control-sm"
+              id="indiceOperReafect11"
+              readonly
+              style="background-color: rgb(221, 221, 221)"
+            />
+          </div>
+          <input type="text" id="idIndiceReafecter11" hidden readonly />
+          <input type="text" id="organisationReafectA" hidden readonly />
+          <div class="form-group col-md-2">
+            <button class="btn btn-secondary btn-sm" onclick="actionClientUnblocked()">
+              <i class="fas fa-user-cog"></i>
+            </button>
+          </div>
+
+          <div class="form-group col-md-4">
+            <input type="number" class="form-control form-control-sm" placeholder="Seuil" id="seuilClient" />
+            <small id="emailHelp" class="form-text text-muted">Balance: <span id="openBalance"></span></small>
+          </div>
+          <div class="form-group col-md-2">
+            <button class="btn btn-success btn-sm" onclick="majBalance()">MAJ</button>
+            <input type="number" hidden id="clientBalance" />
+            <input type="number" hidden id="orgBalance" />
+            <input type="number" hidden id="balanceIdDemDep" />
+          </div>
+        </div>
+
+        <div class="form-group">
+          <div class="mb-3">
+            <textarea class="form-control is-valid" id="description" placeholder="Description"></textarea>
+            <div class="valid-feedback">Veuillez saisir un message dans la zone de texte.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="form-row">
+        <div class="col-sm-6">
+          <u style="padding: 10px" id="informationSeuil"></u>
+        </div>
+        <div class="col-sm-6">
+          <input class="form-control form-control-sm" placeholder="Recherche Client .." id="recherhceClient" />
+        </div>
+      </div>
+      <div class="line"></div>
+      <div class="my-custom-scrollbarD">
+        <table class="table table-sm table-hover" id="table1111">
+          <thead class="thead-dark">
+            <tr>
+              <th scope="col" style="width: 40%">Clients</th>
+              <th scope="col">Oper</th>
+              <th scope="col" class="ecrEnCentre">Opération</th>
+              <th scope="col">Action</th>
+            </tr>
+          </thead>
+          <tbody id="tableDebloqueAuj"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+  $(document).ready(function () {
+    $("#recherhceClient").on("keyup", function () {
+      var value = $(this).val().toLowerCase();
+      $("#table1111 tr").filter(function () {
+        $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1);
+      });
+    });
+  });
+  getListe();
+  remplirtableDebloque();
+  function runPage() {
+    remplirtableDebloque();
+    getListe();
+    aZeroInfoClient();
+  }
+  function getListe() {
+    chargement();
+    let id_org = document.getElementById("id_org").value;
+    let id_user = document.getElementById("id_user").value;
+    let role = document.getElementById("rolesId").value;
+    $.ajax({
+      url: "easy/recouvOper/getListeClientUnblocked",
+      method: "POST",
+      data: { id_user, id_org, role },
+    }).then((reponse) => {
+      remplirTableDemande(reponse);
+      chargementClose();
+    });
+  }
+
+  function getCreditStatus(bpartnerStatus) {
+    switch (bpartnerStatus) {
+      case "O":
+        return "Crédit OK";
+      case "W":
+        return "Crédit Watch";
+      case "H":
+        return "Crédit Hold";
+      case "S":
+        return "Crédit Stop";
+      case "X":
+        return "Pas de vérification crédit";
+      default:
+        return "Statut inconnu";
+    }
+  }
+
+  function getNameOrganization(adOrgId) {
+    switch (adOrgId) {
+      case 1000000:
+        return "ATTIRYAK";
+      case 1000416:
+        return "SEIF";
+      case 1000517:
+        return "PALMA";
+      default:
+        return "Statut inconnu";
+    }
+  }
+
+  function remplirTableDemande(reponse) {
+    chargement();
+    let id_org = document.getElementById("id_org").value;
+    document.getElementById("tblDemande").innerHTML = "";
+    let svrhidden = document.getElementById("svrhidden").hidden;
+    if (id_org == 0) {
+      document.getElementById("svrhidden").hidden = false;
+    }
+    var balance, telephone;
+    var statusValide;
+    for (var i = 0; i < reponse.length; i++) {
+      const prospect = reponse[i].prosper == 0 ? "NON" : "OUI";
+      const status = getCreditStatus(reponse[i].bpartner_status);
+      var orgf = getNameOrganization(reponse[i].id_org);
+      var lastCommand = reponse[i].lastCommande;
+      if (lastCommand != null) {
+        lastCommand = lastCommand.split("T")[0];
+      }
+      balance = reponse[i].balance;
+      balance = parseFloat(balance).toFixed(2);
+      telephone = reponse[i].numTelephone;
+      const dateCreation = reponse[i].dateCreation.split("-").reverse().join("/");
+      const timeCreation = reponse[i].timeCreation;
+      telephone = telephone.split("/");
+      document.getElementById("tblDemande").insertAdjacentHTML(
+        "beforeend",
+        `<tr 
+           style="font-size: 11px; font-family: Sans-serif, sans-serif;font-weight: bolder;cursor: pointer;" 
+           id="${i}ss" onclick="selectClient(${reponse[i].idDemDep},${i + 1})">
+            <td>${reponse[i].indiceOper}</td>
+            <td id="${reponse[i].idDemDep}" hidden>${reponse[i].superViseurName}</td>
+            <td id="${reponse[i].idDemDep}d">${orgf}</td>
+            <td>${reponse[i].bpartner_name} | <strong style="color: red">${reponse[i].zcreditMessage}</strong><br>
+              <strong><u>${telephone}</u></strong></td>
+            <td>${dateCreation}<br>${timeCreation}</td>
+            <td>${reponse[i].region}</td>
+            <td>${status}</td>
+            <td>${prospect}</td>
+            <td>${lastCommand}</td>
+            </tr>`
+      );
+      if (reponse[i].valide == "Y" || reponse[i].valide == "B") {
+        document.getElementById(reponse[i].idDemDep).style.backgroundColor = "#90EE90";
+      }
+      if (id_org == 0) {
+        document.getElementById(reponse[i].idDemDep).hidden = false;
+      }
+
+      //  if(reponse[i].clientExcellent=='Y'){
+      //    document.getElementById(i+'ss').style.backgroundColor='#7FFFD4'
+      //  }
+    }
+    chargementClose();
+  }
+
+  var clientProspect11 = document.getElementById("clientProspect11");
+  function selectClient(idDemDep, i) {
+    chargement();
+    const getEl = (id) => document.getElementById(id);
+
+    const elements = {
+      indiceLastOper: getEl("indiceLastOper"),
+      bpartner_name: getEl("bpartner_name"),
+      indiceOper11: getEl("indiceOper11"),
+      operationType: getEl("operationType"),
+      indiceReafect: getEl("indiceReafect"),
+      description: getEl("description"),
+      hiddenReafect: getEl("hiddenReafect"),
+      id_user: getEl("id_user").value,
+      hiddenIndiceOperReafect: getEl("hiddenIndiceOperReafect"),
+      indiceOperReafect11: getEl("indiceOperReafect11"),
+      hiddenDebloque: getEl("hiddenDebloque"),
+      idIndiceReafecter11: getEl("idIndiceReafecter11"),
+      iDOperDem: getEl("iDOperDem"),
+      organisationReafectA: getEl("organisationReafectA"),
+      bp_bartner_id: getEl("bp_bartner_id"),
+      idDemDeploque: getEl("idDemDeploque"),
+      CommandValide: getEl("CommandValide"),
+      clientProspect11: getEl("clientProspect11"),
+    };
+
+    elements.hiddenDebloque.hidden = true;
+    $.ajax({
+      url: "easy/recouvOper/selectClientUnblocked",
+      method: "POST",
+      data: { idDemDep },
+    }).then((data) => {
+      const client = data[0];
+
+      selectInfoClient(client.bpartner_id, client.id_org);
+
+      elements.bp_bartner_id.value = client.bpartner_id;
+      elements.idDemDeploque.value = client.idDemDep;
+      elements.iDOperDem.value = client.user_id;
+      elements.organisationReafectA.value = client.id_org;
+      elements.bpartner_name.value = client.bpartner_name;
+      elements.indiceOper11.value = client.indiceOper;
+      elements.indiceLastOper.value = client.bp_lastOper;
+
+      const prospectStatus = client.prosper;
+
+      if (prospectStatus == 3) {
+        elements.CommandValide.hidden = false;
+        elements.hiddenDebloque.hidden = true;
+        elements.hiddenReafect.hidden = true;
+      } else if (prospectStatus == 2) {
+        elements.hiddenReafect.hidden = false;
+        elements.hiddenIndiceOperReafect.hidden = false;
+        elements.indiceOperReafect11.value = client.indiceOper;
+        elements.idIndiceReafecter11.value = client.user_id;
+        elements.hiddenDebloque.hidden = true;
+        elements.clientProspect11.value = prospectStatus;
+        elements.CommandValide.hidden = true;
+      } else {
+        elements.CommandValide.hidden = true;
+        elements.hiddenReafect.hidden = true;
+        elements.hiddenIndiceOperReafect.hidden = true;
+        elements.hiddenDebloque.hidden = false;
+        elements.idIndiceReafecter11.value = "";
+        elements.clientProspect11.value = prospectStatus;
+      }
+
+      chargementClose();
+    });
+  }
+
+  //fin select
+  function aZeroInfoClient() {
+    document.getElementById("attiryak").innerText = "";
+    document.getElementById("seif").innerText = "";
+    document.getElementById("palma").innerText = "";
+    document.getElementById("xx_rc").innerText = "";
+    document.getElementById("xx_nif").innerText = "";
+    document.getElementById("xx_ai").innerText = "";
+    document.getElementById("countInvoice").innerText = "";
+    document.getElementById("nbrPaiementNon").innerText = "";
+    document.getElementById("Encours11").innerHTML = "";
+    document.getElementById("lesPaiement").innerHTML = "";
+    document.getElementById("dateCreationClient").innerText = "";
+    document.getElementById("ageClient").innerText = "";
+  }
+  function chargementInfoClient(isHidden) {
+    let blur = isHidden == false ? "filter: blur(3px)" : "filter: none";
+    document.getElementById("loaderInfoCientRecouv").hidden = isHidden;
+    document.getElementById("cardLoaderInfoCientRecouv").style = blur;
+  }
+  function selectInfoClient(id_client, ad_org_id) {
+    chargementInfoClient(false);
+    aZeroInfoClient();
+    $.ajax({
+      url: "easy/recouvOper/selectInfoClient",
+      method: "POST",
+      data: { c_bpartner_id: id_client, ad_org_id: ad_org_id },
+      timeout: 10000,
+    }).then((reponse) => {
+      let coordonner = reponse.coordonner;
+      document.getElementById("xx_rc").innerText = coordonner[0][0];
+      document.getElementById("xx_nif").innerText = coordonner[0][1];
+      document.getElementById("xx_ai").innerText = coordonner[0][2];
+      let enCours = reponse.encours;
+      document.getElementById("Encours11").innerHTML = "";
+      for (var i = 0; i < enCours.length; i++) {
+        document.getElementById("Encours11").insertAdjacentHTML(
+          "beforeend",
+          `<tr  
+       style="font-size: 11px; font-family: Sans-serif, sans-serif;font-weight: bolder;cursor: pointer;">
+         <td>${enCours[i][0]}</td>
+         <td>${numberWithSpaces(parseFloat(enCours[i][1]).toFixed(2))}</td>
+        </tr>`
+        );
+        // let div = document.getElementById('Encours11')
+        // let p = document.createElement("span")
+        // p.innerHTML=enCours[i][0] +' ==> '+ numberWithSpaces(parseFloat(enCours[i][1]).toFixed(2))+'<br>'
+        // div.append(p)
+      }
+      let paiementAmt = reponse.payementAmt;
+      document.getElementById("lesPaiement").innerHTML = "";
+      for (var i = 0; i < paiementAmt.length; i++) {
+        let ppaa = paiementAmt[i][0] + paiementAmt[i][1];
+        if (ppaa > 500) {
+          ppaa = numberWithSpaces(parseFloat(ppaa).toFixed(2));
+          document.getElementById("lesPaiement").insertAdjacentHTML(
+            "beforeend",
+            `<tr  
+                  style="font-size: 11px; font-family: Sans-serif, sans-serif;font-weight: bolder;cursor: pointer;">
+                    <td>${ppaa}</td>
+                 </tr>`
+          );
+        }
+      }
+
+      let balance = reponse.balance;
+      balance.forEach((element) => {
+        if (element.AD_ORG_ID == 1000000) {
+          document.getElementById("attiryak").innerText = numberWithSpaces(parseFloat(element.TOTALOPENBALANCE.toFixed(2)));
+        }
+        if (element.AD_ORG_ID == 1000416) {
+          document.getElementById("seif").innerText = numberWithSpaces(parseFloat(element.TOTALOPENBALANCE.toFixed(2)));
+        }
+        if (element.AD_ORG_ID == 1000517) {
+          document.getElementById("palma").innerText = numberWithSpaces(parseFloat(element.TOTALOPENBALANCE.toFixed(2)));
+        }
+        if (element.AD_ORG_ID == 1000518) {
+          document.getElementById("orgBL").innerText = numberWithSpaces(parseFloat(element.TOTALOPENBALANCE.toFixed(2)));
+        }
+      });
+      document.getElementById("countInvoice").innerText = reponse.countInvoice;
+      document.getElementById("nbrPaiementNon").innerText = reponse.payement;
+      let StringDate = reponse.dateCreation[0][0];
+      let dt = StringDate.split("T")[0];
+      let tm = StringDate.split("T")[1];
+      let tm1 = tm.split(".")[0];
+      document.getElementById("dateCreationClient").innerText = dt + "__" + tm1;
+      document.getElementById("ageClient").innerText = reponse.ans + "ans __" + parseInt(reponse.day) + "Jours ";
+      chargementInfoClient(true);
+    });
+  }
+  function numberWithSpaces(x) {
+    var parts = x.toString().split(".");
+    parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, " ");
+    return parts.join(".");
+  }
+  function actionClientUnblocked() {
+    chargement();
+    var idDemDeploque = document.getElementById("idDemDeploque").value;
+    var operationType = document.getElementById("operationType").value;
+    var description = document.getElementById("description").value;
+    var id_user = document.getElementById("id_user").value;
+    var indiceOper = document.getElementById("indiceOper").value;
+    var reafecterA = document.getElementById("indiceOperReafect11").value;
+    var idReafecterA = document.getElementById("idIndiceReafecter11").value;
+    var organisationReafectA = document.getElementById("organisationReafectA").value;
+    var indiceLastOper = document.getElementById("indiceLastOper").value;
+    if ((idDemDeploque != "") & (operationType != "")) {
+      $.ajax({
+        url: "easy/recouvOper/actionClientUnblocked",
+        method: "POST",
+        data: {
+          idDemDeploque,
+          operationType,
+          description,
+          id_user,
+          indice_user: indiceOper,
+          reafecterA,
+          idReafecterA,
+          organisationReafectA,
+          bp_lastOper: indiceLastOper,
+        },
+      }).then((reponse) => {
+        getListe();
+        remplirtableDebloque();
+        document.getElementById("idDemDeploque").value = "";
+        document.getElementById("operationType").value = "";
+        document.getElementById("description").value = "";
+        document.getElementById("indiceOper11").value = "";
+        document.getElementById("bpartner_name").value = "";
+        chargementClose();
+        // iDOperDem indiceOper11 bpartner_name idDemDeploque bp_bartner_id clientProspect11 hiddenLastOper
+      });
+    } else {
+      chargementClose();
+    }
+  }
+
+  function remplirtableDebloque() {
+    chargement();
+    var id_user = (document.getElementById("tableDebloqueAuj").innerHTML = "");
+    $.ajax({
+      url: "easy/recouvOper/tableDebloqueAuj",
+      method: "POST",
+      data: { id_user: $("#id_user").val(), rolesId: $("#rolesId").val() },
+    }).then((reponse) => {
+      const nbSeuil = reponse.filter((e) => e.isBalance == "Y");
+      document.getElementById("informationSeuil").innerText = `${nbSeuil.length} seuils non traités`;
+      for (var i = 0; i < reponse.length; i++) {
+        const typeOperation = reponse[i].isSeuil == "Y" ? "SEUIL" : reponse[i].typeOperation;
+        const buttonCancelOperation =
+          reponse[i].isSeuil == "Y"
+            ? ""
+            : `<button class="button" title="Modifier Opération" onclick="annulerDebloque(${reponse[i].idClientDebloque},${reponse[i].idDemDep})"><i class="fas fa-edit"></i></button>`;
+
+        document.getElementById("tableDebloqueAuj").insertAdjacentHTML(
+          "beforeend",
+          `<tr  
+                style="font-size: 11px; font-family: Sans-serif, sans-serif;font-weight: bolder;cursor: pointer;" 
+                id="ppaa${i}" class="rowClientDebloque">
+                <td onclick="modifierSeuilClient(${reponse[i].idDemDep}, ${reponse[i].id_org}, ${reponse[i].bpartner_id},${i})">${reponse[i].bpartner_name}</td>
+                <td>${reponse[i].demandeReafectPar}</td>
+                <td class="ecrEnCentre">${typeOperation}</td>
+                <td>
+                  ${buttonCancelOperation}
+                 </td>
+              </tr>`
+        );
+
+        if (reponse[i].isBalance == "Y") {
+          document.getElementById("ppaa" + i).style.background = "#ff9800";
+        }
+        if (reponse[i].isBalance == "OK") {
+          document.getElementById("ppaa" + i).style.background = "#90EE90";
+        }
+      }
+      chargementClose();
+    });
+  }
+  let ii = -1;
+  async function modifierSeuilClient(idDemDep, adOrgId, client_id, i) {
+    await selectInfoClient(client_id, adOrgId);
+    if (ii != -1) document.getElementById("ppaa" + ii).style.background = "#FFFFFF";
+
+    document.getElementById("ppaa" + i).style.background = "#faebd7";
+    ii = i;
+    // document.getElementById('ppaa' + ii).style.background = '#FFFFFF'
+    chargement();
+    $.ajax({
+      url: "easy/recouvOper/modifierSeuilClient",
+      method: "POST",
+      data: { idDemDep },
+    }).then((reponse) => {
+      document.getElementById("seuilClient").value = reponse[0].SO_CREDITLIMIT;
+      document.getElementById("openBalance").innerText = numberWithSpaces(reponse[0].TOTALOPENBALANCE.toFixed(2));
+      document.getElementById("orgBalance").value = reponse[0].AD_ORG_ID;
+      document.getElementById("clientBalance").value = reponse[0].C_BPARTNER_ID;
+      document.getElementById("balanceIdDemDep").value = idDemDep;
+      chargementClose();
+    });
+  }
+  function majBalance() {
+    if ($("#clientBalance").val() != "" && $("#seuilClient").val() != "") {
+      chargement();
+      $.ajax({
+        url: "easy/recouvOper/majBalance",
+        method: "POST",
+        data: {
+          seuil: $("#seuilClient").val(),
+          ad_org_id: $("#orgBalance").val(),
+          c_bpartner_id: $("#clientBalance").val(),
+          idDemDep: $("#balanceIdDemDep").val(),
+        },
+      }).then((reponse) => {
+        if (reponse.reponse == 1) {
+          showToast("#14A44D", "fa-check-circle", "Success", "Mise a Jour Balance Effectuée");
+          remplirtableDebloque();
+          document.getElementById("seuilClient").value = "";
+          document.getElementById("openBalance").innerText = "";
+          document.getElementById("orgBalance").value = "";
+          document.getElementById("clientBalance").value = "";
+          document.getElementById("balanceIdDemDep").value = "";
+          chargementClose();
+        } else {
+          chargementClose();
+        }
+      });
+    }
+  }
+
+  function annulerDebloque(idClientDebloque, idDemDep) {
+    chargement();
+    var conf = confirm("Vous Etes Sur De Annuler Opération");
+    if (conf == true) {
+      var indiceOper = document.getElementById("indiceOper").value;
+      var id_user = document.getElementById("id_user").value;
+      $.ajax({
+        url: "easy/recouvOper/annulerDebloque",
+        method: "POST",
+        data: {
+          indiceOper: indiceOper,
+          idClientDebloque: idClientDebloque,
+          idDemDep: idDemDep,
+          id_user: id_user,
+        },
+      }).then((reponse) => {
+        //var data = JSON.parse(reponse)
+        getListe();
+        remplirtableDebloque();
+        chargementClose();
+      });
+    } else if (conf == false) {
+      chargementClose();
+    }
+  }
+  //fonction recherche
+  $(document).ready(function () {
+    $("#rechercheClient").on("keyup", function () {
+      var value = $(this).val().toLowerCase();
+      $("#tableClientParOper tr").filter(function () {
+        $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1);
+      });
+    });
+  });
+</script>

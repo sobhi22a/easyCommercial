@@ -1,0 +1,325 @@
+<div id="pageTransport">
+<div class="line1"></div>
+<div class="shadow p-3 mb-5 bg-white rounded">
+<div class="form-row">
+    <div class="col-sm-5">
+        <div class="form-row">
+          <!-- <label for="inputEmail3" class="col-sm-4 col-form-label" onclick="calculeSommeTt()">
+            Transporteur :
+          </label> -->
+          <div class="custom-control custom-checkbox mr-sm-2">
+            <input type="checkbox" onclick="calculeSommeTt()" class="custom-control-input" id="selectToutBonRoute">
+            <label class="custom-control-label" for="selectToutBonRoute">Tout</label>
+          </div>
+        <div class="col-sm-8">
+        <input list="encodings" class="form-control form-control-sm" id="id_transporteur">
+        <datalist id="encodings">
+        </datalist>
+        </div>
+    </div>
+    </div>
+    <div class="col-sm-1">
+    <button class="btn btn-sm btn-primary" onclick="getListeMission()"><i class="fas fa-sync-alt"></i></button>
+    </div>
+        <div class="col-sm-4">
+        <div class="form-row">
+            <div class="col-sm-6">
+                <input type="date" id="date1" class="form-control form-control-sm">
+            </div>
+            <div class="col-sm-6">
+                <input type="date" id="date2" class="form-control form-control-sm">
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-2">
+      <input type="text" id="rechercheBonRoute" class="form-control form-control-sm" placeholder="Bon route ..">
+    </div>
+</div>
+
+<div class="table-responsive">
+<div class="my-custom-scrollbarTransport">
+  <table class="table table-striped">
+   <thead class="thead-dark">
+    <tr>
+     <th scope="col">#</th>
+     <th scope="col">Ref</th>
+     <th scope="col">Livreur</th>
+     <th scope="col">Region</th>
+     <th scope="col">Depart</th>
+     <th scope="col">Véhicule</th>
+     <th scope="col">Colis</th>
+     <th scope="col">Tr</th>
+     <th scope="col">Montant</th>
+    </tr>
+   </thead>
+  <tbody id="tblTransport"></tbody>
+ </table>
+</div>
+</div>
+</div>
+<div class="shadow p-3 mb-5 bg-white rounded">
+<div class="form-row"> 
+<div class="col-sm-2">
+ <br>
+  <button class="btn btn-success" onclick="traiterLaProcedure()">Traiter &nbsp;<i class="fas fa-cog"></i></button>
+</div>
+<div class="col-sm-6">
+  Description :
+  <input type="text" class="form-control" id="description">
+</div>
+<div class="col-sm-4">
+         Montant Total : 
+        <input type="text" class="form-control" id="totalMontantAffichage" readonly>
+        <input type="text" class="form-control" id="totalMontant" hidden readonly>
+    </div>
+</div>
+</div>
+<script>
+  getLIsteTransporteurs()
+  function getLIsteTransporteurs(){
+      $.ajax({
+          url:'easy/comptabilite/getLIsteTransporteurs',
+          method:'POST',
+          success:(reponse)=>{
+            remplirListeTransporteurs(reponse)
+          }
+      })
+  }
+  var array = [] , arrayDt = []
+
+  function remplirListeTransporteurs(reponse){
+    var select = document.getElementById('encodings')
+    let el1 = document.createElement('OPTION')
+    el1.value=""
+    el1.innerHTML="Transporteur"
+    select.appendChild(el1)
+     for(var i=0;i<reponse.length;i++){
+      var el = document.createElement('OPTION')
+      el.value=reponse[i][0]+'_'+reponse[i][1]
+      select.appendChild(el)
+     }
+  }
+var listTransport = [];
+function getListeMission(){
+ let c_bpartner_id = $('#id_transporteur').val()
+ let nameShipper = c_bpartner_id.split('_')[1]
+ document.getElementById('description').value='LF ' + nameShipper +'_'
+  if(c_bpartner_id!=""){
+    chargement()
+    document.getElementById('totalMontant').value=""
+    document.getElementById('totalMontantAffichage').value='0,00 .DZD'
+    if(c_bpartner_id.length>=8){
+    $.ajax({
+        url:'easy/comptabilite/getListeTransport',
+        method:'POST',
+        data:{
+            c_bpartner_id: $('#id_transporteur').val(),
+            date1: $('#date1').val(),
+            date2: $('#date2').val()
+        },
+        success:(reponse)=>{
+          listTransport = reponse;
+          remplirTableTransporteur(reponse)
+          chargementClose()
+        }
+    })
+  }
+}
+  }
+  
+  function calculeSommeTt() {
+    // montant: data[i][36] date: data[i][22] bonRouteId: data[i][3]
+    let isToutChecked = document.getElementById('selectToutBonRoute').checked;
+    let montantTt = 0; let dateTransport = '';
+    let description = document.getElementById('description').value
+    if(isToutChecked) {
+      for(var i=0; i < listTransport.length; i++) {
+      document.getElementById(i+1).checked = true;
+      if(listTransport[i][36] > 0) {
+        dateTransport += `${listTransport[i][22]},`;
+        montantTt += listTransport[i][36];
+      }
+      array.push(listTransport[i][3]);
+    }
+      dateTransport = dateTransport.slice(0, -1);
+      document.getElementById('description').value=description + dateTransport;
+      document.getElementById('totalMontant').value=montantTt
+      let totalMontant = numberWithSpaces(montantTt)
+      document.getElementById('totalMontantAffichage').value=totalMontant+',00 .DZD'
+    } else {
+      for(var i=0; i < listTransport.length; i++) {
+        array = [];
+        description = document.getElementById('description').value=description
+        description = description.split('_')[0];
+        document.getElementById('description').value=description+'_'
+        montantTt = 0;
+        document.getElementById('totalMontant').value=montantTt;
+        let totalMontant = numberWithSpaces(montantTt)
+        document.getElementById('totalMontantAffichage').value=totalMontant+',00 .DZD'
+        document.getElementById(i+1).checked = false;
+      }
+    }
+  };
+
+  function calculSomme(xx_bonroute_id,montant,i,dt){
+      let checked = document.getElementById(i).checked;
+      let description = document.getElementById('description').value
+      description = description.split('_')[0]
+      let totalMontant11
+      if(checked==true){
+        if (montant>0) {
+          arrayDt.push(dt)
+          document.getElementById('description').value=description + '_ ' + arrayDt
+        }
+
+      array.push(xx_bonroute_id)
+      montant = parseFloat(montant)
+      let  totalMontant = document.getElementById('totalMontant').value
+      if(totalMontant==""){
+        totalMontant = montant
+        document.getElementById('totalMontant').value=totalMontant
+        totalMontant11 = numberWithSpaces(totalMontant)
+        document.getElementById('totalMontantAffichage').value=totalMontant11+',00 .DZD'
+      }else{
+        totalMontant = parseFloat(totalMontant)
+        totalMontant = totalMontant + montant  
+        document.getElementById('totalMontant').value=totalMontant
+        totalMontant11 = numberWithSpaces(totalMontant)
+        document.getElementById('totalMontantAffichage').value=totalMontant11+',00 .DZD'
+      }
+    }else if(checked==false){
+      if (montant>0) {
+          arrayDt.pop(dt)
+          document.getElementById('description').value=description + '_ ' + arrayDt
+        }
+      array.pop(xx_bonroute_id)
+      montant = parseFloat(montant)
+     let  totalMontant = document.getElementById('totalMontant').value
+      if(totalMontant==""){
+        totalMontant = montant
+        document.getElementById('totalMontant').value=totalMontant
+        totalMontant11 = numberWithSpaces(totalMontant)
+        document.getElementById('totalMontantAffichage').value=totalMontant11+',00 .DZD'
+      }else{
+        totalMontant = parseFloat(totalMontant)
+        totalMontant = totalMontant - montant  
+        document.getElementById('totalMontant').value=totalMontant
+        totalMontant11 = numberWithSpaces(totalMontant)
+        document.getElementById('totalMontantAffichage').value=totalMontant11+',00 .DZD'
+      }
+    }
+
+  }
+  async function traiterLaProcedure(){
+    let description = $('#description').val()
+    // array = [] ; arrayDt = []
+    if(description!=''){
+      let conf = confirm('Traiter ? ..')
+      if(conf==true){
+        let arrayParenthese = await arrayToParentese()
+        let collDonnee = await colecterDonnee()
+        let isPaid = await updateIsPaid(arrayParenthese,collDonnee)
+      getListeMission();
+      document.getElementById('description').style = "none"
+    }
+    }else{
+      document.getElementById('description').style = " border: 2px solid red"
+    }
+  }
+  function arrayToParentese(){
+    return new Promise((resolve,reject)=>{
+        let arrayP ;
+        for(let i=0;i<array.length;i++){
+            if(arrayP==undefined){
+                arrayP = array[i]
+            }else{
+                arrayP = arrayP+','+array[i]
+            }
+        }
+        arrayP = '('+arrayP+')'
+        resolve(arrayP)
+    })
+  }
+
+  function colecterDonnee(){
+    return new Promise((resolve,reject)=>{
+      let donnee = { 
+      ad_user_id : $('#id_user').val(),
+      p_requestamt : $('#totalMontant').val(),
+      c_bpartner_id : $('#id_transporteur').val(),
+      summary : $('#description').val()
+    }
+      resolve(donnee)
+    })
+
+  }
+
+  function updateIsPaid(bonRoute,donnee){
+    return new Promise((resolve,reject)=>{
+       $.ajax({
+           url:'easy/comptabilite/updateIsPaid',
+           method:'post',
+           data:{bonRoute:bonRoute,
+            ad_user_id : donnee.ad_user_id,
+            p_requestamt : donnee.p_requestamt,
+            c_bpartner_id : donnee.c_bpartner_id,
+            summary : donnee.summary
+          },
+           success:(reponse)=>{
+              resolve(reponse)
+            }
+        })
+    })
+  }
+  function remplirTableTransporteur(data){
+    chargement()
+    document.getElementById('tblTransport').innerHTML=""
+    for(var i=0;i<data.length;i++){
+      let xx = data[i][36]
+      if(xx==null){
+        xx=0
+      }
+   let numbre = numberWithSpaces(xx)
+   document.getElementById('tblTransport')
+   .insertAdjacentHTML( 'beforeend',
+   `<tr  style="font-size: 15px; font-family: Verdana, sans-serif;">
+    <td>  
+    <label class="container">
+    <input type="checkbox" id="${i+1}" onclick="calculSomme(${data[i][3]},${data[i][36]},${i+1},'${data[i][22]}')">
+    <span class="checkmark"></span>
+    </label>
+    </td>
+    <td>${data[i][4]}</td>
+    <td>${data[i][6]}</td>
+    <td>${data[i][20]}</td>
+    <td>${data[i][22]}</td>
+    <td>${data[i][10]}</td>
+    <td>${data[i][33]}</td>
+    <td>${data[i][2]}</td>
+    <td>${numbre},00 .DZD</td>
+   </tr>`
+  );
+ }
+ chargementClose()
+}
+
+// function numberWithSpaces(x) {
+//     return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ");
+// }
+
+function numberWithSpaces(x) {
+    var parts = x.toString().split(".");
+    parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, " ");
+    return parts.join("."); 
+}
+$(document).ready(function(){
+    $("#rechercheBonRoute").on("keyup", function() {
+      var value = $(this).val().toLowerCase();
+      $("#tblTransport tr").filter(function() {
+        $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+      });
+    });
+  });
+</script>
+
+</div>

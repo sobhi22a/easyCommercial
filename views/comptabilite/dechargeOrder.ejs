@@ -1,0 +1,304 @@
+<div id="pageDechargeOrder" hidden>
+<div class="shadow p-3 mb-5 bg-white rounded">
+<div class="card-group">
+  <div class="card">
+    <div class="card-body">
+      <div class="form-row">
+          <div class="col-sm-12">
+              <div class="form-row">
+                  <div class="col-sm-6">
+                      <input list="encodings" class="form-control form-control-sm" id="id_transporteur1">
+                      <datalist id="encodings">
+                    </datalist>
+                </div>
+                <div class="col-sm-2">
+                    <button class="btn btn-sm btn-primary" onclick="getListeMission1()"><i class="fas fa-sync-alt"></i></button>
+                </div>
+                <div class="col-sm-4">
+                    <input type="text" id="recherche1" class="form-control form-control-sm">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="line1"></div>
+    <div class="my-custom-scrollbarTransport">
+    <table class="table table-sm">
+        <thead class="thead-dark">
+          <tr>
+            <th scope="col">#</th>
+            <th scope="col">Documentno</th>
+            <th scope="col">date</th>
+            <th scope="col">Région</th>
+          </tr>
+        </thead>
+        <tbody id="tblTransport1">
+        </tbody>
+      </table>
+   </div>
+   <div class="line1"></div>
+   <div class="line1"></div>
+   <div class="form-row">
+     <div class="col-sm-6">
+       <input type="text" maxlength="7" id="documentno1" class="form-control form-control-sm" placeholder="Numéro De Bon De Route">
+     </div>
+     <div class="col-sm-6">
+       <button class="btn btn-sm btn-danger" onclick="processed()">Traiter=N</button>
+     </div>
+   </div>
+</div>
+</div>
+    <div class="card">
+     <div class="card-body">
+      <div class="form-row">
+       <div class="col-sm-12">
+        <div class="canvas_div_pdf">
+         <div class="form-row">
+          <div class="col-sm-1"></div>
+          <div class="col-sm-10"><h1>SARL ATTIRYAK PHARM</h1></div>
+          <div class="col-sm-1"></div>
+       </div>
+       <div class="form-row">
+        <div class="col-sm-2"></div>
+        <div class="col-sm-8">
+          <strong>  Distribution De Produits Pharmaceutique </strong> <br>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <strong>et Parapharmaceutique </strong> <br>
+            <strong> 117 Zone Industerial Ali mendjeli CNE </strong>
+        </div>
+        <div class="col-sm-2"></div>
+     </div>
+     <div class="form-row">
+        <div class="col-sm-1"></div>
+        <div class="col-sm-7"></div>
+        <div class="col-sm-4"> <strong><u>Le : <span id="dateJour"></span></u></strong>  </div>
+     </div>
+     <hr>
+       <div class="line1"></div><div class="line1"></div>
+        <div class="form-row">
+        <div class="col-sm-4"><h5>Je Soussigné Mr : </h5></div>
+        <div class="col-sm-6">
+            <strong><span id="transporteurDechID">....................................</span></strong>
+        </div>
+       </div> 
+     <div class="line1"></div>
+      <div class="form-row">
+      <div class="col-sm-3"><h5>Fonction : </h5></div>
+      <div class="col-sm-4"><strong><span> CHAUFFEUR </span></strong></div>
+     </div>
+   <div class="line1"></div>
+   <div class="form-row">
+    <div class="col-sm-1"></div>
+    <div class="col-sm-10"><h5>Avoir remis l'ordre de mission de la région :</h5></div>
+    <div class="col-sm-1"></div>
+   </div>
+   <div class="line1"></div>   
+   <div class="form-row">
+     <div class="col-sm-2"></div>
+     <div class="col-sm-10">
+        <strong><span id="regionTransport1">................................................................</span></strong>
+    </div>
+   </div>
+   <div class="line1"></div>
+   <div class="form-row"> 
+   <div class="col-sm-4"><h5>Nombre d'ODM : </h5></div>
+   <div class="col-sm-6">
+       <strong><span id="nbrOrderMiss"> &nbsp; </span> (<span id="listeOrder"> </span>)</div></strong>
+   </div>
+   <div class="line1"></div>
+   <div class="form-row">
+   <div class="col-sm-2"><h5>DU  : </h5></div>
+   <div class="col-sm-10">
+       <strong><span id="dateOrder"> </span></strong>
+    </div>
+  </div>
+  <div class="line1"></div>
+  <div class="line1"></div>
+   <div class="form-row">
+    <div class="col-sm-4"><strong>L'intéressé</strong></div>
+    <div class="col-sm-4"></div>
+    <div class="col-sm-4"><strong>le Récéptionnaire</strong></div>
+  </div>
+ </div>
+ <div class="line1"></div>
+ <div class="line1"></div>
+ <div class="line1"></div>
+ <div class="form-row">
+    <div class="col-sm-4">
+      <button class="btn btn-sm btn-warning" onclick="aZero()"><i class="fas fa-times-circle"></i> &nbsp; Terminer</button>
+    
+    </div>
+    <div class="col-sm-4"></div>
+    <div class="col-sm-4">
+        <button class="btn btn-sm btn-primary" onclick="getPDF()"><i class="fas fa-print"></i> &nbsp; Print</button>
+    </div>
+   </div>
+</div>   
+</div>
+</div>
+</div>
+</div>
+ <script src="/public/htmlToPdf/jquery-1.12.4.js"></script>
+ <script src="htmlToPdf/jspdf.min.js"></script>
+ <script src="htmlToPdf/html2canvas.js"></script>
+</div>
+
+<script>
+  function processed(){
+    if($('#documentno1').val()!=''){
+    $.ajax({
+      url:'easy/comptabilite/processed',
+      method:'POST',
+      data:{
+        documentno:$('#documentno1').val(),
+        id_user:$('#id_user').val(),
+        nameTable:"xx_bonroute"
+      },
+    }).then((reponse)=>{
+     alert(reponse)
+     document.getElementById('documentno1').value=''
+    })
+  }
+  }
+    sysDate()
+    function sysDate(){
+        var today = new Date()
+        var dd = today.getDate();
+        var yy = today.getFullYear()
+        var mm = today.getMonth()+1
+      document.getElementById('dateJour').innerText =  dd+'/'+mm+'/'+yy;
+    }  
+function getListeMission1(){
+    let c_bpartner_id = $('#id_transporteur1').val()
+  if(c_bpartner_id!=""){
+    chargement()
+    if(c_bpartner_id.length>=8){
+    $.ajax({
+        url:'easy/comptabilite/getListeTransport',
+        method:'POST',
+        data:{
+            c_bpartner_id: $('#id_transporteur1').val(),
+            date1: '',
+            date2: ''
+        },
+        success:(reponse)=>{
+           remplirTableTransporteur1(reponse)
+           chargementClose()
+        }
+    })
+  }
+ }
+}
+var arrayRegion = []
+var arrayDocumentno = []
+var arrayDate = []
+var nmbrOrder = 0
+function collecterDonnee(documentno,date,region,i){
+document.getElementById('transporteurDechID').innerText=$('#id_transporteur1').val().split('_')[1]
+if(document.getElementById(i+'m').checked==true){
+    arrayRegion.push(region)
+    arrayDocumentno.push(documentno)
+    arrayDate.push(date)
+    nmbrOrder++
+}else if(document.getElementById(i+'m').checked==false){
+    removeItemOnce(arrayRegion,region)
+    removeItemOnce(arrayDocumentno,documentno)
+    removeItemOnce(arrayDate,date)
+    nmbrOrder--
+}
+document.getElementById('regionTransport1').innerText=arrayRegion
+document.getElementById('nbrOrderMiss').innerText=nmbrOrder
+document.getElementById('listeOrder').innerText=arrayDocumentno
+document.getElementById('dateOrder').innerText=arrayDate
+}
+function remplirTableTransporteur1(data){
+    chargement()
+    document.getElementById('tblTransport1').innerHTML=""
+    for(var i=0;i<data.length;i++){
+      let xx = data[i][36]
+      if(xx==null){
+        xx=0
+      }
+   let numbre = numberWithSpaces(xx)
+   document.getElementById('tblTransport1')
+   .insertAdjacentHTML( 'beforeend',
+   `<tr  style="font-size: 15px; font-family: Verdana, sans-serif;">
+    <td>  
+    <label class="container">
+    <input type="checkbox" id="${i+1}m" 
+    onclick="collecterDonnee(${data[i][4]},'${data[i][22]}','${data[i][20]}',${i+1})">
+    <span class="checkmark"></span>
+    </label>
+    </td>
+    <td>${data[i][4]}</td>
+    <td>${data[i][22]}</td>
+    <td>${data[i][20]}</td>
+   </tr>`
+  );
+ }
+ chargementClose()
+}
+
+function aZero(){
+  document.getElementById('regionTransport1').innerText=""
+  document.getElementById('nbrOrderMiss').innerText=""
+  document.getElementById('listeOrder').innerText=""
+  document.getElementById('dateOrder').innerText=""
+  document.getElementById('transporteurDechID').innerText=""
+  document.getElementById('tblTransport1').innerHTML=""
+  arrayRegion = []
+  arrayDocumentno = []
+  arrayDate = []
+  nmbrOrder = 0
+  sysDate() 
+  getLIsteTransporteurs()
+}
+function removeItemOnce(arr, value) {
+  var index = arr.indexOf(value);
+  if (index > -1) {
+    arr.splice(index, 1);
+  }
+  return arr;
+}
+</script>
+
+
+
+<script>
+   function getPDF(){
+    var HTML_Width = $(".canvas_div_pdf").width();
+    var HTML_Height = $(".canvas_div_pdf").height();
+    var top_left_margin = 15;
+    var PDF_Width = HTML_Width+(top_left_margin*2);
+    var PDF_Height = (PDF_Width*1.5)+(top_left_margin*2);
+    var canvas_image_width = HTML_Width;
+    var canvas_image_height = HTML_Height;        
+    var totalPDFPages = Math.ceil(HTML_Height/PDF_Height)-1;    
+        html2canvas($(".canvas_div_pdf")[0],{allowTaint:true}).then(function(canvas) {
+            canvas.getContext('2d');
+            
+            console.log(canvas.height+"  "+canvas.width);
+        
+            var imgData = canvas.toDataURL("image/jpeg", 1.0);
+            var pdf = new jsPDF('p', 'pt',  [PDF_Width, PDF_Height]);
+            pdf.addImage(imgData, 'JPG', top_left_margin, top_left_margin,canvas_image_width,canvas_image_height);
+            
+            
+            for (var i = 1; i <= totalPDFPages; i++) { 
+                pdf.addPage(PDF_Width, PDF_Height);
+                pdf.addImage(imgData, 'JPG', top_left_margin, -(PDF_Height*i)+(top_left_margin*4),canvas_image_width,canvas_image_height);
+            }
+            
+            pdf.save("DéchargeOrdre.pdf");
+        });
+        };
+
+        $(document).ready(function(){
+        $("#recherche1").on("keyup", function() {
+          var value = $(this).val().toLowerCase();
+          $("#tblTransport1 tr").filter(function() {
+            $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+          });
+        });
+      });
+    </script>
+</div>

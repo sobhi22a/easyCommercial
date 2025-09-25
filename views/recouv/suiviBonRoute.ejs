@@ -1,0 +1,248 @@
+<div id="pageSuiviBonRoute" hidden>
+    <div class="line1"></div>
+<div class="form-row">
+  <div class="col-sm-12">
+    <div class="shadow p-3 mb-5 bg-white rounded">
+      <nav class="navbar navbar-light bg-light" id="navBarId">
+      </nav>
+ <div class="line1"></div>
+  <div class="form-row">
+   <div class="col-sm-3">
+    <div class="my-custom-scrollbarLivreur">
+     <table class="table table-sm table-bordered" id="tableLivreurH">
+      <thead class="thead-dark">
+       <tr>
+        <th scope="col" style="text-align: center;">#</th>
+        <th scope="col" style="text-align: center;">Livreur</th>
+       </tr>
+      </thead>
+     <tbody id="tableLivreur">
+    </tbody>
+   </table>
+  </div>
+</div>
+<div class="col-sm-2">
+  <div class="my-custom-scrollbarLivreur">
+  <table class="table table-sm table-bordered">
+    <thead class="thead-dark">
+     <tr>
+      <th scope="col" style="text-align: center;">Bon Route</th>
+     </tr>
+    </thead>
+   <tbody id="documentno">
+  </tbody>
+ </table>
+</div>
+</div>
+<div class="col-sm-7">
+    <div class="my-custom-scrollbarLivreur">
+      <table class="table table-sm">
+        <thead class="thead-dark">
+         <tr>
+          <th scope="col">Oper</th>
+          <th scope="col" style="width: 30%;">Client <span id="nmbrClients1"></span></th>
+          <th scope="col">Montant</th>
+          <th scope="col">Livré</th>
+          <th scope="col">Paid</th>
+          <th scope="col">Colis</th>
+          <th scope="col">SCH</th>
+          <th scope="col">Ins</th>
+          <th scope="col">Action</th>
+         </tr>
+        </thead>
+       <tbody id="tableDetail">
+      </tbody>
+     </table>
+</div>
+<hr>
+<div class="shadow-lg p-3 mb-5 bg-white rounded">Nombre Clients :<span id="nmbrClients" ></span></div>
+</div>
+ </div>
+</div>
+  </div>
+</div>
+<script>
+  getRegionParSV()
+  function getRegionParSV(){
+    let id_user = $('#id_user').val();
+    $.ajax({
+      url:'easy/recouvOper/getRegionSV',
+      method:'POST',
+      data:{id_user:id_user},
+      success:(reponse)=>{
+        var nav=document.getElementById("navBarId");
+        for(var i=0;i<reponse.length;i++){
+        var node = document.createElement("a");
+        var textnode = document.createTextNode(`${reponse[i][1]}`);
+        node.appendChild(textnode);
+        nav.appendChild(node);
+      }
+    }
+    })
+  }
+  getLivreur()
+  function getLivreur(){
+    $.ajax({
+      url:'easy/recouvOper/getLivreur',
+      method:'POST',
+      data:{id_user:$('#id_user').val()},
+      success:(reponse)=>{
+        remplirtableLivreur(reponse)
+      }
+    })
+  }
+  var predentI = 0;var predentII =0
+  function getBonRoute(i,id_livreur){
+    predentII =0
+    if(predentI==0){
+      document.getElementById(i+'livreur').style.backgroundColor='#90EE90'
+      predentI=i
+    }else if(predentI!=i){
+      document.getElementById(i+'livreur').style.backgroundColor='#90EE90'
+      document.getElementById(predentI+'livreur').style.backgroundColor='white'
+      predentI=i
+    }
+    document.getElementById("documentno").innerHTML="";
+    $.ajax({
+      url:'easy/recouvOper/getBonRoute',
+      method:'POST',
+      data:{id_livreur:id_livreur},
+      success:(reponse)=>{
+        remplirtableBonRoute(reponse)
+      }
+    })
+  }
+
+function detailBonRoute(i,documentno){
+  if(predentII==0){
+      document.getElementById(i+'fact').style.backgroundColor='#90EE90'
+      predentII=i
+    }else if(predentII!=i){
+      document.getElementById(i+'fact').style.backgroundColor='#90EE90'
+      document.getElementById(predentII+'fact').style.backgroundColor='white'
+      predentII=i
+    }
+  $.ajax({
+    url:'easy/recouvOper/detailBonRoute',
+    method:'POST',
+    data:{documentno:documentno},
+    success:(reponse)=>{
+      remplirTableFacture(reponse)
+    }
+  })
+}
+
+  function remplirtableLivreur(reponse){
+    document.getElementById('tableLivreur').innerHTML=""
+    for(var i=0;i<reponse.length;i++){
+      document.getElementById( 'tableLivreur' )
+      .insertAdjacentHTML( 'beforeend',
+      `<tr  
+       style="font-size: 14px; font-family: Sans-serif, sans-serif;font-weight: bolder;cursor: pointer;" 
+        id="${i+1}livreur">
+        <td>${i+1}</td>
+         <td onclick='getBonRoute(${i+1},${reponse[i][1]})'>${reponse[i][0]}</td>
+        </tr>`
+       );
+     }
+  }
+  function remplirtableBonRoute(reponse){
+    document.getElementById('documentno').innerHTML=""
+    for(var i=0;i<reponse.length;i++){
+      document.getElementById( 'documentno' )
+      .insertAdjacentHTML( 'beforeend',
+      `<tr style="font-size: 14px; font-family: Sans-serif, sans-serif;font-weight: bolder;cursor: pointer;" 
+      id="${i+1}fact">
+         <td onclick='detailBonRoute(${i+1},${reponse[i][0]})'>${reponse[i][0]}__${reponse[i][1]} (${reponse[i][2]})</td>
+        </tr>`
+       );
+     }
+  }
+  function remplirTableFacture(reponse){
+    document.getElementById('tableDetail').innerHTML=""
+    var name = "";var montant11;var oper; var nmbrClient=0
+    for(var i=0;i<reponse.length;i++){
+      if(i==0){
+        name = reponse[i][1]
+        nmbrClient++
+       }else if(reponse[i][1]==reponse[i-1][1]){
+         name = ""
+       }else if(reponse[i][1]!=reponse[i-1][1]){
+        name = reponse[i][1]
+        nmbrClient++
+       }
+       document.getElementById('nmbrClients').innerText= ' ('+nmbrClient+')'
+       let montant = numberWithSpaces(parseFloat(reponse[i][2]).toFixed(2))
+       if(i==0){
+        montant11 = montant
+       }else if(reponse[i][2]==reponse[i-1][2]){
+        montant11 = ""
+       }else if(reponse[i][2]!=reponse[i-1][2]){
+        montant11 = montant
+       }
+       if(i==0){
+        oper = reponse[i][4]
+       }else if(reponse[i][4]==reponse[i-1][4]){
+        oper = ""
+       }else if(reponse[i][4]!=reponse[i-1][4]){
+        oper = reponse[i][4]
+       }
+      document.getElementById( 'tableDetail' )
+      .insertAdjacentHTML( 'beforeend',
+      `<tr style="font-size: 14px; font-family: Sans-serif, sans-serif;font-weight: bolder;cursor: pointer;"
+       id="">
+         <td>${oper}</td>
+         <td>${name}</td>
+         <td>${montant11}</td>
+         <td id="${i}livrii"></td>
+         <td id="${i}paiid"><span>${reponse[i][3]}</span></td>
+         <td>${reponse[i][5]+reponse[i][6]}</td>
+         <td>${reponse[i][7]}</td>
+         <td>${reponse[i][8]}</td>
+         <td>
+            <button class="btn btn-success btn-sm" title="Réexepidition"><i class="fas fa-retweet"></i></button>
+            <button class="btn btn-warning btn-sm" title="Annuler"><i class="fas fa-times-circle"></i></button>
+          </td>
+        </tr>`
+       );
+       if(reponse[i][9]=='N'){
+        document.getElementById(i+'livrii').innerHTML=`
+        <div class='form-row'>
+         <div class="col-sm-6">
+        <span class="badge badge-danger">${reponse[i][9]}</span>
+        </div>
+        <div class="col-sm-6">
+        <div class="form-check form-switch">
+        <input class="form-check-input" type="checkbox" id="flexSwitchCheckDefault">
+        </div>
+        </div>
+        </div>
+        `
+       }else{
+        document.getElementById(i+'livrii').innerHTML=`<span class="badge badge-success">${reponse[i][9]}</span>`
+       }
+       if(reponse[i][3]=='N'){
+        document.getElementById(i+'paiid').innerHTML=`
+        <div class='form-row'>
+         <div class="col-sm-6">
+        <span class="badge badge-danger">${reponse[i][3]}</span>
+        </div>
+        <div class="col-sm-6">
+        <div class="form-check form-switch">
+        <input class="form-check-input" type="checkbox" id="flexSwitchCheckDefault">
+        </div>
+        </div>
+        </div>
+        `
+       }else{
+        document.getElementById(i+'paiid').innerHTML=`<span class="badge badge-success">${reponse[i][9]}</span>`
+       }
+     }
+  }
+  function numberWithSpaces(x) {
+    var parts = x.toString().split(".");
+    parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, " ");
+    return parts.join("."); 
+} 
+</script>
+</div>

@@ -1,0 +1,103 @@
+<%-include('entete.ejs')%>
+  <script>
+    function chargement() {
+      document.getElementById('ccc').hidden = false
+      document.getElementById('wrapper').style = "filter: blur(3px)"
+    }
+    function chargementClose() {
+      document.getElementById('ccc').hidden = true
+      document.getElementById('wrapper').style = "filter:none"
+    }
+    function demandeDebloque() {
+      document.getElementById("demandeDebloque").classList.add("active");
+      document.getElementById("historyRecouv").classList.remove("active");
+      document.getElementById("nouveauClient").classList.remove("active");
+      // document.getElementById("callCenter").classList.remove("active");
+      document.getElementById("suiviBonRoute").classList.remove("active");
+      document.getElementById("pageExcellentClient").classList.remove("active");
+
+      document.getElementById('pageExcellentClientHidden').hidden = true
+      document.getElementById('pageSuiviBonRoute').hidden = true
+      document.getElementById('pageRecouverement').hidden = false
+      document.getElementById('pageHistoryRecouv').hidden = true
+      document.getElementById('pageNvClientRecou').hidden = true
+      // document.getElementById("pageCallCenter").hidden=true
+    }
+    function historyRecouv() {
+      document.getElementById("demandeDebloque").classList.remove("active");
+      document.getElementById("historyRecouv").classList.add("active");
+      document.getElementById("nouveauClient").classList.remove("active");
+      document.getElementById("suiviBonRoute").classList.remove("active");
+
+      document.getElementById('pageSuiviBonRoute').hidden = true
+      // document.getElementById("callCenter").classList.remove("active");
+      document.getElementById("pageExcellentClient").classList.remove("active");
+
+      document.getElementById('pageExcellentClientHidden').hidden = true
+      document.getElementById('pageRecouverement').hidden = true
+      document.getElementById('pageHistoryRecouv').hidden = false
+      document.getElementById('pageNvClientRecou').hidden = true
+      // document.getElementById("pageCallCenter").hidden=true
+    }
+    function nouveauClient() {
+      listeNvClientRecouv()
+      document.getElementById("demandeDebloque").classList.remove("active");
+      document.getElementById("historyRecouv").classList.remove("active");
+      document.getElementById("nouveauClient").classList.add("active");
+      document.getElementById("suiviBonRoute").classList.remove("active");
+      document.getElementById("pageExcellentClient").classList.remove("active");
+
+      document.getElementById('pageExcellentClientHidden').hidden = true
+      document.getElementById('pageSuiviBonRoute').hidden = true
+      document.getElementById('pageRecouverement').hidden = true
+      document.getElementById('pageHistoryRecouv').hidden = true
+      document.getElementById('pageNvClientRecou').hidden = false
+      // document.getElementById("pageCallCenter").hidden=true
+    }
+    function suiviBonRoute() {
+      document.getElementById("demandeDebloque").classList.remove("active");
+      document.getElementById("historyRecouv").classList.remove("active");
+      document.getElementById("nouveauClient").classList.remove("active");
+      document.getElementById("suiviBonRoute").classList.add("active");
+      document.getElementById("pageExcellentClient").classList.remove("active");
+
+      document.getElementById('pageExcellentClientHidden').hidden = true
+
+      document.getElementById('pageSuiviBonRoute').hidden = false
+      document.getElementById('pageRecouverement').hidden = true
+      document.getElementById('pageHistoryRecouv').hidden = true
+      document.getElementById('pageNvClientRecou').hidden = true
+      // document.getElementById("pageCallCenter").hidden=true
+    }
+    function pageExcellentClient() {
+      getListClientExcellent()
+      document.getElementById("demandeDebloque").classList.remove("active");
+      document.getElementById("historyRecouv").classList.remove("active");
+      document.getElementById("nouveauClient").classList.remove("active");
+      document.getElementById("suiviBonRoute").classList.remove("active");
+      document.getElementById("pageExcellentClient").classList.add("active");
+
+      document.getElementById('pageExcellentClientHidden').hidden = false
+      document.getElementById('pageSuiviBonRoute').hidden = true
+      document.getElementById('pageRecouverement').hidden = true
+      document.getElementById('pageHistoryRecouv').hidden = true
+      document.getElementById('pageNvClientRecou').hidden = true
+      // document.getElementById("pageCallCenter").hidden=true
+    }
+
+    function showToast(color, icon, status, message) {
+      var x = document.getElementById("snackbar");
+      document.getElementById("statusToast").innerText = status
+      document.getElementById("messageToast").innerText = message
+      document.getElementById("iconToast").classList.add(icon)
+      x.style.color = color
+      x.className = "show";
+      setTimeout(function () { x.className = x.className.replace("show", ""); }, 3000);
+    }
+  </script>
+  <%-include('recouverementDepbloque.ejs')%>
+    <%-include('suiviBonRoute.ejs')%>
+      <%-include('history.ejs')%>
+        <%-include('page-excellent-client.ejs')%>
+          <%-include('nvClientsRecou.ejs')%>
+            <%-include('enbas.ejs')%>

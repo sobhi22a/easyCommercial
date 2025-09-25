@@ -1,0 +1,90 @@
+<%-include('entete.ejs')%>
+  <script>
+    function chargement() {
+      document.getElementById('ccc').hidden = false
+      document.getElementById('wrapper').style = "filter: blur(3px)"
+    }
+    function chargementClose() {
+      document.getElementById('ccc').hidden = true
+      document.getElementById('wrapper').style = "filter:none"
+    }
+  </script>
+
+    <%-include('ficheNouveauClient.ejs')%>
+    <%-include('psyOrdre.ejs')%>
+    <%-include('stockRectif.ejs')%>
+    <%-include('inventaire.ejs')%>
+    <%-include('enbas.ejs')%>
+
+          <script>
+            Autorisation()
+            function Autorisation() {
+              if ($('#id_role').val() == 12) {
+                stockRectif();
+                document.getElementById("nouveauClient").hidden = true;
+              } else {
+                nouveauClient();
+              }
+            }
+            function nouveauClient() {
+              listeNvClientRecouv()
+              document.getElementById("nouveauClient").classList.add("active");
+
+              document.getElementById('pageFicheNouveauClient').hidden = false
+              //  document.getElementById('pageHistoryRecouv').hidden=true
+              // document.getElementById("pageCallCenter").hidden=true
+            }
+            function stockRectif() {
+              // document.getElementById("nouveauClient").classList.remove("active");
+              document.getElementById("stockRectifier").classList.add("active");
+              document.getElementById('psyCommander').classList.remove("active");
+              document.getElementById("inventaire").classList.remove("active");
+
+              document.getElementById('pageFicheNouveauClient').hidden = true
+              document.getElementById('pagePsyOrdre').hidden = true;
+              document.getElementById('pageInventaire').hidden = true;
+              document.getElementById('pageStockRectif').hidden = false;
+
+              //  document.getElementById('pageHistoryRecouv').hidden=true
+              // document.getElementById("pageCallCenter").hidden=true
+            }
+            function psyOrdre() {
+              // document.getElementById("nouveauClient").classList.remove("active");
+              document.getElementById("stockRectifier").classList.remove("active");
+              document.getElementById("inventaire").classList.remove("active");
+              document.getElementById('psyCommander').classList.add("active");
+
+              document.getElementById('pageFicheNouveauClient').hidden = true
+              document.getElementById('pageStockRectif').hidden = true;
+              document.getElementById('pageInventaire').hidden = true;
+              document.getElementById('pagePsyOrdre').hidden = false;
+
+
+              //  document.getElementById('pageHistoryRecouv').hidden=true
+              // document.getElementById("pageCallCenter").hidden=true
+            }
+            function inventairePage() {
+              // document.getElementById("nouveauClient").classList.remove("active");
+              document.getElementById("stockRectifier").classList.remove("active");
+              document.getElementById('psyCommander').classList.remove("active");
+              document.getElementById("inventaire").classList.add("active");
+
+              document.getElementById('pageFicheNouveauClient').hidden = true
+              document.getElementById('pageStockRectif').hidden = true;
+              document.getElementById('pagePsyOrdre').hidden = true;
+              document.getElementById('pageInventaire').hidden = false;
+
+
+              //  document.getElementById('pageHistoryRecouv').hidden=true
+              // document.getElementById("pageCallCenter").hidden=true
+            }
+            function showToast(color, icon, status, message) {
+              var x = document.getElementById("snackbar");
+              document.getElementById("statusToast").innerText = status
+              document.getElementById("messageToast").innerText = message
+              document.getElementById("iconToast").classList.add(icon)
+              x.style.color = color
+              x.className = "show";
+              setTimeout(function () { x.className = x.className.replace("show", ""); }, 3000);
+            }
+          </script>

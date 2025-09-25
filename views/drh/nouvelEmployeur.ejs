@@ -1,0 +1,207 @@
+<div id='pageNouvelEmployeur' hidden>
+    <div class="line"></div>
+    <div class="card-group">
+      <div class="card">
+        <div class="card-body">
+          <param style="font-size: x-small;">Nouvel Employeur</param>
+          <div class="form-row">
+            <div class="col-6">
+              <input type="number" class="form-control" placeholder="(AC-No.) Code Sur Pointeuse" id="AC_No">
+            </div>
+          </div>
+          <div class="line1"></div>
+            <div class="form-row">
+              <div class="col-6">
+                <input type="text" class="form-control" placeholder="(nom) Nom Complet" id="nomComplet">
+              </div>
+            </div>
+            <div class="line1"></div>
+            <div class="form-row">
+             <div class="col-6">
+              <select class="form-control" id="idOrg">
+                <option value="">Organisation ..</option>
+                <option value="1000000">ATTIRYAK</option>
+                <option value="1000416">SEIF</option>
+                <option value="1000517">PALMA</option>
+              </select>
+             </div>
+              <div class="col-6">
+              <select class="form-control" id="emplacement">
+                <option value="">Emplacement ..</option>
+                <option value="GROS">GROS</option>
+                <option value="ATTIRYAK">ATTIRYAK</option>
+                <option value="SEIF">SEIF</option>
+              </select>
+             </div>
+           </div>
+           <div class="line1"></div>
+           <div class="form-row">
+              <div class="col-6">
+                <div class="btn-group" role="group" aria-label="Basic example">
+                  <button type="button" class="btn btn-success" onclick="Obligatoire1();"><i class="fas fa-user-plus"></i></button>&nbsp;&nbsp;
+                  <button type="button" class="btn btn-danger" onclick="suppEmpl();"><i class="fas fa-user-minus"></i></button>&nbsp;&nbsp;
+                  <button type="button" class="btn btn-primary" onclick="modifierEmpl2();">
+                    <i class="fas fa-user-edit"></i></button>
+                </div>
+             </div>
+           </div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-body">
+          <div class="form-row">
+            <div class="col-sm-4">
+              <param style="font-size: x-small;"><u>Liste Des Employeurs</u></param>
+            </div>
+            <div class="col-sm-6">
+              <select id="emplacementSelect" class="form-control form-control-sm">
+                <option value=""></option>
+                <option value="GROS">GROS</option>
+                <option value="ATTIRYAK">ATTIRYAK</option>
+                <option value="SEIF">SEIF</option>
+              </select>
+            </div>
+            <div class="col-sm-2">
+              <button class="btn btn-sm btn-primary" onclick="listeEmployeurs()">
+                <i class="fas fa-sync-alt"></i></button>
+            </div>
+          </div>
+          <div class="my-custom-scrollbar22A">
+          <table class="table table-striped table-sm">
+            <thead class="thead-dark">
+              <tr>
+                <th scope="col">Code</th>
+                <th scope="col">Nom</th>
+                <th scope="col">Emp</th>
+              </tr>
+            </thead>
+            <tbody id="tableEmployeurs">
+            </tbody>
+          </table>
+          </div>
+        </div>
+        <input type="number" id="idEmployeur" hidden>
+      </div>
+    </div>
+<script>
+  function Obligatoire1(){
+    let AC_No = $('#AC_No').val(),
+    nomComplet = $('#nomComplet').val(),
+    idOrg = $('#idOrg').val(),
+    emplacement = $('#emplacement').val()
+    if(AC_No==""){
+      alert('Code Pointeuse Obligatoire')
+    }else if(nomComplet==''){
+      alert('Nom Obligatoire')
+    }else if(idOrg==''){
+      alert('Organisation Obligatoire')
+    }else if(emplacement==''){
+      alert('Emplacement Obligatoire')
+    }else{
+      ajouterEmployeurs()
+    }
+  }
+  function EmpAzero(){
+    document.getElementById('AC_No').value = ''
+    document.getElementById('nomComplet').value =''
+    document.getElementById('idOrg').value= ''
+    document.getElementById('emplacement').value= ''
+    document.getElementById('idEmployeur').value= ''
+  }
+  function replirFormulaire(e){
+    document.getElementById('AC_No').value = e.AC_No
+    document.getElementById('nomComplet').value = e.nomComplet
+    document.getElementById('idOrg').value= e.idOrg
+    document.getElementById('emplacement').value= e.emplacement
+    document.getElementById('idEmployeur').value=e.idEmployeur
+  }
+function ajouterEmployeurs(){
+  $.ajax({
+   url:'easy/drhRoute/ajouterEmployeurs',
+   method:'POST',
+   data:{
+    AC_No:$('#AC_No').val(),
+    nomComplet:$('#nomComplet').val(),
+    idOrg:$('#idOrg').val(),
+    emplacement:$('#emplacement').val()
+   },
+   success:(reponse)=>{
+   if(reponse=='ok'){
+    listeEmployeurs()
+    EmpAzero()
+  }
+ }
+})
+}
+function listeEmployeurs(){
+  $.ajax({
+    url:'easy/drhRoute/listeEmployeurs',
+    method:'POST',
+    data:{emplacement:$('#emplacementSelect').val()},
+    success:(reponse)=>{
+      tableEmployeurs(reponse)
+    }
+  })
+}
+//modifier Employeur
+function modifierEmpl(idEmployeur){
+  $.ajax({
+    url:'easy/drhRoute/gestionEmployeurs',
+    method:'POST',
+    data:{idEmployeur:idEmployeur},
+    success:(reponse)=>{
+      replirFormulaire(reponse[0])
+    }
+  })
+}
+function modifierEmpl2(){
+  $.ajax({
+    url:'easy/drhRoute/gestionEmployeurs',
+    method:'PUT',
+    data:{
+    AC_No:$('#AC_No').val(),
+    nomComplet:$('#nomComplet').val(),
+    idOrg:$('#idOrg').val(),
+    emplacement:$('#emplacement').val(),
+    idEmployeur:$('#idEmployeur').val()
+    },
+    success:(reponse)=>{
+      listeEmployeurs()
+      EmpAzero()
+    }
+  })
+}
+// fin modifier Employeur
+
+//supprimer Employeur 
+function suppEmpl(){
+  let conf = confirm('Voulez Vous Supprimer')
+  if(conf==true){
+   $.ajax({
+      url:'easy/drhRoute/gestionEmployeurs',
+      method:'DELETE',
+      data:{idEmployeur:$('#idEmployeur').val()},
+      success:(reponse)=>{
+        listeEmployeurs()
+        EmpAzero()
+      }
+    })
+  }
+}
+// fin supprimer employeur
+function tableEmployeurs(data){
+  document.getElementById('tableEmployeurs').innerHTML=""
+   for(var i=0;i<data.length;i++){
+    document.getElementById('tableEmployeurs')
+    .insertAdjacentHTML( 'beforeend',
+    `<tr style="font-size: 13px; font-family: Verdana, sans-serif;" onclick='modifierEmpl(${data[i].idEmployeur})'>
+     <td>${data[i].AC_No}</td>
+     <td>${data[i].nomComplet}</td>
+     <td>${data[i].emplacement}</td>
+    </tr>`
+   );
+  }
+}
+
+    </script>
+</div>

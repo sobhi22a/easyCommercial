@@ -1,0 +1,63 @@
+<div id="pageExcellentClientHidden" hidden>
+    <br>
+<div class="shadow p-3 mb-5 bg-white rounded">
+    <div class="col">
+        <div class="my-custom-scrollbarLivreur">
+      <table class="table table-striped">
+        <thead class="thead-dark">
+         <tr>
+          <th scope="col">#</th>
+          <th scope="col">Org</th>
+          <th scope="col">Client</th>
+          <th scope="col">Oper</th>
+          <th scope="col">Region</th>
+         </tr>
+        </thead>
+   <tbody id="tblExcellent">
+   </tbody>
+  </table>
+</div>
+ </div>
+</div>
+<script>
+    
+    function getListClientExcellent(){
+        let id_user = $('#id_user').val();
+        $.ajax({
+            url:'easy/recouvOper/getListClientExcellent',
+            method:'POST',
+            data:{id_user:id_user}
+        }).then((reponse)=>{
+            remplirtableClientExcellent(reponse)
+        })
+    }
+
+    function remplirtableClientExcellent(reponse){
+        chargement()
+        document.getElementById( 'tblExcellent' ).innerHTML=""
+        let org =''
+        for(var i=0;i<reponse.length;i++){
+            if(reponse[i].AD_ORG_ID==1000000){
+                org="ATTIRYAK"
+            }else if(reponse[i].AD_ORG_ID==1000416){
+                org="SEIF"
+            }else if(reponse[i].AD_ORG_ID==1000517){
+                org="PALMA"
+            }
+        document.getElementById( 'tblExcellent' )
+        .insertAdjacentHTML( 'beforeend',
+            `<tr  
+            style="font-family: Sans-serif, sans-serif;font-weight: bolder;cursor: pointer;" 
+                id="">
+                <td>${i+1}</td>
+                <td>${org}</td>
+                <td>${reponse[i].CLIENT}</td>
+                <td>${reponse[i].OPER}</td>
+                <td>${reponse[i].REGION}</td>
+                </tr>`
+        );
+        }
+     chargementClose()
+    }
+</script>
+</div>

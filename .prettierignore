@@ -1,0 +1,7 @@
+# Ignore all EJS templates
+*.ejs
+
+# Optional: also ignore built files
+node_modules
+dist
+build

@@ -1,0 +1,435 @@
+<div id="pageDebloqueClient" class="pageLayout">
+  <!-- ng-controller="controllersDemande" -->
+  <div class="form-row">
+    <div class="col-sm-6">
+      <div class="card">
+        <div class="form-row">
+          <div class="col-6">
+            <input type="text" class="form-control form-control-sm" id="rechercheClient" placeholder="Recherche ...">
+          </div>
+        </div>
+        <div class="my-custom-scrollbar22A">
+          <table class="table table-sm table-hover" style="font-size:small;" id="tableClientParOper">
+            <thead class="thead-dark">
+              <tr>
+                <th scope="col">Clients</th>
+                <th scope="col">Status</th>
+                <th scope="col">Région</th>
+                <th scope="col">Balance</th>
+                <th scope="col">Action</th>
+              </tr>
+            </thead>
+            <tbody id="tblClient">
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+    <div class="col-sm-6">
+      <div class="card">
+        <div class="form-row">
+          <div class="col-6">
+            <div class="form-row">
+              <div class="col-10">
+                <input type="text" class="form-control form-control-sm" id="rechercheProsp"
+                  placeholder="Recherche CLIENTS PROSPECTS">
+              </div>
+              <div class="col-2">
+                <button class="btn btn-sm" onclick="getClientProsp()"><i class="fas fa-search"></i></button>
+              </div>
+            </div>
+          </div>
+          <div class="col-6">
+            <div class="form-row">
+              <div class="col-9">
+
+              </div>
+              <div class="col-2">
+                <button class="btn btn-sm" onclick="getClientProsp()" title="Actualiser Liste Prosper"><i
+                    class="fas fa-redo-alt"></i></button>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <div class="my-custom-scrollbar22">
+          <table class="table table-sm table-hover" style="font-size:small;" id="table">
+            <thead class="thead-dark">
+              <tr>
+                <th scope="col">Org</th>
+                <th scope="col" style="width: 50%;">Clients</th>
+                <th scope="col">Last Op</th>
+                <th scope="col">Région</th>
+                <th scope="col">Balance</th>
+                <th scope="col">Action</th>
+              </tr>
+            </thead>
+            <tbody id="tblClientPros">
+            </tbody>
+          </table>
+        </div>
+        <div class="form-row">
+          <div class="col-1">
+          </div>
+          <div class="col-9">
+            <i class="fas fa-step-backward" onclick="pagePres()"></i>
+          </div>
+          <div class="col-2">
+            <i class="fas fa-step-forward" onclick="pageSuiv()"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="my-custom-scrollbarD">
+    <table class="table table-sm table-hover" style="font-size:small;" id="table">
+      <thead class="thead-dark">
+        <tr>
+          <th scope="col" style="width: 30%;">Clients</th>
+          <th scope="col">Région</th>
+          <th scope="col">SuperViseur</th>
+          <th scope="col">Balance</th>
+          <th scope="col">Prospect</th>
+          <th scope="col" style="width: 30%;">Description</th>
+          <th scope="col">Action</th>
+        </tr>
+      </thead>
+      <tbody id="tblDemmande">
+      </tbody>
+    </table>
+  </div>
+</div>
+</div>
+<style>
+  td {
+    border: #DDD;
+    padding: 5px;
+    cursor: pointer;
+  }
+
+  .selected {
+    background-color: brown;
+    color: #FFF;
+  }
+</style>
+<script>
+  function getClientOperr() {
+    chargement()
+    var id_org = document.getElementById('id_org').value,
+      id_user = document.getElementById('id_user').value,
+      indiceOper = document.getElementById('indiceOper').value,
+      status, balance;
+    $.ajax({
+      url: 'easy/oper/getClientOperr',
+      method: 'POST',
+      data: { id_user, id_org }
+    }).then((reponse) => {
+      remplirTableClientOperr(reponse)
+      chargementClose()
+    })
+  }
+  var nbrSaut = 9
+  var ij = 0
+  var donnee
+  function getClientProsp() {
+    chargement()
+    nbrSaut = 9
+    ij = 0
+    $.ajax({
+      url: 'easy/oper/getClientProsp',
+      method: 'POST',
+      data: {
+        rechercheProsp: $('#rechercheProsp').val(),
+        id_org: $('#id_org').val(),
+        ad_user_id: $('#id_user').val()
+      }
+    }).then((reponse) => {
+      remplirTableProsp(reponse)
+      chargementClose()
+    })
+  }
+
+  function remplirTableClientOperr(reponse) {
+    chargement()
+    document.getElementById('tblClient').innerHTML = ""
+    var sta
+    for (var i = 0; i < reponse.length; i++) {
+      if (reponse[i].SOCREDITSTATUS == 'O') {
+        status = "Crédit OK"
+        sta = 1
+      } else if (reponse[i].SOCREDITSTATUS == 'W') {
+        status = "Crédit Watch"
+        sta = 20
+      } else if (reponse[i].SOCREDITSTATUS == 'H') {
+        status = "Crédit Hold"
+        sta = 10
+      } else if (reponse[i].SOCREDITSTATUS == 'S') {
+        status = "Crédit Stop"
+        sta = 0
+      } else if (reponse[i].SOCREDITSTATUS == 'X') {
+        status = "Pas de vérification crédit"
+        sta = 100
+      }
+      balance = reponse[i].SO_CREDITUSED
+      balance = parseFloat(balance).toFixed(2);
+      var bpartner_name = reponse[i].NAME
+      var json1 = { bpartner_id: reponse[i].C_BPARTNER_ID }
+      var client = reponse[i].NAME
+      document.getElementById('tblClient')
+        .insertAdjacentHTML('beforeend',
+          `<tr  style="font-size: 16px; font-family: Sans-serif, sans-serif;" id="${reponse[i].NAME}" >
+             <td><strong style="font-size: 16px">${reponse[i].NAME}</strong><br>
+              <u>${reponse[i].NAME_ORG}</u>
+            </td>
+             <td>${status}</td>
+             <td>${reponse[i].NAME_1}</td>
+             <td class="tdtd">${balance}</td>
+             <td style="text-align: right;">
+              <button class="button" onclick="demendeSuilClientNoUnlocked(${reponse[i].C_BPARTNER_ID},${reponse[i].AD_ORG_ID},${balance},${sta},${0}, 'Y');" >Seuil</button> 
+              <button class="button" onclick="deploqueClient(${reponse[i].C_BPARTNER_ID},${reponse[i].AD_ORG_ID},${balance},${sta},${0}, 'N');" ><i class="fas fa-lock-open"></i></button> 
+             </td>
+            </tr>`
+        );
+      //onclick="funcIdprod(${data[i].idprod},'${data[i].design}');"
+      if (reponse[i].SOCREDITSTATUS == 'S') {
+        document.getElementById(reponse[i].NAME).style.backgroundColor = "#FAEBD7"
+      }
+    }
+    chargementClose()
+  }
+
+  function excellentClient(c_bpartner_id, excellent) {
+    if (excellent == null) {
+      excellent = 1000005
+    } else {
+      excellent = null
+    }
+    let conf = confirm('Continue Opération ?')
+    if (conf) {
+      $.ajax({
+        url: 'easy/recouvOper/excellentClient',
+        method: 'POST',
+        data: { c_bpartner_id: c_bpartner_id, excellent: excellent }
+      }).then((reponse) => {
+        if (reponse.reponse == 1) getClientOperr()
+      })
+    }
+  }
+
+  function pageSuiv() {
+    chargement()
+    if (ij == 0) {
+      ij = ij + 9
+    } else {
+      if (donnee.length >= ij) {
+        ij = ij + 9
+      }
+    }
+    nbrSaut = ij + 9
+    remplirTableProsp(donnee)
+    chargementClose()
+  }
+
+  function pagePres() {
+    chargement()
+    if (ij == 0) {
+      ij = ij
+    } else {
+      nbrSaut = ij
+      ij = ij - 9
+    }
+    remplirTableProsp(donnee)
+    chargementClose()
+  }
+  async function remplirTableProsp(reponse) {
+    chargement()
+    var status1, balance11;
+    if (await reponse.length != 0) {
+      donnee = reponse
+      document.getElementById('tblClientPros').innerHTML = ""
+      if (reponse.length < 9) {
+        nbrSaut = reponse.length
+      }
+      for (var i = ij; i < nbrSaut; i++) {
+        balance11 = reponse[i].SO_CREDITUSED
+        balance11 = parseFloat(balance11).toFixed(2);
+        var bpartner_name = reponse[i].NAME
+        var json1 = { bpartner_id: reponse[i].C_BPARTNER_ID }
+        document.getElementById('tblClientPros')
+          .insertAdjacentHTML('beforeend',
+            `<tr style="font-size: 16px; font-family: Sans-serif, sans-serif;" id="${reponse[i].NAME}" >
+              <td>${reponse[i].NAME_ORG}</td>
+          <td><strong style="font-size: 16px">${reponse[i].NAME}</strong><br>
+            <strong><u>${reponse[i].PHONE}</u></strong>
+          </td>
+           <td>${reponse[i].NAME_2}</td>
+           <td>${reponse[i].NAME_1}</td>
+          <td class="tdtd">${balance11}</td>
+          <td style="text-align: right;">
+            <button class="button" onclick="deploqueClient(${reponse[i].C_BPARTNER_ID},${reponse[i].AD_ORG_ID},${balance},${0},${1}, 'N');" ><i class="fas fa-lock-open"></i></button> 
+          </td>
+       </tr>`
+          );
+        if (reponse[i].SOCREDITSTATUS == 'S') {
+          document.getElementById(reponse[i].NAME).style.backgroundColor = "#FAEBD7"
+        }
+      }
+      chargementClose()
+    } else {
+      chargementClose()
+    }
+  }
+  async function remplirTableDemande(reponse) {
+    chargement()
+    var prospet;
+    if (await reponse.length != 0) {
+      document.getElementById('tblDemmande').innerHTML = ""
+      for (var i = 0; i < reponse.length; i++) {
+        if (reponse[i].prosper == 1) {
+          prospet = "OUI"
+        } else {
+          prospet = "NON"
+        }
+        balance1 = reponse[i].balance
+        balance1 = parseFloat(balance1).toFixed(2);
+        document.getElementById('tblDemmande')
+          .insertAdjacentHTML('beforeend',
+            `<tr style="font-size: 16px; font-family: Sans-serif, sans-serif;" id="${reponse[i].idDemDep}">
+           <td>${reponse[i].bpartner_name}</td>
+           <td>${reponse[i].region}</td>
+           <td>${reponse[i].superViseurName}</td>
+           <td><h6>${numberWithSpaces(balance1)}</h6></td>
+           <td>${prospet}</td>
+           <td>${reponse[i].description}</td>
+         <td>
+          <button class="btn btn-sm btn-secondary"  onclick=suppDemandeDeploque(${reponse[i].idDemDep},'${reponse[i].valide}');><i class="fas fa-trash-alt"></i></button>
+          <button class="btn btn-sm btn-warning" onclick=demandeNouveauSeuil(${reponse[i].idDemDep},'${reponse[i].valide}');>Seuil (${reponse[i].isBalance})</button>
+         </td>
+       </tr>`
+          );
+        if (reponse[i].valide == 'Y') {
+          document.getElementById(reponse[i].idDemDep).style.backgroundColor = "#90EE90"
+        } 
+        if (reponse[i].valide == 'B') {
+          document.getElementById(reponse[i].idDemDep).style.backgroundColor = "#D3D3D3"
+        }
+        if(reponse[i].prosper == 4) {
+          document.getElementById(reponse[i].idDemDep).style.backgroundColor = "#fd5c63"
+        }
+      }
+      chargementClose()
+    } else {
+      document.getElementById('tblDemmande').innerHTML = ""
+      chargementClose()
+    }
+  }
+  function demandeNouveauSeuil(idDemDep, isValid) {
+    chargement()
+    if (isValid == 'Y') {
+      $.ajax({
+        url: "easy/recouvOper/demandeNouveauSeuil",
+        method: "POST",
+        data: { idDemDep }
+      }).then((reponse) => {
+        if (reponse.reponse == 1) {
+          listeDemandeDeploque()
+        } else {
+          alert('error Update')
+          chargementClose()
+        }
+      })
+    } else {
+      chargementClose();
+      alert('Demande Débloquage Non Valide');
+    }
+  }
+  
+  function deploqueClient(c_bpartner_id,ad_org_id, balance, status, prosper, isSeuil) {
+    chargement()
+    if (status != 1 & status != 100) {
+      $.ajax({
+        url: 'easy/oper/deploqueClient',
+        method: 'POST',
+        data: { id_org: ad_org_id, 
+          indiceOper: document.getElementById('indiceOper').value,
+          user_id: document.getElementById('id_user').value,
+          bpartner_id: c_bpartner_id,
+          bpartner_status: status,
+          balance: balance,
+          prosper: prosper, isSeuil}
+      }).then((data) => {
+        if(data) listeDemandeDeploque();
+          chargementClose()
+      })
+    } else {
+      chargementClose()
+    }
+  }
+
+  function demendeSuilClientNoUnlocked(c_bpartner_id,ad_org_id, balance, status, prosper, isSeuil) {
+    chargement()
+    if (status != 0) {
+      $.ajax({
+        url: 'easy/oper/deploqueClient',
+        method: 'POST',
+        data: { id_org: ad_org_id, 
+          indiceOper: document.getElementById('indiceOper').value,
+          user_id: document.getElementById('id_user').value,
+          bpartner_id: c_bpartner_id,
+          bpartner_status: status,
+          balance: balance,
+          prosper: prosper, isSeuil}
+      }).then((data) => {
+        if(data) listeDemandeDeploque();
+          chargementClose()
+      })
+    } else {
+      chargementClose();
+    }
+  }
+  function suppDemandeDeploque(idDemDep, bloque) {
+    chargement()
+    if (bloque == 'N') {
+      var conf = confirm('Voulez vous Supprimer ? :(')
+      if (conf == true) {
+        id_user = document.getElementById('id_user').value
+        $.ajax({
+          url: 'easy/oper/suppDemandeDeploque',
+          method: 'POST',
+          data: { idDemDep, id_user },
+        }).then((reponse) => {
+          remplirTableDemande(reponse)
+          chargementClose()
+        })
+      } else {
+        chargementClose()
+      }
+    } else {
+      chargementClose()
+    }
+  }
+  function listeDemandeDeploque() {
+    chargement()
+    $.ajax({
+      url: 'easy/oper/listeDemandeDeploque',
+      method: 'POST',
+      data: { id_user: $('#id_user').val() },
+    }).then(async (reponse) => {
+      remplirTableDemande(reponse);
+      chargementClose();
+    }).catch((error) => {
+      alert(error);
+    })
+  }
+
+  //fonction recherche
+  $(document).ready(function () {
+    $("#rechercheClient").on("keyup", function () {
+      var value = $(this).val().toLowerCase();
+      $("#tableClientParOper tr").filter(function () {
+        $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+      });
+    });
+  });
+</script>

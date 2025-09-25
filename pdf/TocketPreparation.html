@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <style>
+        table {
+border: medium solid #020203;
+border-collapse: collapse;
+width: auto;
+margin-left: auto;
+margin-right: auto;
+}
+th {
+  font-family: monospace;
+border: none solid #030407;
+width: auto;
+padding: 5px;
+background-color: #d3d1d1;
+text-align: center;
+}
+td {
+font-family: sans-serif;
+border: thin solid #05070c;
+width: auto;
+height: 30px;
+padding: 5px;
+background-color: #ffffff;
+}
+    </style>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ticket Préparation</title>
+</head>
+<body>
+    <div style="text-align: center;">{{name}}</div>
+    <table>
+        <thead>
+          <tr>
+            <th>PPA</th>
+            <th>Perempt</th>
+            <th>Qts</th>
+            <th>Empl</th>
+            <th>Tbl</th>
+          </tr>
+        </thead>
+        <tbody>
+          {{#each list}}
+            <td>{{this.ppa}}</td>
+            <td>{{this.perempt}}</td>
+            <td>{{this.qts}}</td>
+            <td>{{this.empl}}</td>
+            <td>{{this.table}}</td>
+          </tr>
+          {{/each}}
+        </tbody>
+        <tfoot>
+            <tr>
+              <td></td>
+              <td>Somme</td>
+              <td><u>{{somme}}</u></td>
+              <td></td>
+              <td></td>
+            </tr>
+          </tfoot>
+      </table>
+</body>
+</html>

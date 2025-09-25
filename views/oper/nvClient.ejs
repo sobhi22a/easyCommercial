@@ -1,0 +1,301 @@
+<div id="pageNvClient" class="pageLayout">
+    <div class="line"></div>
+    <div class="form-row">
+        <div class="col-sm-8">
+            <div class="card">
+                <div class="card-body">
+                    <h3 class="card-title">Formulaire Nouveau Client</h3>
+                    <div class="form-row">
+                        <div class="col-sm-6">
+                            <label for="nomClient">Nom Complet * :</label>
+                            <input type="text" placeholder="Nom De Client *" class="form-control" id="nomClient">
+                            <input type="text" id="idClient12" hidden>
+                        </div>
+                    </div>
+                    <div class="line1"></div>
+                    <div class="form-row">
+                        <div class="col-sm-6">
+                            <label for="nomClient">Téléphone * :</label>
+                            <input type="tel" placeholder="Numéro De Téléphone " maxlength="10"
+                                pattern="0[1-68]([-. ]?[0-9]{2}){4}" class="form-control" id="nTel1">
+                        </div>
+                        <div class="col-sm-6">
+                            <label for="nomClient">Téléphone (Optionnel) :</label>
+                            <input type="tel" placeholder="Numéro De Téléphone " maxlength="10"
+                                pattern="0[1-68]([-. ]?[0-9]{2}){4}" class="form-control" id="nTel2">
+                        </div>
+                    </div>
+                    <div class="line1"></div>
+                    <div class="form-row">
+                        <div class="col-sm-9">
+                            <label for="nomClient">Adresse *:</label>
+                            <input type="text" placeholder="Adresse Client *" class="form-control" id="adresse1">
+                        </div>
+                        <div class="col-sm-3">
+                            <label for="nomClient">Wilaya * :</label>
+                            <input type="text" placeholder="Wilaya * " class="form-control" id="wilaya">
+                        </div>
+                    </div>
+                    <div class="line1"></div>
+                    <br>
+                    <div class="form-row">
+                        <div class="col-sm-3"></div>
+                        <div class="col-sm-8">
+                            <h3>COORDONNEES DU CLIENT</h3>
+                        </div>
+                        <div class="col-sm-1"></div>
+                    </div>
+                    <div class="form-row">
+                        <div class="col-sm-4">
+                            <label for="nomClient">N° REGISTER DE COMMERCE :</label>
+                            <input type="text" placeholder="N° REGISTER DE COMMERCE " maxlength="12"
+                                class="form-control" id="rc">
+                        </div>
+                        <div class="col-sm-4">
+                            <label for="nomClient">N° IDENTIFIANT FISCAL :</label>
+                            <input type="text" placeholder="N° IDENTIFIANT FISCAL " maxlength="15" class="form-control"
+                                id="nif">
+                        </div>
+                        <div class="col-sm-4">
+                            <label for="nomClient">N° ARTICLE D'IMPOSITION :</label>
+                            <input type="text" placeholder="N° ARTICLE D'IMPOSITION " maxlength="12"
+                                class="form-control" id="ai">
+                        </div>
+                    </div>
+                    <br>
+                    <div class="form-row">
+                        <div class="col-sm-2">
+                            <div class="form-check">
+                                <input type="checkbox" class="form-check-input" id="bl">
+                                <label class="form-check-label" for="bl">BL</label>
+                            </div>
+                        </div>
+                        <div class="col-sm-2">
+                            <div class="form-check">
+                                <input type="checkbox" class="form-check-input" id="fact">
+                                <label class="form-check-label" for="fact">FACT</label>
+                            </div>
+                        </div>
+                        <div class="col-sm-2">
+                            <div class="form-check">
+                                <input type="checkbox" class="form-check-input" id="para">
+                                <label class="form-check-label" for="para">BL(para)</label>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-row">
+                                <div class="col-sm-4">
+                                    <button onclick="aZero()" class="btn btn-primary" id="b1" hidden><i
+                                            class="fas fa-check-circle"></i>Vérifier</button>
+                                </div>
+                                <div class="col-sm-3">
+                                    <button onclick="obligatoireM()" id="b2" class="btn btn-success" hidden><i
+                                            class="fas fa-check-circle"></i>Modifier</button>
+                                </div>
+                                <div class="col-sm-4">
+                                    <button onclick="obligatoire()" id="b3" class="btn btn-success"><i
+                                            class="fas fa-check-circle"></i> Valider</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-4">
+            <div class="card">
+                <div class="card-body">
+                    <h6 class="card-title">
+                        Liste Des Nouveaux Clients
+                    </h6>
+                    <div class="my-custom-scrollbar22A">
+                        <table class="table table-sm table-hover" style="font-size:small;" id="tableClientParOper">
+                            <thead class="thead-dark">
+                                <tr>
+                                    <th scope="col" style="width: 40%;">Clients</th>
+                                    <th scope="col">Wilaya</th>
+                                    <th scope="col">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tblClinetNV">
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    function aZero() {
+        document.getElementById('b1').hidden = true
+        document.getElementById('b2').hidden = true
+        document.getElementById('b3').hidden = false
+        document.getElementById('nomClient').value = "",
+            document.getElementById('nTel1').value = "",
+            document.getElementById('nTel2').value = "",
+            document.getElementById('adresse1').value = "",
+            document.getElementById('wilaya').value = "",
+            document.getElementById('rc').value = "",
+            document.getElementById('nif').value = "",
+            document.getElementById('ai').value = "",
+            document.getElementById('bl').checked = false,
+            document.getElementById('fact').checked = false,
+            document.getElementById('idClient12').value = ""
+    }
+    function obligatoire() {
+        let nomClient = document.getElementById('nomClient').value,
+            nTel1 = document.getElementById('nTel1').value,
+            nTel2 = document.getElementById('nTel2').value,
+            adresse1 = document.getElementById('adresse1').value,
+            wilaya = document.getElementById('wilaya').value,
+            rc = document.getElementById('rc').value,
+            nif = document.getElementById('nif').value,
+            ai = document.getElementById('ai').value,
+            bl = document.getElementById('bl').checked,
+            fact = document.getElementById('fact').checked,
+            para = document.getElementById('para').checked,
+            indiceOper = document.getElementById('indiceOper').value
+        if (bl == true) {
+            bl = 1
+        } else if (bl == false) {
+            bl = 0
+        }
+        if (fact == true) {
+            fact = 1
+        } else if (fact == false) {
+            fact = 0
+        }
+        if (para == true) {
+            para = 1
+        } else if (para == false) {
+            para = 0
+        }
+        let json = { nomClient: nomClient, nTel1: nTel1, nTel2: nTel2, adresse1: adresse1, wilaya: wilaya, rc: rc, nif: nif, ai: ai, bl: bl, fact: fact, indiceOper: indiceOper, para: para }
+        let faut = 0
+        if (nomClient == "") {
+            document.getElementById('nomClient').style.borderColor = 'red'
+            faut = 1
+        } else if (nTel1 == "") {
+            document.getElementById('nTel1').style.borderColor = 'red'
+            faut = 1
+        } else if (adresse1 == "") {
+            document.getElementById('adresse1').style.borderColor = 'red'
+            faut = 1
+        } else if (wilaya == "") {
+            document.getElementById('wilaya').style.borderColor = 'red'
+            faut = 1
+        }
+        if (faut == 0) {
+            insertionNV(json)
+        }
+    }
+    function insertionNV(e) {
+        let id_org = $('#id_org').val();
+        $.ajax({
+            url: 'easy/oper/insertionNV',
+            method: 'POST',
+            data: { indiceOper: e.indiceOper, nomClient: e.nomClient, nTel1: e.nTel1, nTel2: e.nTel2, adresse1: e.adresse1, wilaya: e.wilaya, rc: e.rc, nif: e.nif, ai: e.ai, bl: e.bl, fact: e.fact, id_org: id_org, para: e.para },
+            success: (reponse) => {
+                aZero()
+                listeNvClient()
+            }
+        })
+    }
+
+    function listeNvClient() {
+        $.ajax({
+            url: 'easy/oper/listNouveauClient',
+            method: 'POST',
+            data: { indiceOper: $('#indiceOper').val(), id_org: $('#id_org').val() }
+        }).then((reponse) => {
+            remplirTblNvClient(reponse)
+        })
+    }
+    function remplirTblNvClient(data) {
+        document.getElementById('tblClinetNV').innerHTML = ""
+        for (var i = 0; i < data.length; i++) {
+            document.getElementById('tblClinetNV')
+                .insertAdjacentHTML('beforeend',
+                    `<tr  style="font-size: 15px; font-family: Sans-serif, sans-serif;" id=${data[i].idClient}>
+                 <td>${data[i].nomClient}</td>
+                 <td>${data[i].wilaya}</td>
+                 <td>
+                    <button class="button" onclick="gestionClient(${data[i].idClient},'M')"><i class="fas fa-edit"></i></button>
+                    <button class="button" onclick="gestionClient(${data[i].idClient},'S')"><i class="fas fa-trash-alt"></i></button>
+                </td>
+                </tr>`
+                );
+            if (data[i].valide == 'R') {
+                document.getElementById(data[i].idClient).style.backgroundColor = '#FF8F39'
+            }
+            if (data[i].valide == 'C') {
+                document.getElementById(data[i].idClient).style.backgroundColor = '#66ff99'
+            }
+        }
+    }
+    function gestionClient(idClient, ty) {
+        if (ty == 'S') {
+            let conf = confirm('Voulez Vous Supprimer Enregistrement')
+            if (conf == true) {
+                suppClient11(idClient)
+            } else {
+            }
+        } if (ty == 'M') {
+            document.getElementById('b1').hidden = false
+            document.getElementById('b2').hidden = false
+            document.getElementById('b3').hidden = true
+            $.ajax({
+                url: 'easy/oper/gestionClient',
+                method: 'PUT',
+                data: { idClient }
+            }).then((reponse) => {
+                remplirModifier(reponse)
+            })
+        }
+    }
+    function suppClient11(idClient) {
+        $.ajax({
+            url: 'easy/oper/gestionClient',
+            method: 'DELETE',
+            data: { idClient },
+            success: (reponse) => {
+                if (reponse == 0) {
+                    alert("L'Opération Supprimer Echouée")
+                } else if (reponse == 1) {
+                    listeNvClient();
+                    alert("L'Opération Réussie")
+                }
+            }
+        })
+    }
+    function remplirModifier(data) {
+        document.getElementById('nomClient').value = data[0].nomClient
+        document.getElementById('nTel1').value = data[0].nTel1
+        document.getElementById('nTel2').value = data[0].nTel2
+        document.getElementById('adresse1').value = data[0].adresse1
+        document.getElementById('wilaya').value = data[0].wilaya
+        document.getElementById('rc').value = data[0].rc
+        document.getElementById('nif').value = data[0].nif
+        document.getElementById('ai').value = data[0].ai
+        document.getElementById('idClient12').value = data[0].idClient
+        let bl = data[0].bl
+        if (bl == 1) {
+            document.getElementById('bl').checked = true
+        }
+        let fact = data[0].fact
+        if (fact == 1) {
+            document.getElementById('fact').checked = true
+        }
+        let para = data[0].para
+        if (para == 1) {
+            document.getElementById('para').checked = true
+        }
+
+    }
+    function obligatoireM() {
+        let idClient = document.getElementById('idClient12').value
+        suppClient11(idClient)
+        obligatoire()
+    }
+</script>

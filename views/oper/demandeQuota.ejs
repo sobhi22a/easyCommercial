@@ -1,0 +1,870 @@
+<div id="pageDemandeQuota" class="pageLayout">
+  <div class="alert alert-warning alert-dismissible fade show" role="alert" id="alertBloque" hidden>
+    <strong
+      ><strong><u>EASY</u></strong> Bloqué Merci :)</strong
+    >
+    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+
+  <div class="line"></div>
+  <div class="line"></div>
+  <div class="form-row">
+    <div class="col-sm-9">
+      <div class="card">
+        <div class="card-body">
+          <div class="col-sm-12">
+            <div class="form-row" style="margin-bottom: 15px">
+              <div class="col-sm-5">
+                <select class="form-control form-control-sm" id="c_bpartner_id" onchange="featureGetBccJour()">
+                  <option value=""></option>
+                </select>
+                <!-- <input type="text" readonly  id="c_bpartner_idSauver"> -->
+              </div>
+              <div class="col-1">
+                <button class="btn btn-primary btn-sm" onclick="clientOperQuota()"><i class="fas fa-sync"></i></button>
+              </div>
+              <div class="col-sm-6">
+                <input
+                  type="text"
+                  class="form-control form-control-sm"
+                  id="recherche"
+                  onclick="actualiserStock()"
+                  placeholder="Rechercher..."
+                />
+              </div>
+            </div>
+          </div>
+          <div class="col-sm-12">
+            <div class="table-responsive">
+              <!-- <div class="loader" id="loaderOfQuota" hidden>
+                <div class="face">
+                  <div class="circle"></div>
+                </div>
+                <div class="face">
+                  <div class="circle"></div>
+                </div>
+              </div> -->
+              <div class="center-body" id="loaderOfQuota" hidden>
+                <div class="loader-circle-21"><span></span></div>
+              </div>
+              <div class="table-wrapper-scroll-y my-custom-scrollbar">
+                <table class="table table-sm table-bordered">
+                  <thead class="thead-scandary thead-dark">
+                    <tr style="font-size: small">
+                      <th scope="col" onclick="orderByASCorDESC('NAME')">Produits</th>
+                      <th scope="col" onclick="orderByASCorDESC('QTYORDERED')">Qts</th>
+                    </tr>
+                  </thead>
+                  <tbody id="tblProduits"></tbody>
+                </table>
+              </div>
+              <hr />
+            </div>
+            <div class="row">
+              <div class="col-sm-4">
+                <form id="myForm" action="easy/oper/quotaExcel" method="GET">
+                  <input type="text" name="ad_org_id" value="<%=locals.org%>" hidden readonly />
+                  <input type="text" name="id_dc" value="<%=locals.id_dc%>" hidden readonly />
+                  <input type="text" name="id_svc" value="<%=locals.id_svc%>" hidden readonly />
+                  <button class="btn btn-sm btn-primary" type="submit">Excel</button>
+                </form>
+              </div>
+              <div class="col-sm-4">
+                <u><span style="color: rgb(158, 9, 9)" id="nomProduits"></span></u>
+              </div>
+              <div class="col-sm-2">
+                <input type="number" min="0" class="form-control form-control-sm" id="qts" placeholder="Qts" />
+              </div>
+              <div class="col-sm-2">
+                <button class="btn btn-success btn-sm" title="Add" id="buttonAjouter" onclick="ajouterProduitOrder()">
+                  <strong>+</strong>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-sm-3">
+      <div class="card" style="height: auto">
+        <div class="card-body">
+          <u>Reference : </u> &nbsp; <br />
+          <strong
+            ><span id="spanReference" class="badge badge-secondary"></span>
+            <input type="text" id="valueReference" hidden readonly />
+            &nbsp; &nbsp; &nbsp; <i class="fas fa-plus" onclick="addBccListe()"></i>
+          </strong>
+          <br />
+          <hr />
+          <u>BCC :</u> &nbsp; <br />
+          <div class="table-responsive">
+            <div class="my-custom-scrollbarDocumentno">
+              <table class="table table-borderless table-sm">
+                <thead class="thead-dark">
+                  <tr>
+                    <th scope="col">Documentno</th>
+                    <th scope="col">Action</th>
+                  </tr>
+                </thead>
+                <tbody id="listeDocumentno"></tbody>
+              </table>
+            </div>
+          </div>
+          <hr />
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="line"></div>
+  <div class="line"></div>
+  <div class="form-row">
+    <div class="col-sm-7">
+      <div class="card">
+        <div class="center-body" id="loadingTableQuota" hidden>
+          <div style="margin-top: 100px; margin-left: 20px" class="loader-circle-21"><span></span></div>
+        </div>
+        <div class="card-body">
+          <div>
+            <div class="row">
+              <div class="col-sm-6">Table Des Quota</div>
+              <div class="col-sm-6">
+                <div class="row">
+                  <div class="col-sm-6"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="table-responsive">
+            <div class="table-wrapper-scroll-y my-custom-scrollbar">
+              <table class="table table-sm" id="selected11">
+                <thead class="thead-dark">
+                  <tr style="font-size: small">
+                    <th style="width: 60">Produits</th>
+                    <th style="width: 12">Quantité</th>
+                    <th style="width: 12">QTY DC</th>
+                    <th style="width: 12">QTY cmd</th>
+                  </tr>
+                </thead>
+                <tbody id="tableQuota"></tbody>
+              </table>
+            </div>
+            <div class="form-row">
+              <div class="col-sm-8"></div>
+              <div class="col-sm-2">
+                <button class="btn btn-danger btn-sm" id="suppQuota" onclick="supprimerQuota();">
+                  <i class="fas fa-trash-alt"></i>
+                </button>
+              </div>
+              <div class="col-sm-2">
+                <button class="btn btn-success btn-sm" id="buttonTraiter" onclick="traiterQuota();">
+                  <i class="fas fa-cogs"></i> Traiter
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-sm-5">
+      <div class="card">
+        <div class="card-body">
+          <div class="form-row">
+            <div class="col-sm-6">
+              <h6 class="card-title">Liste Demandes</h6>
+            </div>
+            <div class="col-sm-4"></div>
+            <div class="col-sm-2">
+              <button class="btn btn-sm btn-primary" onclick="listeDemandeQuota()"><i class="fas fa-spinner"></i></button>
+            </div>
+          </div>
+          <div class="table-wrapper-scroll-y my-custom-scrollbarGG">
+            <table class="table table-sm table-striped">
+              <thead></thead>
+              <tbody id="listeDemandeQuota"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- Modal -->
+<div
+  data-backdrop="false"
+  class="modal fade"
+  id="exampleModalCenter"
+  tabindex="-1"
+  role="dialog"
+  aria-labelledby="exampleModalCenterTitle"
+  aria-hidden="true"
+>
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLongTitle">Liste Bcc &nbsp; <strong id="nomClientBcc"></strong></h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <input readonly id="referenceAjouter" multiple class="form-control" />
+        </div>
+        <div class="form-group">
+          <select id="selectBcc" multiple class="form-control"></select>
+        </div>
+        <div class="form-group">
+          <select id="divBccSelect" multiple class="form-control"></select>
+        </div>
+        <div class="form-group">
+          liste BCC Existe
+          <select id="divBccExiste" multiple class="form-control"></select>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Fermer</button>
+        <button type="button" class="btn btn-primary" data-dismiss="modal" onclick="sauverBcc()">Sauvegarder</button>
+      </div>
+    </div>
+  </div>
+</div>
+<input type="text" id="m_product_id" hidden readonly />
+<input type="number" id="qtyAllocatedAncien" hidden readonly />
+<input type="text" id="bloqueOper" hidden readonly />
+<script>
+  let id_org = document.getElementById("id_org").value,
+    id_user = document.getElementById("id_user").value;
+  indiceOper = document.getElementById("indiceOper").value;
+  value = document.getElementById("value").value;
+  id_dc = document.getElementById("id_dc").value;
+  let jsonConn = { id_org: id_org, id_user: id_user, indiceOper: indiceOper, value: value, id_dc: id_dc };
+
+  async function featureGetBccJour() {
+    document.getElementById("c_bpartner_id").disabled = true;
+    let jsonDeja = {
+      c_bpartner_id1: document.getElementById("c_bpartner_id").value,
+      ad_org_id: $("#id_org").val(),
+      id_svc: $("#id_svc").val(),
+    };
+    let deja = await dejaCreer(jsonDeja);
+    if (deja == "vide") {
+      let reference = await runGetReference();
+      getBccJour1(reference.reference);
+      chargementClose();
+    } else {
+      remplirRenseig(deja);
+    }
+  }
+
+  function runGetReference() {
+    return new Promise((resolve, reject) => {
+      $.ajax({
+        url: "easy/oper/runGetReference",
+        method: "GET",
+      }).then((reponse) => {
+        resolve(reponse);
+      });
+    });
+  }
+
+  function dejaCreer(jsonDeja) {
+    chargement();
+    return new Promise((resolve, reject) => {
+      if (jsonDeja.c_bpartner_id1 != "") {
+        $.ajax({
+          url: "easy/oper/dejaCreer",
+          method: "post",
+          data: {
+            id_client: jsonDeja.c_bpartner_id1,
+            ad_org_id: jsonDeja.ad_org_id,
+            id_svc: jsonDeja.id_svc,
+          },
+        }).then((reponse) => {
+          resolve(reponse);
+        });
+      }
+    });
+  }
+  var order = "ASC";
+  function orderByASCorDESC(orderBy) {
+    order = order == "ASC" ? "DESC" : "ASC";
+    getProduit({ order, orderBy });
+  }
+  function getProduit(order) {
+    chargementOfBox("loaderOfQuota", "tblProduits", true, false);
+    let jsonConn = { id_org: id_org, id_user: id_user, indiceOper: indiceOper, value: value, id_dc: id_dc };
+    $.ajax({
+      url: "easy/routeVente/getProduit",
+      method: "POST",
+      data: {
+        ad_org_id: $("#id_org").val(),
+        ad_user_id: $("#id_user").val(),
+        indice: $("#indiceOper").val(),
+        value: $("#value").val(),
+        id_dc: $("#id_dc").val(),
+        id_svc: $("#id_svc").val(),
+        order: JSON.stringify(order),
+      },
+    })
+      .then((reponse) => {
+        afficheTableQuota(reponse.listProducts, reponse.listConditions);
+      })
+      .catch((error) => {
+        alert(error);
+      });
+  }
+
+  function actualiserStock() {
+    let id_org = document.getElementById("id_org").value,
+      id_user = document.getElementById("id_user").value;
+    indiceOper = document.getElementById("indiceOper").value;
+    value = document.getElementById("value").value;
+    id_dc = document.getElementById("id_dc").value;
+    let jsonConn = { id_org: id_org, id_user: id_user, indiceOper: indiceOper, value: value, id_dc: id_dc };
+    orderByASCorDESC("");
+  }
+  function ajouterProduitOrder() {
+    chargement();
+
+    const c_bpartner_id = $("#c_bpartner_id").val();
+    const m_product_id = $("#m_product_id").val();
+    let qts = $("#qts").val();
+    const valueReference = $("#valueReference").val();
+    const ad_org_id = $("#id_org").val();
+    const ad_user_id = $("#id_user").val();
+    const id_dc = $("#id_dc").val();
+    const id_svc = $("#id_svc").val();
+    const qtyAllocatedAncien = $("#qtyAllocatedAncien").val();
+    const bloqueOper = $("#bloqueOper").val();
+
+    document.getElementById("suppQuota").hidden = true;
+
+    qts = qts === "" ? 0 : Number(qts);
+
+    let qts1 = 0;
+    let del = 0;
+    if (qtyAllocatedAncien !== "") {
+      qts1 = (Number(qtyAllocatedAncien) - qts) * -1;
+      del = 1;
+    }
+
+    const missingFields = [];
+    if (!c_bpartner_id) missingFields.push("client");
+    if (!m_product_id) missingFields.push("produit");
+    if (!qts) missingFields.push("quantité");
+    if (!valueReference) missingFields.push("BCC");
+
+    if (missingFields.length > 0) {
+      const message = "Veuillez renseigner les champs suivants : " + missingFields.map((field) => `<b>${field}</b>`).join(", ");
+      showModal(message);
+      chargementClose();
+      return;
+    }
+
+    const data = {
+      c_bpartner_id,
+      m_product_id,
+      qts,
+      valueReference,
+      ad_org_id,
+      ad_user_id,
+      id_dc,
+      qts1,
+      del,
+      exception: 0,
+      id_svc,
+    };
+
+    $.ajax({
+      url: "easy/routeVente/ajouterProduitOrder",
+      method: "POST",
+      data,
+    }).then((response) => {
+      bloqueOperDc1();
+      if (response.status === "Y") {
+        getReference();
+        document.getElementById("recherche").value = "";
+      } else {
+        showModal(response.result);
+      }
+      chargementClose();
+    });
+
+    $("#qtyAllocatedAncien").val("");
+    $("#m_product_id").val("");
+  }
+
+  function getReference() {
+    // document.getElementById('loadingTableQuota').hidden = false
+    chargementOfBox("loadingTableQuota", "tableQuota", true, false);
+    $.ajax({
+      url: "easy/routeVente/quotaDemander",
+      method: "POST",
+      data: {
+        reference: $("#valueReference").val(),
+        ad_org_id: $("#id_org").val(),
+        exception: 1,
+      },
+    }).then((reponse) => {
+      // document.getElementById('loadingTableQuota').hidden = true
+      afficheTableQuotaDemander(reponse);
+      chargementOfBox("loadingTableQuota", "tableQuota", false, true);
+    });
+  }
+
+  function bloqueOperDc(donne) {
+    document.getElementById("bloqueOper").value = donne;
+    donne == "Y"
+      ? (document.getElementById("alertBloque").hidden = false)
+      : (document.getElementById("alertBloque").hidden = true);
+    // if (donne == 'Y') {
+    //   document.getElementById('alertBloque').hidden = false
+    // } else if (donne == 'N') {
+    //   document.getElementById('alertBloque').hidden = true
+    // }
+  }
+
+  function bloqueOperDc1() {
+    let indiceOper = $("#indiceOper").val();
+    $.ajax({
+      url: "easy/oper/bloqueOperDc1",
+      method: "POST",
+      data: { indiceOper: indiceOper },
+      success: (reponse) => {
+        bloqueOperDc(reponse);
+      },
+    });
+  }
+  // setInterval(function () { bloqueOperDc1() }, 500);
+  //liste Clients par Oper
+  function clientOperQuota() {
+    aZeroVente();
+    chargement();
+    document.getElementById("c_bpartner_id").disabled = false;
+    document.getElementById("c_bpartner_id").innerHTML = "";
+    document.getElementById("tableQuota").innerHTML = "";
+    document.getElementById("listeDocumentno").innerHTML = "";
+    document.getElementById("spanReference").innerHTML = "";
+    document.getElementById("valueReference").innerHTML = "";
+    $.ajax({
+      url: "easy/oper/listeClientParOper",
+      method: "POST",
+      data: { ad_user_id: $("#id_user").val(), ad_org_id: $("#id_org").val() },
+    }).then((reponse) => {
+      document.getElementById("recherche").value = "";
+      var select = document.getElementById("c_bpartner_id");
+      let el1 = document.createElement("OPTION");
+      el1.value = "";
+      select.appendChild(el1);
+      for (var i = 0; i < reponse.length; i++) {
+        var el = document.createElement("OPTION");
+        el.innerHTML = `${reponse[i].NAME}`;
+        el.value = reponse[i].C_BPARTNER_ID;
+        select.appendChild(el);
+      }
+      chargementClose();
+    });
+  }
+
+  function getBccJour1(reference) {
+    document.getElementById("divBccSelect").innerHTML = "";
+    document.getElementById("divBccExiste").innerHTML = "";
+    let c_bpartner_id = $("#c_bpartner_id").val();
+    let pbartener = document.getElementById("c_bpartner_id").innerText;
+    let salesrep_id = $("#id_user").val();
+    let ad_org_id = $("#id_org").val();
+    if (c_bpartner_id != "") {
+      $.ajax({
+        url: "easy/oper/getBccJour",
+        method: "POST",
+        data: { c_bpartner_id, salesrep_id, ad_org_id },
+      }).then((repo) => {
+        document.getElementById("selectBcc").innerHTML = "";
+        document.getElementById("nomClientBcc").innerText = "";
+        document.getElementById("referenceAjouter").value = reference;
+
+        // document.getElementById('nomClientBcc').innerText=pbartener
+        let selectBcc = document.getElementById("selectBcc");
+        for (var i = 0; i < repo.length; i++) {
+          let mnt = parseFloat(repo[i].GRANDTOTAL).toFixed(2);
+          var el1 = document.createElement("OPTION");
+          el1.value = repo[i].C_ORDER_ID + "-" + repo[i].DOCUMENTNO + "-" + repo[i].DOCSTATUS;
+          el1.innerHTML = repo[i].DOCUMENTNO + "--  Montant:  " + mnt;
+          selectBcc.appendChild(el1);
+        }
+        $("#exampleModalCenter").modal();
+      });
+    }
+  }
+  function addBccListe() {
+    if ($("#valueReference").val() != "") {
+      getBccJour1($("#valueReference").val());
+    }
+  }
+  $(document).ready(function () {
+    $("#selectBcc").on("click", function () {
+      let documentno = this.innerText.split("--")[0];
+      let mntBcc = this.innerText.split("--")[1];
+      let json1 = { c_order_id: this.value, c_bpartner_id: $("#c_bpartner_id").val(), indiceOper: $("#indiceOper").val() };
+      if (this.value != "") {
+        $.ajax({
+          url: "easy/oper/bccSelectOper",
+          method: "POST",
+          data: {
+            c_order_id: this.value,
+            c_bpartner_id: $("#c_bpartner_id").val(),
+            indiceOper: $("#indiceOper").val(),
+            ad_user_id: $("#id_user").val(),
+            ad_org_id: $("#id_org").val(),
+            reference: $("#referenceAjouter").val(),
+            id_svc: $("#id_svc").val(),
+          },
+        }).then((rep) => {
+          if (rep != "existe") {
+            listeBccSelect(json1);
+          } else {
+            listeBccExiste(documentno, mntBcc);
+          }
+        });
+      }
+    });
+  });
+
+  function listeBccSelect(json) {
+    let divBccSelect = document.getElementById("divBccSelect");
+    let el1 = document.createElement("OPTION");
+    el1.value = "";
+    let e = json.c_order_id;
+    e = e.split("-")[1];
+    el1.innerHTML = e;
+    divBccSelect.appendChild(el1);
+  }
+  function listeBccExiste(documentno, mntBcc) {
+    let divBccExiste = document.getElementById("divBccExiste");
+    let el1 = document.createElement("OPTION");
+    el1.value = documentno;
+    el1.innerHTML = documentno;
+    divBccExiste.appendChild(el1);
+  }
+  $(document).ready(function () {
+    $("#divBccExiste").on("click", function () {
+      $.ajax({
+        url: "easy/oper/deleteBccExiste",
+        method: "DELETE",
+        data: { documentno: this.value },
+      }).then((rep) => {
+        if (rep.affectedRows == 0) {
+          showModal("Suppression Impossible , BCC راك درت طلب بهذا");
+        }
+      });
+    });
+  });
+  function sauverBcc() {
+    chargement();
+    $.ajax({
+      url: "easy/oper/sauverBcc",
+      method: "POST",
+      data: {
+        id_client: $("#c_bpartner_id").val(),
+        reference: $("#referenceAjouter").val(),
+        ad_org_id: $("#id_org").val(),
+        id_user: $("#id_user").val(),
+      },
+    }).then((reponse) => {
+      remplirRenseig(reponse);
+      chargementClose();
+    });
+  }
+  function remplirRenseig(data) {
+    document.getElementById("valueReference").value = data[0].reference;
+    document.getElementById("spanReference").innerText = data[0].reference;
+    document.getElementById("listeDocumentno").innerHTML = "";
+    for (var o = 0; o < data.length; o++) {
+      document.getElementById("listeDocumentno").insertAdjacentHTML(
+        "beforeend",
+        `<tr style="font-size: 14px; font-family: Verdana, sans-serif;">
+            <td>${data[o].documentno}</td>
+            <td><button class="btn btn-sm btn-danger" onclick="suppDocumentno(${data[o].idBccQuota})"><i class="fas fa-trash-alt"></i></button></td>
+          </tr>`
+      );
+    }
+    chargementClose();
+  }
+  function suppDocumentno(idBccQuota) {
+    let reference = $("#valueReference").val();
+    let ad_org_id = $("#id_org").val();
+    $.ajax({
+      url: "easy/oper/suppDocumentno",
+      method: "DELETE",
+      data: { idBccQuota: idBccQuota, reference: reference, ad_org_id: ad_org_id },
+      timeout: 3000,
+    })
+      .then((reponse) => {
+        listeDemandeQuota();
+        if (reponse.length == 0) {
+          document.getElementById("listeDocumentno").innerHTML = "";
+          document.getElementById("spanReference").innerText = "";
+          document.getElementById("valueReference").value = "";
+        } else {
+          reponse.length > 0 ? remplirRenseig(reponse) : showModal(reponse);
+        }
+      })
+      .catch((error) => {
+        alert(error);
+      });
+  }
+
+  // background:${data[i].COLOR !== null ? data[i].COLOR : 'transparent'}
+  function isConditionExst(m_product_id, list) {
+    return list.some((item) => item.m_product_id === m_product_id);
+  }
+  function afficheTableQuota(data, conditions) {
+    document.getElementById("tblProduits").innerHTML = "";
+    for (var i = 0; i < data.length; i++) {
+      let isCondition = isConditionExst(data[i].M_PRODUCT_ID, conditions);
+      if (isCondition) {
+        isCondition = `<i class="fa fa-certificate" aria-hidden="true"></i>`;
+      }
+      document.getElementById("tblProduits").insertAdjacentHTML(
+        "beforeend",
+        `<tr 
+            style="font-size: 14px; font-family: Verdana, sans-serif;
+            background:${data[i].PERCENTAGE === 0 ? "transparent" : "#C0C0C0"}" 
+            id='${data[i].M_PRODUCT_ID}'  
+            onclick = ChoixProduit(${data[i].M_PRODUCT_ID})>
+            <td>
+              ${data[i].NAME}
+              ${isCondition}
+              </td>
+            <td>${data[i].QTYORDERED}</td>
+          </tr>`
+      );
+    }
+    chargementOfBox("loaderOfQuota", "tblProduits", false, true);
+  }
+  function afficheTableQuotaDemander(data) {
+    // document.getElementById('loadingTableQuota').hidden = false;
+    document.getElementById("tableQuota").innerHTML = "";
+    var i = 0;
+    for (i; i < data.length; i++) {
+      document.getElementById("tableQuota").insertAdjacentHTML(
+        "beforeend",
+        `<tr style="font-size: 14px; font-family: Verdana, sans-serif;" id="${data[i].M_PRODUCT_ID}+'a'"  onclick = actionProduit(${data[i].M_PRODUCT_ID})>
+            <td>${data[i].NAME}</td>
+            <td>${data[i].QTYALLOCATED}</td>
+            <td>${data[i].QUANTITY}</td>
+            <td>${data[i].QTYORDERED}</td>
+          </tr>`
+      );
+    }
+    if (i == data.length) {
+      // document.getElementById('loadingTableQuota').hidden = true;
+    }
+  }
+  //selectioner ptoduit Quota
+  var idpPresident = 0;
+  function ChoixProduit(idp, m_product) {
+    document.getElementById("qtyAllocatedAncien").value = "";
+    document.getElementById("suppQuota").hidden = true;
+    document.getElementById("m_product_id").value = idp;
+    document.getElementById("nomProduits").innerText = m_product;
+    if (idpPresident != 0) {
+      var objet1 = document.getElementById(idpPresident);
+      objet1.style.background = "#ffff";
+    }
+    var objet = document.getElementById(idp);
+    objet.style.background = "rgb(214, 210, 210)";
+    idpPresident = idp;
+  }
+
+  function traiterQuota() {
+    let reference = document.getElementById("valueReference").value;
+    if (reference) {
+      chargement();
+      $.ajax({
+        url: "easy/oper/traiterQuota",
+        method: "POST",
+        data: { reference, traiter: "Y", confirme: "N" },
+      }).then((reponse) => {
+        aZeroVente();
+        listeDemandeQuota();
+        chargementClose();
+      });
+    } else {
+      showModal("Sélectionnez la référence");
+    }
+  }
+
+  $(document).ready(function () {
+    $("#recherche").on("keyup", function () {
+      var value = $(this).val().toLowerCase();
+      $("#tblProduits tr").filter(function () {
+        $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1);
+      });
+    });
+  });
+
+  function alert1(message) {
+    alert(message);
+  }
+
+  function actionProduit(m_product) {
+    document.getElementById("suppQuota").hidden = false;
+    let reference = $("#valueReference").val();
+    let ad_org_id = $("#id_org").val();
+    $.ajax({
+      url: "easy/oper/actionProduit",
+      method: "PUT",
+      data: { m_product_id: m_product, reference: reference, ad_org_id: ad_org_id },
+      success: (repo) => {
+        document.getElementById("qtyAllocatedAncien").value = repo[0][2];
+        document.getElementById("m_product_id").value = repo[0][0];
+      },
+    });
+  }
+  //table des quota demander
+  function listeDemandeQuota() {
+    document.getElementById("suppQuota").hidden = true;
+    $.ajax({
+      url: "easy/oper/listeDemandeQuota",
+      method: "POST",
+      data: {
+        ad_user_id: $("#id_user").val(),
+        ad_org_id: $("#ad_org_id").val(),
+      },
+      success: (reponse) => {
+        afficheListeDemanderNonConfirmer(reponse);
+      },
+    });
+  }
+
+  function gererException(exc) {
+    let exception = document.getElementById("exception").checked,
+      c_bpartner_id = document.getElementById("c_bpartner_id").value;
+    if ((exception == true) & (c_bpartner_id != "")) {
+      $.ajax({
+        url: "easy/demandeQuota/exception",
+        method: "POST",
+        data: {
+          c_bpartner_id: c_bpartner_id,
+          ad_org_id: exc.ad_org_id,
+          ad_user_id: exc.ad_user_id,
+          createby: exc.createby,
+        },
+        success: (reponse) => {
+          remplirRenseig(reponse);
+          //getReference()
+        },
+      });
+    }
+  }
+  //fin gérer exception
+  function afficheListeDemanderNonConfirmer(data) {
+    document.getElementById("suppQuota").hidden = true;
+    document.getElementById("listeDemandeQuota").innerHTML = "";
+
+    for (var i = 0; i < data.length; i++) {
+      let traiter = data[i].traiter;
+      if (traiter == "N") {
+        traiter = `<span class="badge badge-danger" style="font-size:15px"><i class="fas fa-times-circle"></i></span>`;
+      } else {
+        traiter = `<span class="badge badge-success" style="font-size:15px"><i class="fas fa-check-circle"></i></span>`;
+      }
+      document.getElementById("listeDemandeQuota").insertAdjacentHTML(
+        "beforeend",
+        `<tr style="font-size: 14px; font-family: Verdana, sans-serif;" id='${i}' onclick="getClientsSelectAsked('${data[i].reference}')">
+            <td>${data[i].reference}</td>
+            <td>${data[i].nomTiers}</td>
+            <td style="text-align: right;">${traiter}</td>
+          </tr>`
+      );
+      if (data[i].confirme == "Y") {
+        document.getElementById(i).style.background = "#ADFF2F";
+      }
+      if (data[i].status == "Y") {
+        document.getElementById(i).style.background = "#FFA500";
+      }
+      // if()
+    }
+  }
+
+  function getClientsSelectAsked(reference) {
+    // document.getElementById('loadingTableQuota').hidden = false;
+    chargementOfBox("loadingTableQuota", "tableQuota", true, false);
+    document.getElementById("suppQuota").hidden = true;
+    document.getElementById("c_bpartner_id").disabled = true;
+    $.ajax({
+      url: "easy/oper/getClientsSelectAsked",
+      method: "POSt",
+      data: { reference, ad_org_id: $("#id_org").val() },
+      success: (reponse) => {
+        remplirRenseig(reponse.IXxQuotaRef);
+        afficheTableQuotaDemander(reponse.IXxquota);
+        listeDemandeQuota();
+        document.getElementById("c_bpartner_id").value = reponse.IXxQuotaRef[0].c_pbartner_id;
+        chargementOfBox("loadingTableQuota", "tableQuota", false, true);
+      },
+    });
+  }
+
+  function supprimerQuota() {
+    chargementOfBox("loadingTableQuota", "tableQuota", true, false);
+    const data = {
+      qtyAllocatedAncien: $("#qtyAllocatedAncien").val(),
+      id_dc: $("#id_dc").val(),
+      id_svc: $("#id_svc").val(),
+      m_product_id: $("#m_product_id").val(),
+      reference: $("#valueReference").val(),
+      ad_org_id: $("#id_org").val(),
+    };
+    $.ajax({
+      url: "easy/routeVente/supprimerQuota",
+      method: "POST",
+      data,
+    }).then((response) => {
+      chargementOfBox("loadingTableQuota", "tableQuota", false, true);
+      response == "ok" ? getReference() : showModal(response);
+    });
+    document.getElementById("suppQuota").hidden = true;
+    document.getElementById("m_product_id").value = "";
+    document.getElementById("qtyAllocatedAncien").value = "";
+  }
+
+  var table11 = document.getElementById("selected11"),
+    selected11 = table11.getElementsByClassName("selected");
+  table11.onclick = highlight11;
+  function highlight11(e) {
+    if (selected11[0]) selected11[0].className = "";
+    e.target.parentNode.className = "selected";
+  }
+
+  function aZeroVente() {
+    document.getElementById("referenceAjouter").value = "";
+    document.getElementById("c_bpartner_id").value = "";
+    document.getElementById("m_product_id").value = "";
+    document.getElementById("qtyAllocatedAncien").value = "";
+    document.getElementById("qts").value = "";
+    document.getElementById("valueReference").value = "";
+
+    document.getElementById("tableQuota").innerHTML = "";
+    document.getElementById("listeDocumentno").innerHTML = "";
+
+    document.getElementById("spanReference").innerText = "";
+    document.getElementById("suppQuota").hidden = true;
+  }
+
+  document.addEventListener("keydown", function (event) {
+    if (event.keyCode == 13) {
+      ajouterProduitOrder();
+    }
+  });
+
+  function showModal(message) {
+    document.getElementById("messageError").innerHTML = message;
+    $(document).ready(function () {
+      $("#ModalErrorMessage").modal("show");
+    });
+  }
+</script>

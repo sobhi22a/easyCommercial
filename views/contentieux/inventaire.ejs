@@ -1,0 +1,102 @@
+<div id="pageInventaire" hidden>
+    <div class="card">
+        <div class="card-body">
+            <div class="row form">
+                <div class="col-sm-5">
+                    <input type="date" id="dateInventaire" class="form-control form-control-sm">
+                </div>
+                <div class="col-sm-1">
+                    <button class="btn btn-primary btn-sm" onclick="getListInventaireByDate()">Load</button>
+                </div>
+                <div class="col-sm-5">
+                    <input type="text" class="form-control form-control-md" id="rechercheProductInventory" placeholder="Recherche ...">
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="card">
+        <div class="card-body">
+            <table class="table table-striped" id="tableProductInventory">
+                <thead class="thead-dark">
+                    <tr>
+                        <th scope="col">#</th>
+                        <th scope="col">Empl</th>
+                        <th scope="col">Produit</th>
+                        <th scope="col">Quantité</th>
+                        <th scope="col">PPA</th>
+                        <th scope="col">LOT</th>
+                        <th scope="col">Date</th>
+                        <th scope="col">créé par</th>
+                        <th scope="col">Date Créé</th>
+                    </tr>
+                </thead>
+                <tbody id="tableInventaire">
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script>
+    function getListInventaireByDate() {
+        chargement();
+        const date = $('#dateInventaire').val();
+        $.ajax({
+            url: 'easy/contentieux/getListInventaireByDate',
+            method: 'POST',
+            data: { date }
+        }).then((reponse) => {
+            afficheTableInventaire(reponse)
+        }).catch((error) => {
+            alert(error);
+            chargementClose();
+        })
+    }
+
+    function afficheTableInventaire(data) {
+        document.getElementById("tableInventaire").innerHTML = ""
+        for (var i = 0; i < data.length; i++) {
+                document.getElementById('tableInventaire').insertAdjacentHTML('beforeend', `<tr
+                    style="font-size: 14px; font-family: Verdana, sans-serif;
+                    background: ${data[i].m_product_id === "0" ? '#FAEBD7' : 'transparent'}">
+                <td>${i + 1}</td>
+                <td>${data[i].empl}</td>
+                <td>${data[i].NAME}</td>
+                <td>${data[i].quantity}</td>
+                <td>${data[i].ppa}</td>
+                <td>${data[i].lot}</td>
+                <td>${data[i].DATE}</td>
+                <td>${data[i].createdBy.split('-')[1]}</td>
+                <td>${data[i].dateCreated}</td>
+            </tr>`
+                );
+        }
+        chargementClose();
+    }
+
+    function getAdUserNameInventaire(id, type, i) {
+        id ?
+            (chargement(),
+                $.ajax({
+                    url: 'easy/contentieux/getAdUserName',
+                    method: "POST",
+                    data: { id },
+                }).then((reponse) => {
+                    chargementClose()
+                    document.getElementById(type + i).innerText = reponse[0].NAME
+                }).catch((error) => {
+                    alert(error)
+                    chargementClose()
+                }))
+            : document.getElementById(type + i).innerHTML = "<span style='color: #ff0000'>Empty</span>"
+    }
+
+    $(document).ready(function () {
+    $("#rechercheProductInventory").on("keyup", function () {
+      var value = $(this).val().toLowerCase();
+      $("#tableProductInventory tr").filter(function () {
+        $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+      });
+    });
+  });
+</script>

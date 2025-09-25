@@ -1,0 +1,74 @@
+<div id="pageRestoure" class="pageLayout">
+    <div class="card">
+        <div class="card-body">
+          <div class="form-row">
+            <div class="col-md-4"><input class="form-control" type="date" id="dateRestor"></div>
+            <div class="col-md-4">
+              <input list="encodings" class="form-control" onkeypress={getProductsRestore()} id="m_product_id">
+                <datalist id="encodings">
+              </datalist>
+            </div>
+            <div class="col-md-4">
+              <button class="btn btn-primary" onclick="restaurerProduits()">Restaurer</button>
+            </div>
+          </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function getProductsRestore() {
+      const date = $('#dateRestor').val()
+      const name = $('#m_product_id').val()
+      console.log(name.length);
+      if(name.length > 4 && date !== '') {
+        chargement();
+        $.ajax({
+            url: 'easy/superViseur/getProductsRestore',
+            method: 'POST',
+            data: { date, name },
+        }).then((reponse) => {
+            remplirListeProduits(reponse)
+            chargementClose();
+        })
+      }
+    }
+
+    function remplirListeProduits (reponse) {
+      var select = document.getElementById('encodings')
+      for (var i = 0; i < reponse.length; i++) {
+        var el = document.createElement('OPTION')
+        el.value = reponse[i].m_product_id + '_' + reponse[i].name + '_' + reponse[i].isRestor
+        select.appendChild(el)
+      }
+    }
+
+    function restaurerProduits() {
+      let object = $('#m_product_id').val();
+      if(object !== '') {
+        let date = $('#dateRestor').val();
+        let m_product_id = object.split('_')[0];
+        let isRestor = object.split('_')[2];
+        if(isRestor == 1) {
+          let confirmA = confirm("Vous avez déjà restauré ce produit. Souhaitez-vous relancer la restauration ?");
+          confirmA && apiRestauration(m_product_id, date);
+        } else {
+          apiRestauration(m_product_id, date);
+        }
+      };
+    }
+    function apiRestauration(m_product_id, date) {
+        chargement();  
+        $.ajax({
+            url: 'easy/superViseur/restaurerProduits',
+            method: 'POST',
+            data: { m_product_id, date }
+        }).then((reponse) => {
+            document.getElementById("m_product_id").innerHTML = "";
+            document.getElementById("m_product_id").value = "";
+            document.getElementById("encodings").innerHTML = "";
+            document.getElementById("encodings").value = "";
+            chargementClose();
+        })
+    }
+</script>

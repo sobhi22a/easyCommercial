@@ -1,0 +1,63 @@
+<%-include('entete.ejs')%>
+<!-- Modal -->
+<div class="modal fade" id="ModalErrorMessage" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLongTitle"><span style="color: brown;">Erreur Message</span></h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <span id="messageError"></span>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+    <script>
+        function chargement() {
+            document.getElementById('ccc').hidden = false
+            document.getElementById('wrapper').style = "filter: blur(1px)"
+        }
+        function chargementClose() {
+            document.getElementById('ccc').hidden = true
+            document.getElementById('wrapper').style = "filter:none"
+        }
+        function chargementOfBox(id, idBlur, isBlur, isOpen) {
+            let blur = "filter:none"
+            if (isBlur) {
+                blur = "filter: blur(2px)"
+            }
+            document.getElementById(id).hidden = isOpen;
+            document.getElementById(idBlur).style = blur
+        }
+    </script>
+    <script>
+        setTimeout(() => {
+            sideBar('pageDemandeQuota', 'FonDemanderQuota')
+        }, 1000)
+        function sideBar(idPage, idLi) {
+            $("li").removeClass("active");
+            $(`#${idLi}`).addClass('active');
+            $(".pageLayout").hide();
+            $(`#${idPage}`).show();
+            idLi == 'FonDeploqueClient' && getClientOperr() & getClientProsp() & listeDemandeDeploque();
+            idLi == 'nvClient' && listeNvClient();
+            idLi == 'FonDemanderQuota' && orderByASCorDESC('') & clientOperQuota() & listeDemandeQuota() & bloqueOperDc1();
+        }
+
+        function numberWithSpaces(x) {
+            var parts = x.toString().split(".");
+            parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, " ");
+            return parts.join(".");
+        }
+    </script>
+    <%-include('demandeQuota.ejs')%>
+        <%-include('nvClient.ejs')%>
+            <%-include('deploqueClient.ejs')%>
+                <%-include('enbas.ejs')%>

@@ -1,0 +1,35 @@
+<%-include('entete.ejs')%>
+  <script>
+    function chargement() {
+      document.getElementById('ccc').hidden = false
+      document.getElementById('wrapper').style = "filter: blur(3px)"
+    }
+    function chargementClose() {
+      document.getElementById('ccc').hidden = true
+      document.getElementById('wrapper').style = "filter:none"
+    }
+    function GestionAbsence() {
+      document.getElementById("GestionAbsence").classList.add("active");
+      document.getElementById("nouvelEmployeur").classList.remove("active");
+
+      document.getElementById('pageAbsence').hidden = false
+      document.getElementById('pageNouvelEmployeur').hidden = true
+    }
+    function nouvelEmployeur() {
+      listeEmployeurs()
+      document.getElementById("GestionAbsence").classList.remove("active");
+      document.getElementById("nouvelEmployeur").classList.add("active");
+
+      document.getElementById('pageAbsence').hidden = true
+      document.getElementById('pageNouvelEmployeur').hidden = false
+    }
+    function numberWithSpaces(x) {
+      var parts = x.toString().split(".");
+      parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, " ");
+      return parts.join(".");
+    }
+  </script>
+
+  <%-include('paie.ejs')%>
+    <%-include('nouvelEmployeur.ejs')%>
+      <%-include('enbas.ejs')%>

@@ -1,0 +1,263 @@
+<div id="pagePaie">
+  <div class="line1"></div>
+  <!-- Zone Livreur -->
+  <div id="zoneLivreur">
+    <div class="shadow p-3 mb-5 bg-white rounded">
+      <h3>Paie Livreur</h3>
+      <div class="form-row">
+        <div class="col-sm-4">
+          <input list="encodings" class="form-control form-control-sm" id="id_livreur" />
+          <datalist id="encodings"> </datalist>
+        </div>
+        <div class="col-sm-3">
+          <input type="date" id="dateA" class="form-control form-control-sm" />
+        </div>
+        <div class="col-sm-3">
+          <input type="date" id="dateB" class="form-control form-control-sm" />
+        </div>
+        <div class="col-sm-2">
+          <button class="btn btn-sm btn-success" onclick="calculePrimeLivreur()"><i class="fas fa-cog"></i>&nbsp;Calcule</button>
+        </div>
+      </div>
+      <hr />
+      <div class="form-row">
+        <div class="col-sm-2">
+          <div class="form-group">
+            <label for="exampleInputEmail1">Nbr Client Est</label>
+            <input
+              type="text"
+              class="form-control"
+              id="nbrClientEst"
+              aria-describedby="emailHelp"
+              placeholder="Nombre Clients Est"
+              readonly
+            />
+            <small id="emailHelp" class="form-text text-muted">Quondition | > 20Clients.</small>
+          </div>
+        </div>
+        <div class="col-sm-2">
+          <div class="form-group">
+            <label for="exampleInputEmail1">Nbr Client Ouest</label>
+            <input
+              type="text"
+              class="form-control"
+              id="nbrClientOuest"
+              aria-describedby="emailHelp"
+              placeholder="Nombre Clients Ouest"
+              readonly
+            />
+            <small id="emailHelp" class="form-text text-muted">Quondition | > 40Clients.</small>
+          </div>
+        </div>
+        <div class="col-sm-3">
+          <div class="form-group">
+            <label for="exampleInputEmail1">Total Clients</label>
+            <input
+              type="text"
+              class="form-control"
+              id="totalClient"
+              aria-describedby="emailHelp"
+              placeholder="Total Clients"
+              readonly
+            />
+            <small id="emailHelp" class="form-text text-muted">Total Client</small>
+          </div>
+        </div>
+        <div class="col-sm-2">
+          <div class="form-group">
+            <label for="exampleInputEmail1">Prime Par Client</label>
+            <input
+              type="text"
+              class="form-control"
+              id="exampleInputEmail1"
+              aria-describedby="emailHelp"
+              placeholder="50 .DZ"
+              readonly
+            />
+            <small id="emailHelp" class="form-text text-muted">Prime Par Client</small>
+          </div>
+        </div>
+        <div class="col-sm-3">
+          <div class="form-group">
+            <label for="exampleInputEmail1">Total Prime Par Client</label>
+            <input
+              type="email"
+              class="form-control"
+              id="primeTotal"
+              aria-describedby="emailHelp"
+              placeholder="Total Prime Par Client"
+              readonly
+            />
+            <small id="emailHelp" class="form-text text-muted">Total Prime Par Client</small>
+          </div>
+        </div>
+      </div>
+      <hr />
+      <div class="form-row">
+        <div class="col-sm-4">
+          <div class="form-group">
+            <label for="exampleInputEmail1">Chiffre D'affaire Recouvré </label>
+            <input
+              type="text"
+              class="form-control"
+              id="chiffreRecouv"
+              aria-describedby="emailHelp"
+              placeholder="Chiffre D'affaire"
+              readonly
+            />
+            <!-- <small id="emailHelp" class="form-text text-muted">Chiffre D'affaire Recouvré Par Mois Sans Chèque .</small> -->
+          </div>
+        </div>
+        <div class="col-sm-4">
+          <div class="form-group">
+            <label for="exampleInputEmail1">Poucentage Prime De Chiffre </label>
+            <input
+              type="text"
+              class="form-control"
+              id="exampleInputEmail1"
+              aria-describedby="emailHelp"
+              placeholder="0.05%"
+              readonly
+            />
+            <!-- <small id="emailHelp" class="form-text text-muted">pouecentage Prime De Chiffre .</small> -->
+          </div>
+        </div>
+        <div class="col-sm-4">
+          <div class="form-group">
+            <label for="exampleInputEmail1">Prime De Mois </label>
+            <input
+              type="text"
+              class="form-control"
+              id="primeMoisRecou"
+              aria-describedby="emailHelp"
+              placeholder="Prime De Mois Recouvré"
+              readonly
+            />
+            <!-- <small id="emailHelp" class="form-text text-muted">Prime De Mois .</small> -->
+          </div>
+        </div>
+      </div>
+      <hr />
+      <div class="form-row">
+        <div class="col-sm-4">
+          <div class="form-group">
+            <label for="exampleInputEmail1">Colisage globale De Mois </label>
+            <input type="text" class="form-control" id="nbrColis" aria-describedby="emailHelp" placeholder="Colisage " readonly />
+            <!-- <small id="emailHelp" class="form-text text-muted">Nbr Colis Livré Par mois  .</small> -->
+          </div>
+        </div>
+        <div class="col-sm-4">
+          <div class="form-group">
+            <label for="exampleInputEmail1">Prix De Colis </label>
+            <input
+              type="text"
+              class="form-control"
+              id="exampleInputEmail1"
+              aria-describedby="emailHelp"
+              placeholder="2 .DA"
+              readonly
+            />
+            <!-- <small id="emailHelp" class="form-text text-muted">Prime De 1 Colis .</small> -->
+          </div>
+        </div>
+        <div class="col-sm-4">
+          <div class="form-group">
+            <label for="exampleInputEmail1">Prime Colisage Mois </label>
+            <input
+              type="email"
+              class="form-control"
+              id="primeMoisColis"
+              aria-describedby="emailHelp"
+              placeholder="Prime De Colis"
+              readonly
+            />
+            <!-- <small id="emailHelp" class="form-text text-muted">Total Prime Colis .</small> -->
+          </div>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="col-sm-8"></div>
+        <div class="col-sm-4">
+          <div class="form-group">
+            <label for="totalPrimeLivreur">Total</label>
+            <input
+              type="text"
+              class="form-control"
+              id="totalPrimeLivreur"
+              aria-describedby="emailHelp"
+              placeholder="Prime De Colis"
+              readonly
+            />
+            <!-- <small id="emailHelp" class="form-text text-muted">Total Prime Colis .</small> -->
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Fin Zone Livreur -->
+
+    <script>
+      getListeLivreur();
+      function getListeLivreur() {
+        $.ajax({
+          url: "easy/drhRoute/listeLivreur",
+          method: "POST",
+          success: (reponse) => {
+            var select = document.getElementById("encodings");
+            let el1 = document.createElement("OPTION");
+            el1.value = "";
+            el1.innerHTML = "Liste Des Livreur";
+            select.appendChild(el1);
+            for (var i = 0; i < reponse.length; i++) {
+              var el = document.createElement("OPTION");
+              el.value = reponse[i][0] + "_" + reponse[i][1];
+              select.appendChild(el);
+            }
+          },
+        });
+      }
+
+      function calculePrimeLivreur() {
+        AzeroLiv();
+        if ($("#id_livreur").val() != "") {
+          $.ajax({
+            url: "easy/drhroute/calculePrimeLivreur",
+            method: "POST",
+            data: { id_livreur: $("#id_livreur").val(), dateA: $("#dateA").val(), dateB: $("#dateB").val() },
+            success: (reponse) => {
+              if (reponse.success == false) {
+                alert(reponse.message);
+                return;
+              }
+              const data = reponse.data;
+              document.getElementById("totalClient").value = data.smc;
+              document.getElementById("primeTotal").value = numberWithSpaces(parseFloat(data.primeClient).toFixed(2));
+
+              document.getElementById("chiffreRecouv").value = data.chiffre;
+              document.getElementById("primeMoisRecou").value = numberWithSpaces(parseFloat(data.primeMoisRecou).toFixed(2));
+
+              document.getElementById("nbrColis").value = data.Collisage;
+              document.getElementById("primeMoisColis").value = data.primeMoisColis;
+
+              document.getElementById("totalPrimeLivreur").value = numberWithSpaces(parseFloat(data.totalNumber).toFixed(2));
+            },
+            error: (err) => {
+              alert(err.responseJSON.message);
+            },
+          });
+        }
+      }
+
+      function AzeroLiv() {
+        document.getElementById("nbrClientOuest").value = "";
+        document.getElementById("nbrClientEst").value = "";
+        document.getElementById("totalClient").value = "";
+        document.getElementById("primeTotal").value = "";
+        document.getElementById("chiffreRecouv").value = "";
+        document.getElementById("primeMoisRecou").value = "";
+        document.getElementById("nbrColis").value = "";
+        document.getElementById("primeMoisColis").value = "";
+        document.getElementById("totalPrimeLivreur").value = "";
+      }
+    </script>
+  </div>
+</div>

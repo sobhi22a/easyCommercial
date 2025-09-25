@@ -1,0 +1,616 @@
+<div id="pageXx_arrivage" class="pageLayout">
+  <div class="form-row">
+    <div class="col-md-9">
+      <div class="card shadow" id="tableDC">
+        <div class="card-body">
+          <div class="form-row">
+            <div class="col-sm-4">
+              <input type="text" id="recherche1112" onkeyup="listeProduitsDc()" class="form-control form-control-sm"
+                placeholder="Recherche ...">
+            </div>
+            <div class="col-sm-2">
+              <button class="btn btn-danger btn-sm" onclick="renouvelerStock()">Renouveler le Stock</button>
+            </div>
+            <div class="col-sm-4">
+              <input type="file" id="fileInput" class="form-control form-control-sm">
+            </div>
+            <div class="col-sm-2">
+              <button class="btn btn-success btn-sm" id="buttonId">Upload</button>
+            </div>
+            <div class="col-sm-2"></div>
+            <div class="col-sm-2">
+              <div class="form-row">
+                <div class="btn-group" role="group" aria-label="Basic example">
+                  <button type="button" title="Bloqué Les Opérateur" onclick="bloqueClientDc('Y')"
+                    class="btn btn-danger btn-sm"><i class="fas fa-unlock"></i></button>
+                  <button type="button" class="btn btn-default btn-sm"></button>
+                  <button type="button" title="Débloqué Les Opérateur" onclick="bloqueClientDc('N')"
+                    class="btn btn-success btn-sm"><i class="fas fa-lock-open"></i></button>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="line1"></div>
+          <div class="table-responsive">
+            <div class="my-custom-scrollbarRecouv1">
+              <table class="table table-bordered table-sm table-hover" id="myTblRecouv">
+                <thead class="thead-dark">
+                  <tr
+                    style="font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif; font-size: smaller;">
+                    <th scope="col" style="width: 3%;">#</th>
+                    <th scope="col" style="width: 30%;">Produit</th>
+                    <th scope="col" style="width: 7%;">Qty Dispo</th>
+                    <th scope="col" style="width: 7%;">Qty Entrer</th>
+                    <th scope="col" style="width: 7%;">Qty Order</th>
+                    <th scope="col" style="width: 7%;">L.WEEK</th>
+                    <th scope="col" style="width: 7%;">L.MONTH</th>
+                    <th scope="col" style="width: 10%;">Action</th>
+                  </tr>
+                </thead>
+                <tbody id="tblQuotaDC">
+                </tbody>
+              </table>
+            </div>
+            <hr>
+            <div class="form-row">
+              <div class="col-sm-10"></div>
+              <div class="col-sm-2">
+                <button class="btn btn-sm btn-default" onclick="pagePres()"><i class="fas fa-arrow-left"></i></button>
+                <button class="btn btn-sm btn-default" onclick="pageSuiv()"><i class="fas fa-arrow-right"></i></button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="card shadow h-100 p-3">
+        <div class="row p-3">
+          <input type="text" class="form-control" id="produitName" readonly placeholder="Product name">
+          <input type="text" id="xx_quota_idPar" hidden>
+        </div>
+        <div class="row p-3">
+          <input type="text" class="form-control" id="quantityGlobal" readonly placeholder="Quantity Global">
+        </div>
+        <div class="row md-10 p-3">
+          <div class="col-8">
+            <input type="number" class="form-control" id="quantitePartager" title="Actualiser les Bonus"
+              placeholder="QtePartager">
+          </div>
+          <div class="col-2">
+            <button class="btn btn-danger" onclick="actualiserPourcentage()"><i class="fas fa-redo-alt"></i></button>
+          </div>
+        </div>
+        <div class="row md-10 p-3">
+          <div class="col-8">
+            <input type="number" class="form-control" id="qteMax" title="Actualiser les Bonus" placeholder="qte Max">
+          </div>
+          <div class="col-2">
+            <button class="btn btn-primary" onclick="ajouterQteMax()"><i class="fas fa-redo-alt"></i></button>
+          </div>
+        </div>
+        <div class="card p-3 border-0" style="max-height: 260px;overflow-y: auto;">
+          <span class="card-title">Liste SVC Partager</span>
+          <div id="divListSvc"></div>
+        </div>
+        <button type="button" class="btn btn-primary mt-3" onclick="produitPartager()">Save changes</button>
+      </div>
+    </div>
+  </div>
+  <input type="text" id="bloqueOper" readonly hidden>
+  <div class="card mt-3" id="myTableAdmine" hidden>
+    <div class="card-body">
+      <div class="form-row">
+        <label for="encodings" class="col-md-1 col-form-label">Produits :</label>
+        <div class="col-sm-6">
+          <input list="encodings" class="form-control form-control-sm" id="m_product_id">
+          <datalist id="encodings">
+          </datalist>
+        </div>
+        <div class="col-sm-2">
+          <button class="btn btn-success btn-sm" onclick="restaurerProduits()">Restaurer</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <div class="col">
+            <div class="row mb-3">
+              <input type="text" class="form-control" id="produitName" readonly placeholder="Product name">
+            </div>
+            <div class="row  mb-3">
+              <input type="text" class="form-control" id="quantityGlobal" readonly placeholder="Quantity Global">
+            </div>
+            <div class="row  mb-3">
+              <div class="col-3">
+                <label for="quantitePartager">Quantity</label>
+                <input type="number" class="form-control" id="quantitePartager" placeholder="QtePartager">
+              </div>
+              <div class="col-3">
+                <label for="pourcentageAtt">ATT %</label>
+                <input type="number" class="form-control" onkeyup="calculePourcentage()" id="pourcentageAtt"
+                  placeholder="Attiryak %">
+              </div>
+              <div class="col-3">
+                <label for="pourcentageSeif">SEIF %</label>
+                <input type="number" class="form-control" id="pourcentageSeif" placeholder="Seif %">
+              </div>
+              <div class="col-3">
+                <label for="pourcentagePalma">PALMA %</label>
+                <input type="number" class="form-control" id="pourcentagePalma" placeholder="Palma %">
+              </div>
+            </div>
+            <input type="text" id="xx_quota_idPar">
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-primary" data-dismiss="modal">Save changes</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script>
+    //upload excel
+    let selectedFile;
+    document.getElementById('fileInput').addEventListener("change", (event) => {
+      selectedFile = event.target.files[0];
+    })
+
+    let data = [{
+      "name": "jayanth",
+      "data": "scd",
+      "abc": "sdef"
+    }]
+
+    function getLastMonth(m_product_id) {
+      $.ajax({
+        url: 'easy/superViseur/getLastMonth',
+        method: 'POST',
+        data: { m_product_id }
+      }).then((reponse) => {
+        document.getElementById('lastMonth' + m_product_id).innerHTML = " "
+        $(`td#lastMonth${m_product_id}`).append(`<span>${reponse[0].LASTMONTH}</span>`);
+      })
+    }
+
+    function getLastWeek(m_product_id) {
+      $.ajax({
+        url: 'easy/superViseur/getLastWeek',
+        method: 'POST',
+        data: { m_product_id }
+      }).then((reponse) => {
+        document.getElementById('lastWeek' + m_product_id).innerHTML = " "
+        $(`td#lastWeek${m_product_id}`).append(`<span>${reponse[0].LASTWEEK}</span>`);
+      })
+    }
+
+    document.getElementById('buttonId').addEventListener("click", () => {
+      chargement();
+      XLSX.utils.json_to_sheet(data, 'out.xlsx');
+      var rowObject;
+      if (selectedFile) {
+        let fileReader = new FileReader();
+        fileReader.readAsBinaryString(selectedFile);
+        fileReader.onload = (event) => {
+          let data = event.target.result;
+          let workbook = XLSX.read(data, { type: "binary" });
+          workbook.SheetNames.forEach(sheet => {
+            rowObject = XLSX.utils.sheet_to_row_object_array(workbook.Sheets[sheet]);
+          });
+          if (arrayPourcentage.length && rowObject.length) {
+            $.ajax({
+            url: 'easy/superViseur/produitPartagerGlobale',
+            method: 'POST',
+            data: {
+              jsonSvc: JSON.stringify(arrayPourcentage),
+              data: JSON.stringify(rowObject),
+            }
+          }).then((reponse) => {
+            chargementClose()
+            console.log(reponse);
+          }).catch((error) => {
+            chargementClose()
+            alert(error);
+          })
+          } else {
+            alert('Le pourcentage SV ou Excel n\'existe pas.');
+            chargementClose();
+          }
+        }
+      }
+    });
+    //fin upload excel
+    //condition Qte Max
+    function ajouterQteMax() {
+      chargement();
+      const xx_quota_id = $('#xx_quota_idPar').val();
+      const qteMax = $('#qteMax').val();
+      xx_quota_id && qteMax && $.ajax({
+        url: 'easy/superViseur/ajouterQteMax',
+        method: 'POST',
+        data: {
+          xx_quota_id,
+          qteMax
+        }
+      }).then((reponse) => {
+        chargementClose();
+      })
+    }
+    //partie condition
+    function getProduitCondition() {
+      $.ajax({
+        url: 'easy/superViseur/getProduitCondition',
+        method: 'GET',
+      }).then((reponse) => {
+
+      })
+    }
+    //fin partie condition
+    // function restaurerProduits() {
+    //   let m_product_id = $('#m_product_id').val()
+    //   m_product_id = m_product_id.split('_')[0]
+
+    //   $.ajax({
+    //     url: 'superViseur/restaurerProduits',
+    //     method: 'POST',
+    //     data: { m_product_id: m_product_id }
+    //   }).then((reponse) => {
+    //   })
+    // }
+    // function getProductsRestore() {
+    //   chargement();
+    //   $.ajax({
+    //     url: 'superViseur/getProductsRestore',
+    //     method: 'GET',
+    //   }).then((reponse) => {
+    //     remplirListeProduits(reponse)
+    //     chargementClose();
+    //   })
+    // }
+    // function remplirListeProduits (reponse) {
+    //   var select = document.getElementById('encodings')
+    //   for (var i = 0; i < reponse.length; i++) {
+    //     var el = document.createElement('OPTION')
+    //     el.value = reponse[i].m_product_id + '_' + reponse[i].name
+    //     select.appendChild(el)
+    //   }
+    // }
+    //session Admin
+    function getListeDC() {
+      let ad_org = $('#ad_org').val()
+      if (ad_org == 0) {
+        $.ajax({
+          url: 'easy/superViseur/getListeDC',
+          method: 'POST',
+          success: (reponse) => {
+            let data = reponse
+            var ad_user_idDC = document.getElementById('ad_user_idDC')
+            let option1 = document.createElement('OPTION')
+            option1.innerHTML = "Liste DC"
+            option1.value = ""
+            for (var i = 0; i < data.length; i++) {
+              var option = document.createElement('OPTION')
+              option.innerHTML = data[i].indice
+              option.value = data[i].indice
+            }
+          }
+        })
+      }
+    }
+
+
+
+    var xx_quota_idPre1 = 0, qtsOrdered1 = 0, qtsRester
+    function updateQtAdmin(xx_quota_id) {
+      qtsRester = document.getElementById(xx_quota_id).innerHTML
+      document.getElementById(xx_quota_id).innerHTML = " "
+      $(`td#${xx_quota_id}`).append(`<input type='number' id='miseQtsAdmin' class='inputCss' />`);
+      xx_quota_idPre1 = xx_quota_id
+    }
+
+    function updateQtAdminBase(xx_quota_id) {
+      let qtt = $('#miseQtsAdmin').val()
+      if (qtt == '' || qtt == undefined) {
+        qtt = 0
+      }
+
+      qtsRester = parseInt(qtsRester)
+      qtt = parseInt(qtt)
+      document.getElementById(xx_quota_id).innerHTML = qtt + qtsRester
+      updateQtAdminBase22(xx_quota_id, qtt)
+    }
+    function updateQtAdminBase22(xx_quota_id, qtt) {
+      let indiceDc = document.getElementById('ad_user_idDC').value
+      $.ajax({
+        url: 'easy/routeVente/updateQtyAdmineBase',
+        method: 'PUT',
+        data: { qtyOrdered: qtt, xx_quota_id: xx_quota_id, indiceDc: indiceDc },
+      })
+    }
+    //fin session Admin
+
+    function verifBloque() {
+      let ad_org = $('#ad_org').val()
+      if (ad_org == 0) {
+        let id_user = $('#id_user').val()
+        $.ajax({
+          url: 'easy/superViseur/bloqueOper',
+          method: 'POST',
+          data: { id_dc: id_user },
+          success: (reponse) => {
+            document.getElementById('bloqueOper').value = reponse
+            listeProduitsDc()
+            listSvc()
+          }
+        })
+      }
+    }
+    //get liste SVC
+    function listSvc() {
+      $.ajax({
+        url: 'easy/routeVente/listSvc',
+        method: 'GET',
+      }).then((_rep) => {
+        remplirCardSvc(_rep)
+      })
+    }
+    function remplirCardSvc(_rep) {
+      let addList = document.getElementById('divListSvc')
+      addList.innerHTML = ""
+      for (const _r of _rep) {
+        let div = document.createElement('DIV')
+        div.innerHTML = `<input type='number' class='form-control mb-3' id=${_r.AD_USER_ID} 
+      placeholder=${_r.NAME} onchange='getModelPourcentage(${_r.AD_USER_ID},${_r.AD_ORG_ID})'> `
+        addList.appendChild(div)
+      }
+    }
+    var arrayPourcentage = [];
+    function actualiserPourcentage() {
+      arrayPourcentage = [];
+    }
+    function getModelPourcentage(ad_user_id, ad_org_id) {
+      let json = {
+        ad_user_id: ad_user_id,
+        ad_org_id: ad_org_id,
+        pourcentage: document.getElementById(ad_user_id).value
+      }
+      arrayPourcentage.push(json);
+    }
+    function bloqueClientDc(bloque) {
+      const id_user = $('#id_user').val();
+      const json = { id_dc: id_user, bloque: bloque };
+
+      $.ajax({
+        url: 'easy/routeVente/bloqueClientDc',
+        method: 'PUT',
+        data: json,
+      })
+        .done((reponse) => {
+          document.getElementById('bloqueOper').value = reponse;
+          listeProduitsDc();
+        })
+        .fail((jqXHR, textStatus, errorThrown) => {
+          showModal(`Error ${jqXHR.status}: ${jqXHR.responseText}`);
+        });
+    }
+    var donnee;
+    var nbrSaut = 7
+    var ij = 0
+    function listeProduitsDc() {
+      let bloqueOper = $('#bloqueOper').val()
+      let id_user = $('#id_user').val()
+      let ad_org = $('#ad_org').val()
+      if (bloqueOper == 'Y') {
+        $.ajax({
+          url: 'easy/superViseur/xx_arrivage',
+          method: 'post',
+          data: {
+            id_dc: id_user,
+            ad_org_id: ad_org,
+            like: $('#recherche1112').val()
+          },
+          success: (reponse) => {
+            donnee = reponse
+            if (donnee.length < nbrSaut) {
+              nbrSaut = donnee.length
+              ij = 0
+            } else {
+              nbrSaut = 7
+              ij = 0
+            }
+
+            if (donnee.length) {
+              remplirTbleQuotaDC(donnee)
+            }
+          }
+        })
+      } else if (bloqueOper == 'N') {
+        alert('Bloqué Les Opérateurs')
+        document.getElementById('tblQuotaDC').innerHTML = ""
+      }
+    }
+
+    function remplirTbleQuotaDC(data) {
+      if (data.length < nbrSaut) {
+        nbrSaut = data.length
+      }
+    chargement();
+    document.getElementById('tblQuotaDC').innerHTML = ""
+      for (var i = ij; i < nbrSaut; i++) {
+        let quantity = data[i].QUANTITY
+        let qtyEntred = data[i].QTYENTERED
+        let qtyOrdered = data[i].QTYORDERED
+        let description = data[i].DESCRIPTION
+        if (qtyEntred == null) {
+          qtyEntred = 0
+        }
+        if (quantity == null) {
+          quantity = 0
+        }
+        if (qtyOrdered == null) {
+          qtyOrdered = 0
+        }
+        document.getElementById('tblQuotaDC')
+          .insertAdjacentHTML('beforeend',
+            `<tr style="font-size: 15px; font-family: Verdana, sans-serif;">
+              <td>${i + 1}</td>
+              <td id="${data[i].XX_QUOTA_ID}name" onclick="updateQty(${data[i].XX_QUOTA_ID})">${data[i].NAME}</td>
+              <td id="${data[i].XX_QUOTA_ID + 's'}">${quantity}</td>
+              <td>${qtyEntred}</td>
+              <td id="${data[i].XX_QUOTA_ID}" >${qtyOrdered}</td>
+              <td id="lastWeek${data[i].M_PRODUCT_ID}" onclick='getLastWeek(${data[i].M_PRODUCT_ID})'></td>
+              <td id="lastMonth${data[i].M_PRODUCT_ID}" onclick='getLastMonth(${data[i].M_PRODUCT_ID})'></td>
+              <td>
+                <div>
+                    <div class="col">
+                      <div class="row" style="flex-wrap: inherit !important;">  
+                        <button class="btn btn-primary btn-sm mr-1" onclick='updateQtyBase(${data[i].XX_QUOTA_ID})'><i class="fas fa-edit"></i></button>
+                        <button class="btn btn-info btn-sm mr-1" onclick="sauverQts(${data[i].XX_QUOTA_ID})"><i class="fas fa-arrow-right"></i></button>
+                        <button class="btn btn-danger btn-sm mr-1" onclick="supprimerQts(${data[i].XX_QUOTA_ID})"><i class="fas fa-trash-alt"></i></button>
+                        <button class="btn btn-secondary btn-sm" onclick="remplirModalPartage(${data[i].XX_QUOTA_ID})"><i class="fas fa-share-alt"></i></button>
+                      </div>
+                    </div>
+                  </div>
+                </td>
+              </tr>`
+                    );
+            }
+        chargementClose();
+    }
+    function pageSuiv() {
+      if (ij == 0) {
+        ij = ij + 7
+      } else {
+        if (donnee.length >= ij) {
+          ij = ij + 7
+        }
+      }
+      nbrSaut = ij + 7
+      remplirTbleQuotaDC(donnee)
+    }
+
+    function pagePres() {
+      if (ij == 0) {
+        ij = ij
+      } else {
+        nbrSaut = ij
+        ij = ij - 7
+      }
+      remplirTbleQuotaDC(donnee)
+    }
+    //partage quota
+    function remplirModalPartage(xx_quota_id) {
+      document.getElementById('produitName').value = document.getElementById(xx_quota_id + 'name').innerText;
+      document.getElementById('quantityGlobal').value = document.getElementById(xx_quota_id + 's').innerText;
+      document.getElementById('xx_quota_idPar').value = xx_quota_id;
+    }
+    function produitPartager() {
+      let arrayJson = []
+      let json = {
+        xx_quota_id: $('#xx_quota_idPar').val(),
+        qtyGlobal: $('#quantityGlobal').val(),
+        qtyPartager: $('#quantitePartager').val(),
+        ad_user_id: $('#id_user').val(),
+      }
+      arrayJson.push(json);
+      if ($('#xx_quota_idPar').val()) {
+        $.ajax({
+          url: 'easy/superViseur/produitPartager',
+          method: 'POST',
+          data: {
+            jsonSvc: JSON.stringify(arrayPourcentage),
+            data: JSON.stringify(arrayJson),
+          }
+        }).then((reponse) => {
+          document.getElementById('produitName').value = ""
+          document.getElementById('xx_quota_idPar').value = ""
+          //alert(reponse.msg)
+        })
+      } else {
+        alert('Select Produit !')
+      }
+    }
+    function calculePourcentage() {
+      let att = $('#pourcentageAtt').val()
+      document.getElementById('pourcentageSeif').value = (100 - att) / 2
+      document.getElementById('pourcentagePalma').value = (100 - att) / 2
+    }
+    //fin partage quota 
+    function sauverQts(xx_quota_id) {
+      let qts = document.getElementById(xx_quota_id + 's').innerHTML
+      document.getElementById(xx_quota_id).innerHTML = qts
+      updateQtyBase22(xx_quota_id, qts)
+    }
+    function supprimerQts(xx_quota_id) {
+      document.getElementById(xx_quota_id).innerHTML = 0
+      updateQtyBase22(xx_quota_id, 0)
+    }
+    var xx_quota_idPre = 0, qtsOrdered = 0
+    function updateQty(xx_quota_id) {
+      document.getElementById(xx_quota_id).innerHTML = " "
+      $(`td#${xx_quota_id}`).append(`<input type='number' id='miseQts' class='inputCss' />`);
+      xx_quota_idPre = xx_quota_id
+    }
+
+    function updateQtyBase(xx_quota_id) {
+      let qtt = $('#miseQts').val()
+      if (qtt == '' || qtt == undefined) {
+        qtt = 0
+      }
+      document.getElementById(xx_quota_id).innerHTML = qtt
+      updateQtyBase22(xx_quota_id, qtt)
+    }
+    function updateQtyBase22(xx_quota_id, qtt) {
+      $.ajax({
+        url: 'easy/superViseur/updateQtyBase',
+        method: 'POST',
+        data: { qtyOrdered: qtt, xx_quota_id: xx_quota_id },
+      })
+    }
+
+    function renouvelerStock() {
+      chargement()
+      let bloqueOper = $('#bloqueOper').val()
+      let conf = confirm('Renouveler Le Stock ?')
+      if (conf == true && bloqueOper == 'Y') {
+          let id_user = $('#id_user').val()
+          let ad_org_id = $('#ad_org').val()
+          $.ajax({
+            url: 'easy/superViseur/renouvelerStock',
+            method: 'POST',
+            data: { ad_user_id: id_user, ad_org_id: ad_org_id },
+          }).then(async (reponse) => {
+            console.log(reponse);
+            verifBloque()
+            chargementClose()
+          })
+      } else {
+        chargementClose()
+      }
+    }
+    admin()
+    function admin() {
+      let ad_org = $('#ad_org').val()
+      if (ad_org == 0) {
+        document.getElementById('myTableAdmine').hidden = false
+        document.getElementById('tableDC').hidden = false
+        document.getElementById('pageArrivage').hidden = false
+        document.getElementById('page_Restouree').hidden = false
+      } else {
+        document.getElementById('myTableAdmine').hidden = false
+        document.getElementById('tableDC').hidden = false
+      }
+    }
+
+  </script>

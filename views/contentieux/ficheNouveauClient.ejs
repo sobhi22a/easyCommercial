@@ -1,0 +1,278 @@
+<div id="pageFicheNouveauClient" hidden>
+  <div class="line1"></div>
+  <div class="form-row">
+    <div class="col-sm-5">
+      <div class="shadow p-3 mb-5 bg-white rounded">
+        <div class="form-row">
+          <div class="col-10"></div>
+          <div class="col-2">
+            <button class="btn btn-primary btn-sm" onclick=" listeNvClientRecouv ()"><i
+                class="fas fa-sync-alt"></i></button>
+          </div>
+        </div>
+        <div class="my-custom-scrollbar22A">
+          <table class="table table-sm table-hover" style="font-size:small;">
+            <thead class="thead-dark">
+              <tr>
+                <th scope="col" style="width: 40%;">Clients</th>
+                <th scope="col">Téléphone</th>
+                <th scope="col">Wilaya</th>
+                <th scope="col">SVR</th>
+              </tr>
+            </thead>
+            <tbody id="tblClinetNvRecouv">
+            </tbody>
+          </table>
+        </div>
+        <hr>
+        <button class="btn btn-sm btn-primary" onclick="updateListeProspect(1000000)">Prospect ATTIRYAK</button>
+        <button class="btn btn-sm btn-success" onclick="updateListeProspect(1000416)">Prospect SEIF</button>
+        <button class="btn btn-sm btn-danger" onclick="updateListeProspect(1000517)">Prospect PALMA</button>
+      </div>
+    </div>
+    <div class="col-sm-7">
+      <div class="card">
+        <div class="card-body">
+          <div class="form-row">
+            <div class="col-sm-2"></div>
+            <div class="col-sm-8">
+              <h2><span id="ad_org"></span></h2>
+            </div>
+            <div class="col-sm-2"></div>
+          </div>
+          <div class="line1"></div>
+          <div class="form-row">
+            <div class="col-sm-3">Opérateur :</div>
+            <div class="col-sm-3"><span id="operateur1"></span></div>
+            <input type="text" id="idClient11" hidden>
+          </div>
+          <div class="line2"></div>
+          <div class="form-row">
+            <div class="col-sm-3"> Nom Client : </div>
+            <div class="col-sm-5"><span id="nomClient1"> </span></div>
+            <div class="col-sm-4"></div>
+          </div>
+          <div class="line2"></div>
+          <div class="form-row">
+            <div class="col-sm-3"> Adresse : </div>
+            <div class="col-sm-5"><span id="adresse11"> </span></div>
+            <div class="col-sm-4"></div>
+          </div>
+          <div class="line2"></div>
+          <div class="form-row">
+            <div class="col-sm-2"> N° TEL : </div>
+            <div class="col-sm-4"><span id="nTel11"></span></div>
+            <div class="col-sm-2"> N° TEL : </div>
+            <div class="col-sm-4"><span id="nTel22"></span></div>
+          </div>
+          <div class="line2"></div>
+          <div class="form-row">
+            <div class="col-sm-3"> Mot De Passe : </div>
+            <div class="col-sm-3"><span id="mdp11"></span></div>
+            <div class="col-sm-3">Région : </div>
+            <div class="col-sm-3"><span id="region11"></span></div>
+          </div>
+          <div class="line2"></div>
+          <div class="form-row">
+            <div class="col-sm-2"></div>
+            <div class="col-sm-8">
+              <h4><span>COORDONNEES DU CLIENTS</span></h4>
+            </div>
+            <div class="col-sm-2"></div>
+          </div>
+          <div class="line2"></div>
+          <div class="form-row">
+            <div class="col-sm-5"> N° Register De Commerce : </div>
+            <div class="col-sm-5"><span id="rc1"></span></div>
+            <div class="col-sm-2"></div>
+          </div>
+          <div class="line2"></div>
+          <div class="form-row">
+            <div class="col-sm-5"> N° Identifiant Fiscal : </div>
+            <div class="col-sm-5"><span id="nif11"></span></div>
+            <div class="col-sm-2"></div>
+          </div>
+          <div class="line2"></div>
+          <div class="form-row">
+            <div class="col-sm-5"> N° Article D'Imposition : </div>
+            <div class="col-sm-5"><span id="ai11"></span></div>
+            <div class="col-sm-2"></div>
+          </div>
+          <div class="line2"></div>
+          <div class="form-row">
+            <div class="col-sm-1"> </div>
+            <div class="col-sm-9">Type De Commande :</div>
+            <div class="col-sm-2"></div>
+          </div>
+          <div class="line2"></div>
+          <div class="form-row">
+            <div class="col-sm-2"> </div>
+            <div class="col-sm-2">1- &nbsp;<span id="bl11"></span></div>
+            <div class="col-sm-2">2- &nbsp;<span id="fact11"></span></div>
+            <div class="col-sm-2">3- &nbsp;<span id="para11"></span></div>
+            <div class="col-sm-4"></div>
+          </div>
+          <div class="line1"></div>
+          <div class="form-row">
+            <div class="col-sm-6">
+              <label for="svc11">SuperViseur Commercial</label><br>
+              &nbsp;&nbsp;&nbsp;&nbsp;<span id="svc11"></span>
+            </div>
+            <div class="col-sm-6">
+              <label for="svc11">SuperViseur Recouvrement</label><br>
+              &nbsp;&nbsp;&nbsp;&nbsp;<span id="svr11"></span>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="col-sm-2"></div>
+            <div class="col-sm-8"></div>
+            <div class="col-sm-2"><button class="btn btn-success" onclick="validerClient()"><i
+                  class="fas fa-user-cog"></i></button></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+  function updateListeProspect(id_org) {
+    $.ajax({
+      url: 'easy/oper/updateListeProspect',
+      method: 'POST',
+      data: { id_org: id_org },
+    })
+  }
+  function listeNvClientRecouv() {
+    let id_org = document.getElementById('id_org').value
+    $.ajax({
+      url: 'easy/recouvOper/listeNvClientRecouv',
+      method: 'post',
+      data: { valide: 'R', ad_org: id_org },
+      success: async (reponse) => {
+        let data = await reponse
+        data = JSON.parse(data)
+        remplirTblClinetNvRecouv(data)
+      }
+    })
+  }
+  function remplirTblClinetNvRecouv(data) {
+    chargement()
+    let svr
+    document.getElementById('tblClinetNvRecouv').innerHTML = ""
+    for (var i = 0; i < data.length; i++) {
+      svr = data[i].svr
+      if (svr == null) {
+        svr = " "
+      }
+      document.getElementById('tblClinetNvRecouv')
+        .insertAdjacentHTML('beforeend',
+          `<tr  style="font-size: 15px; font-family: Sans-serif, sans-serif;" onclick="selectClientNV(${data[i].idClient})">
+       <td>${data[i].nomClient}</td>
+       <td>${data[i].nTel1}</td>
+       <td>${data[i].wilaya}</td>
+       <td>${svr}</td>
+      </tr>`
+        );
+    }
+    chargementClose()
+  }
+  function selectClientNV(idClient) {
+    chargement()
+    $.ajax({
+      url: 'easy/recouvOper/selectClientNV',
+      method: 'POST',
+      data: { idClient: idClient },
+      success: (reponse) => {
+        let data = JSON.parse(reponse)
+        renseignementClient(data)
+        chargementClose()
+      }
+    })
+  }
+  function renseignementClient(data) {
+    let bl = data[0].bl
+    if (bl == 1) {
+      bl = "BL"
+    } else if (bl == 0) {
+      bl = " "
+    }
+    let fact = data[0].fact
+    if (fact == 1) {
+      fact = "FACT"
+    } else if (fact == 0) {
+      fact = " "
+    }
+    let para = data[0].para
+    if (para == 1) {
+      para = "BL(para)"
+    } else if (para == 0) {
+      para = " "
+    }
+    let org = data[0].ad_org
+    if (org == 1000000) {
+      org = 'Sarl Attiryak Pharm'
+    } else if (org == 1000517) {
+      org = 'Sarl Palma Pharm'
+    } else if (org == 1000416) {
+      org = 'Eurl Seif Pharm'
+    }
+    document.getElementById('operateur1').innerText = data[0].operateur
+    document.getElementById('nomClient1').innerText = data[0].nomClient
+    document.getElementById('adresse11').innerText = data[0].adresse1
+    document.getElementById('nTel11').innerText = data[0].nTel1
+    document.getElementById('nTel22').innerText = data[0].nTel2
+    document.getElementById('rc1').innerText = data[0].rc
+    document.getElementById('nif11').innerText = data[0].nif
+    document.getElementById('ai11').innerText = data[0].ai
+    document.getElementById('bl11').innerText = bl
+    document.getElementById('fact11').innerText = fact
+    document.getElementById('para11').innerText = para
+    document.getElementById('ad_org').innerText = org
+    document.getElementById('svc11').innerText = data[0].svc
+    document.getElementById('svr11').innerText = data[0].svr
+    document.getElementById('idClient11').value = data[0].idClient
+    document.getElementById('mdp11').innerText = data[0].mdp
+    document.getElementById('region11').innerText = data[0].region
+  }
+  function validerClient() {
+    chargement()
+    $.ajax({
+      url: 'easy/contentieux/validerClient',
+      method: 'post',
+      data: { idClient: $('#idClient11').val() },
+      success: (reponse) => {
+        listeNvClientRecouv()
+        aZeroo()
+        chargementClose()
+      }
+    })
+  }
+  function aZeroo() {
+    document.getElementById('operateur1').innerText = ""
+    document.getElementById('nomClient1').innerText = ""
+    document.getElementById('adresse11').innerText = ""
+    document.getElementById('nTel11').innerText = ""
+    document.getElementById('nTel22').innerText = ""
+    document.getElementById('rc1').innerText = ""
+    document.getElementById('nif11').innerText = ""
+    document.getElementById('ai11').innerText = ""
+    document.getElementById('bl11').checked = false
+    document.getElementById('fact11').checked = false
+    document.getElementById('para11').checked = false
+    document.getElementById('ad_org').innerText = ""
+    document.getElementById('svc11').innerText = ""
+    document.getElementById('idClient11').value = ""
+    document.getElementById('mdp11').value = ""
+    document.getElementById('region11').value = ""
+    document.getElementById('svr11').innerText = ""
+
+  }
+  function printFile() {
+    let idClient = $('#idClient11').val();
+    $.ajax({
+      url: 'easy/recouvOper/printFile',
+      method: 'POST',
+      data: { idClient: idClient }
+    })
+  }
+</script>

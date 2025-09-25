@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <style>
+    .my-custom-scrollbar {
+      position: relative;
+      height: 180px;
+      overflow: auto;
+    }
+
+    .my-custom-scrollbar1 {
+      position: relative;
+      height: 130px;
+      overflow: auto;
+    }
+
+    .table-wrapper-scroll-y {
+      display: block;
+    }
+
+    table {
+      width: 250px;
+      /* Taille du tableau */
+      color: rgb(15, 1, 1);
+      /* Couleur d'écriture */
+    }
+
+    .tdtd {
+      text-align: right;
+    }
+
+    .scrol {
+      max-height: 200px;
+      overflow-y: auto;
+    }
+  </style>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+  <title>EASY SV</title>
+  <link rel="icon" type="image/png" sizes="16x16" href="assets/images/head.png">
+  <!-- Bootstrap CSS CDN -->
+  <link rel="stylesheet" href="bootstrap/bootstrap.min.css">
+  <!-- Our Custom CSS -->
+  <link rel="stylesheet" href="css/style.css">
+  <!-- Font Awesome JS -->
+  <script src="bootstrap/solid.js"></script>
+  <script src="bootstrap/fontawesome.js"></script>
+  <script src="bootstrap/jquery-3.3.1.slim.min.js"></script>
+  <script src="angular/jquery-3.5.1.js"></script>
+  <script src="bootstrap/xlsx.full.min.js"></script>
+</head>
+
+<body>
+  <div class="preloader" id="ccc" hidden>
+    <i class="fa fa-spinner fa-3x fa-pulse"></i>Chargement ...
+  </div>
+  <div class="wrapper" id="wrapper">
+    <!-- Sidebar  -->
+    <nav id="sidebar">
+      <div class="sidebar-header">
+        <!-- <h3>Quota Attiryak</h3> -->
+        <h3><img src="assets/images/easy.png" width="80%" height="100%"></h3>
+      </div>
+      <ul class="list-unstyled components">
+        <li onclick="sideBar('pageListDemandeQuota', 'pageSVlisteDemandes')" id="pageSVlisteDemandes">
+          <a><i class="fas fa-list"></i>&nbsp;
+            Liste Des Demandes</a>
+        </li>
+        <li onclick="sideBar('pageApprouve', 'pageApprouver')" id="pageApprouver"><a><i
+              class="fas fa-clipboard-check"></i>&nbsp; Quota
+            Encours</a></li>
+        <li onclick="sideBar('pageXx_arrivage', 'pageArrivage')" id="pageArrivage" hidden><a><i class="fas fa-list"></i>
+            &nbsp; Arrivage </a></li>
+        <li onclick="sideBar('pageRestoure', 'page_Restouree')" id="page_Restouree" hidden><a><i class="fas fa-list"></i>
+            &nbsp; Restorer Product </a></li>
+      </ul>
+
+      <ul class="list-unstyled">
+        <li onclick="sideBar('pageRecouverementSvc', 'recouverementSvc')" id="recouverementSvc"><a><i
+              class="fas fa-user-lock"></i>&nbsp;
+            Recouverement</a></li>
+        <li onclick="sideBar('pageNvClientSV', 'nouveauClient')" id="nouveauClient"><a><i
+              class="fas fa-user-lock"></i>&nbsp; Nouveau Client</a>
+        </li>
+      </ul>
+    </nav>
+
+    <!-- Page Content  -->
+    <div id="content">
+      <nav class="navbar navbar-expand-lg  bg-light">
+        <div class="container-fluid">
+          <button type="button" id="sidebarCollapse" class="btn btn-info btn-sm">
+            <i class="fas fa-align-left"></i>
+          </button>
+          <div>
+            <form id="myForm" action="easy/oper/quotaExcel" method="GET">
+              &nbsp;&nbsp;
+              <input type="text" id="id_userExcel" name="id_userExcel" value="<%=locals.id%>" hidden readonly>
+              <button class="btn btn-sm btn-primary" type="submit">Excel</button>
+            </form>
+          </div>
+          <button class="btn btn-dark d-inline-block d-lg-none ml-auto" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false"
+            aria-label="Toggle navigation">
+            <i class="fas fa-align-justify"></i></button>
+          <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="nav navbar-nav ml-auto">
+              <li class="nav-item"><a class="nav-link"><u>
+                    <%=locals.indice%>
+                  </u></a></li>
+              <li class="nav-item"><a href="easy/logout" class="nav-link" href="#"><i class="fas fa-sign-out-alt"></i></a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </nav>
+      <div class="line1"></div>
+      <input type="text" name="" id="ad_org" value="<%=locals.org%>" hidden>
+      <input type="text" id="id_user" value="<%=locals.id%>" hidden readonly>
+      <input type="text" id="indiceOper" value="<%=locals.indice%>" hidden readonly>
+      <input type="text" id="id_svc" value="<%=locals.id_svc%>" hidden readonly>
+      <input type="text" id="id_dc" value="<%=locals.id_dc%>" hidden readonly>

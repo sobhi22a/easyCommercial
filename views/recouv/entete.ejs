@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+  <title>EASY Recouvrement</title>
+  <link rel="icon" type="image/png" sizes="16x16" href="assets/images/head.png">
+  <!-- Bootstrap CSS CDN -->
+  <link rel="stylesheet" href="bootstrap/bootstrap.min.css">
+  <!-- Our Custom CSS -->
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/style1.css">
+
+  <!-- Font Awesome JS -->
+  <script src="bootstrap/solid.js"></script>
+  <script src="bootstrap/fontawesome.js"></script>
+  <!-- <script src="bootstrap/fontawesome6.js"></script> -->
+  <script src="angular/angular.min.js"></script>
+  <script src="angular/angular.min.js.map"></script>
+  <script src="bootstrap/jquery-3.3.1.slim.min.js"></script>
+  <script src="angular/jquery-3.5.1.js"></script>
+  <script src="bootstrap/popper.min.js"></script>
+</head>
+
+<body>
+  <div class="preloader" id="ccc" hidden>
+    <i class="fa fa-spinner fa-3x fa-pulse"></i>Chargement ...
+  </div>
+  <div class="wrapper" id="wrapper">
+    <!-- Sidebar  -->
+    <nav id="sidebar">
+      <div class="sidebar-header">
+        <h3><img src="assets/images/easy.png" width="80%" height="100%"></h3>
+        <!-- <h3>Quota Attiryak</h3> -->
+      </div>
+      <ul class="list-unstyled components">
+        <li class="active" id="demandeDebloque" onclick="demandeDebloque()"><a><i class="fas fa-user-lock"></i>&nbsp;
+            Demande Déblocage</a></li>
+        <li id="nouveauClient" onclick="nouveauClient()"><a><i class="fas fa-user-plus"></i>&nbsp;
+            Nouveaux Clients</a></li>
+        <li id="pageExcellentClient" onclick="pageExcellentClient()"><a><i class="fas fa-user-check"></i> &nbsp;
+            Excellent Clients</a></li>
+        <li id="suiviBonRoute" onclick="suiviBonRoute()"><a><i class="fas fa-list-ol"></i> &nbsp; Suivi Bon route</a>
+        </li>
+        <li id="historyRecouv" onclick="historyRecouv()"><a><i class="fas fa-history"></i> &nbsp; Historique</a></li>
+      </ul>
+    </nav>
+
+    <!-- Page Content  -->
+    <div id="content">
+      <nav class="navbar navbar-expand-lg  bg-light">
+        <div class="container-fluid">
+          <button type="button" id="sidebarCollapse" class="btn btn-info btn-sm">
+            <i class="fas fa-align-left"></i>
+          </button>
+          <button class="btn btn-dark d-inline-block d-lg-none ml-auto" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false"
+            aria-label="Toggle navigation">
+            <i class="fas fa-align-justify"></i></button>
+          <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="nav navbar-nav ml-auto">
+              <!-- <li class="nav-item"><a class="nav-link" href="#">Profile</a></li>
+     <li class="nav-item"><a class="nav-link" href="#">Références</a></li> -->
+              <li class="nav-item"><a class="nav-link"><u>
+                    <%=locals.indice%>
+                  </u></a></li>
+              <a class="nav-link" href="easy/logout"><i class="fas fa-sign-out-alt"></i></a>
+            </ul>
+          </div>
+        </div>
+      </nav>
+      <input type="text" id="id_org" value="<%=locals.org%>" hidden readonly>
+      <input type="text" id="id_user" value="<%=locals.id%>" hidden readonly>
+      <input type="text" id="indiceOper" value="<%=locals.indice%>" hidden readonly>
+      <input type="text" id="rolesId" value="<%=locals.roles%>" hidden readonly>
+      <!--
+<div class="line"></div>
+<div class="line"></div>
+<div class="line"></div>
+-->

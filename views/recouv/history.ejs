@@ -1,0 +1,170 @@
+<div id='pageHistoryRecouv' hidden>
+  <div class="card">
+    <div class="card-body">
+      <div class="form-row">
+        <div class="col-sm-3">
+          <div class="input-group mb-2">
+            <div class="input-group-prepend">
+              <div class="input-group-text"><i class="fas fa-calendar"></i></div>
+            </div>
+            <input type="date" class="form-control form-control-sm" id="date111">
+          </div>
+        </div>
+        <div class="col-sm-5">
+          <div class="form-row">
+            <div class="col-7">
+              <div class="input-group mb-2">
+                <div class="input-group-prepend">
+                  <div class="input-group-text"><i class="fas fa-calendar"></i></div>
+                </div>
+                <input type="date" class="form-control form-control-sm" id="date112">
+              </div>
+            </div>
+            <div class="col">
+              <button class="btn btn-primary btn-sm" onclick="vueRecouv1()"><i class="fas fa-search"></i></button>
+            </div>
+          </div>
+        </div>
+        <div class="col-sm-4">
+          <input type="text" id="recherche11" class="form-control form-control-sm" placeholder="Recherche ...">
+        </div>
+      </div>
+      <div class="table-responsive">
+        <div class="my-custom-scrollbarRecouv">
+          <table class="table table-bordered table-sm table-hover" id="myTblRecouv">
+            <thead class="thead-dark">
+              <tr style="font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif; font-size: smaller;">
+                <th scope="col">#</th>
+                <th scope="col" id="hisHiddenSVR" hidden>SVRecouv</th>
+                <th scope="col">Indice</th>
+                <th scope="col">Client</th>
+                <th scope="col">Status</th>
+                <th scope="col">Prospect</th>
+                <th scope="col">Region</th>
+                <th scope="col">Date Demande</th>
+                <th scope="col">Date Action</th>
+              </tr>
+            </thead>
+            <tbody id="tblVueRecouv">
+            </tbody>
+          </table>
+        </div>
+        <hr>
+        <div class="form-row">
+          <div class="col-sm-4">
+            <strong>Statistique :</strong>
+          </div>
+          <div class="col-sm-8">
+            <div class="form-row">
+              <div class="col-sm-4">
+                <span class="badge badge-warning" id="prosper12"></span>
+              </div>
+              <div class="col-sm-4">
+                <span class="badge badge-success" id="debloque12"></span>
+              </div>
+              <div class="col-sm-4">
+                <span class="badge badge-danger" id="bloque12"></span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script>
+    function vueRecouv1() {
+      chargement()
+      var ad_org = $('#id_org').val(),
+        id_user = $('#id_user').val()
+      date111 = $('#date111').val()
+      date112 = $('#date112').val()
+      if (ad_org == 0) {
+        document.getElementById('hisHiddenSVR').hidden = false
+      }
+      $.ajax({
+        url: 'easy/recouvOper/vueRecouv1',
+        method: 'POST',
+        data: { ad_org, id_user, dateCreation1: date111, dateCreation2: date112 },
+      }).then((reponse) => {
+        remplirTableDeploquage3(reponse);
+        chargementClose()
+      })
+    }
+    function remplirTableDeploquage3(data) {
+      chargement()
+      var ad_org = $('#id_org').val()
+      let nbrClientProspect = 0
+      let nbrClientBl = 0
+      let nbrClientDbl = 0
+      document.getElementById('tblVueRecouv').innerHTML = ""
+      for (var i = 0; i < data.length; i++) {
+        var timeCreation = data[i].tdem,
+          timeCreation1 = data[i].td
+        dateCreation = data[i].ddem
+        dateCreation1 = data[i].dd
+        dateCreation = dateCreation.split('T')[0]
+        var dateCreationA = dateCreation.split('-')[0]
+        var dateCreationM = dateCreation.split('-')[1]
+        var dateCreationJ = dateCreation.split('-')[2]
+        dateCreationJ = parseInt(dateCreationJ) + 1
+        dateCreation = dateCreationJ + '-' + dateCreationM + '-' + dateCreationA
+        //
+        dateCreation1 = dateCreation1.split('T')[0]
+        var dateCreationA1 = dateCreation1.split('-')[0]
+        var dateCreationM1 = dateCreation1.split('-')[1]
+        var dateCreationJ1 = dateCreation1.split('-')[2]
+        dateCreationJ1 = parseInt(dateCreationJ1) + 1
+        dateCreation1 = dateCreationJ1 + '-' + dateCreationM1 + '-' + dateCreationA1
+        var prospect = data[i].prosper
+        var status = data[i].typeOperation
+        if (prospect == 0) {
+          prospect = '<span class="badge badge-light">NON</span>'
+        } else if (prospect == 1) {
+          prospect = '<span class="badge badge-warning">OUI</span>'
+          nbrClientProspect++
+        }
+        if (status == 'N') {
+          status = '<span class="badge badge-light">En Cours</span>'
+        } else if (status == 'B' || status == 'BR') {
+          status = '<span class="badge badge-danger">Bloqué</span>'
+          nbrClientBl++
+        } else if (status == 'Y') {
+          status = '<span class="badge badge-success">Débloqué</span>'
+          nbrClientDbl++
+        } if (status == 'DR') {
+          status = '<span class="badge badge-success">Débloqué Réafecter</span>'
+          nbrClientDbl++
+        }
+        document.getElementById('tblVueRecouv')
+          .insertAdjacentHTML('beforeend',
+            `<tr style="font-size: 11px; font-family: Verdana, sans-serif;">
+                   <td>${i + 1}</td>
+                   <td id="${i}" hidden>${data[i].superViseurName}</td>
+                   <td>${data[i].indiceOper}</td>
+                   <td>${data[i].bpartner_name}</td>
+                   <td>${status}</td>
+                   <td id='prosperID'>${prospect}</td>
+                   <td>${data[i].region}</td>
+                   <td>${dateCreation} || ${timeCreation}</td>
+                   <td>${dateCreation1} || ${timeCreation1}</td>
+                 </tr>`
+          );
+        if (ad_org == 0) {
+          document.getElementById(i).hidden = false
+        }
+      }
+      document.getElementById('prosper12').innerText = 'Nbr Clients Prospect  : ' + nbrClientProspect
+      document.getElementById('debloque12').innerText = 'Nbr Clients Débloqué : ' + nbrClientDbl
+      document.getElementById('bloque12').innerText = 'Nbr Clients Bloqué   : ' + nbrClientBl
+      chargementClose()
+    }
+    $(document).ready(function () {
+      $("#recherche11").on("keyup", function () {
+        var value = $(this).val().toLowerCase();
+        $("#myTblRecouv tr").filter(function () {
+          $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+        });
+      });
+    });
+  </script>
+</div>

@@ -1,0 +1,31 @@
+<%-include('entete.ejs')%>
+<script>
+  function chargement(){
+    document.getElementById('ccc').hidden=false
+    document.getElementById('wrapper').style="filter: blur(3px)"
+  }
+  function chargementClose(){
+    document.getElementById('ccc').hidden=true
+    document.getElementById('wrapper').style="filter:none"
+  }
+
+</script>
+<%-include('transport.ejs')%>
+<%-include('dechargeOrder.ejs')%>
+<%-include('enbas.ejs')%>
+
+<script>
+  function listeBonRoute(){
+    document.getElementById("listeBonRoute").classList.add("active");
+    document.getElementById("dechargeBonRoute").classList.remove("active");
+    document.getElementById('pageTransport').hidden=false
+    document.getElementById('pageDechargeOrder').hidden=true
+  }
+
+  function dechargeBonRoute(){
+    document.getElementById("listeBonRoute").classList.remove("active");
+    document.getElementById("dechargeBonRoute").classList.add("active");
+    document.getElementById('pageTransport').hidden=true
+    document.getElementById('pageDechargeOrder').hidden=false
+  }
+</script>

@@ -1,0 +1,250 @@
+<div id="pageStockRectif" hidden>
+  <div class="card">
+    <div class="card-body">
+      <div class="row form">
+        <div class="col-sm-4">
+          <input type="date" id="date11" class="form-control form-control-md" />
+        </div>
+        <div class="col-sm-1">
+          <button class="btn btn-primary btn-md" onclick="getParametreDt()">Load</button>
+        </div>
+        <div class="col-sm-1">
+          <button class="btn btn-primary btn-md" onclick="getListCorrectionToDt()">GET</button>
+        </div>
+        <div class="col-sm-1">
+          <div class="form-group form-check">
+            <input type="checkbox" class="form-check-input" id="isQr" />
+            <label class="form-check-label" for="isQr" style="margin-top: 4px">IS QR</label>
+          </div>
+        </div>
+        <div class="col-sm-3">
+          <div hidden class="input-group">
+            <select type="text" id="paramsId" class="form-control"></select>
+          </div>
+          <input type="text" class="form-control form-control-md" id="rechercheProduct" placeholder="Recherche ..." />
+        </div>
+        <div class="col-sm-2">
+          <input type="hidden" id="id_userExcel" value="<%= locals.id %>" />
+          <input type="hidden" id="dateExcel" />
+          <input type="hidden" id="groupIdExcel" />
+          <input type="hidden" id="isQrExcel" />
+
+          <button class="btn btn-sm btn-primary" type="button" onclick="downloadExcel()">Excel Stat</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-body">
+      <table class="table table-striped" id="tableProduct">
+        <thead class="thead-dark">
+          <tr>
+            <th scope="col">#</th>
+            <th scope="col">Emplacement</th>
+            <th scope="col">Groupe</th>
+            <th scope="col">Produits</th>
+            <th scope="col">PPA</th>
+            <th scope="col">LOT</th>
+            <th scope="col">Date</th>
+            <th scope="col">Qts</th>
+            <th scope="col">Q-P</th>
+            <th scope="col">Q-C</th>
+            <th scope="col">Motif</th>
+          </tr>
+        </thead>
+        <tbody id="tableProduitRectif"></tbody>
+      </table>
+    </div>
+  </div>
+  <style>
+    input[type="checkbox"] {
+      width: 1.2em;
+      height: 1.2em;
+    }
+  </style>
+</div>
+<script>
+  async function downloadExcel() {
+    const id_userExcel = document.getElementById("id_userExcel").value;
+    const dateExcel = document.getElementById("dateExcel").value;
+    const groupIdExcel = document.getElementById("groupIdExcel").value;
+    const isQrExcel = document.getElementById("isQrExcel").value;
+
+    const url = `easy/contentieux/getStatPreparation?id_userExcel=${encodeURIComponent(id_userExcel)}&date=${encodeURIComponent(
+      dateExcel
+    )}&groupId=${encodeURIComponent(groupIdExcel)}&isQr=${encodeURIComponent(isQrExcel)}`;
+
+    try {
+      chargement();
+      const response = await fetch(url, { method: "GET" });
+      if (!response.ok) throw new Error("Download failed");
+
+      // Get file as blob
+      const blob = await response.blob();
+      const link = document.createElement("a");
+      link.href = URL.createObjectURL(blob);
+      link.download = `statPreparateurs_${datea()}.xlsx`; // <-- file name
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(link.href);
+      chargementClose();
+    } catch (err) {
+      chargementClose();
+      console.error("Error downloading Excel:", err);
+      alert("Failed to download file.");
+    }
+  }
+
+  function datea() {
+    var today = new Date();
+    var dd = today.getDate();
+    var yy = today.getFullYear();
+    var mm = today.getMonth() + 1;
+    return dd + "/" + mm + "/" + yy;
+  }
+
+  //nouveau service for DT
+  function getParametreDt() {
+    chargement();
+    $.ajax({
+      url: "easy/contentieux/getParametreDt",
+      method: "POST",
+      data: {
+        dateD: $("#date11").val(),
+      },
+    })
+      .then((reponse) => {
+        fillListOfParams(reponse);
+      })
+      .catch((error) => {
+        alert(error);
+        chargementClose();
+      });
+  }
+  function fillListOfParams(data) {
+    document.getElementById("paramsId").innerHTML = "";
+    var body_cadre = document.getElementById("paramsId");
+    for (var i = 0; i < data.length; i++) {
+      var btn = document.createElement("OPTION");
+      ii = data[i][1];
+      btn.innerHTML = ii;
+      btn.value = data[i][0];
+      body_cadre.appendChild(btn);
+    }
+    chargementClose();
+  }
+  function getListCorrectionToDt() {
+    chargement();
+    $.ajax({
+      url: "easy/contentieux/getListCorrectionToDt",
+      method: "POST",
+      data: {
+        date: $("#date11").val(),
+        groupId: $("#paramsId").val(),
+        isQr: document.getElementById("isQr").checked,
+      },
+    })
+      .then((reponse) => {
+        afficheTableProduitRectif(reponse);
+        setFormValues($("#date11").val(), $("#paramsId").val(), document.getElementById("isQr").checked);
+      })
+      .catch((error) => {
+        alert(error);
+        chargementClose();
+      });
+  }
+
+  //fin nouveau service for DT
+  function clearElement(element) {
+    element.innerHTML = "";
+  }
+
+  function afficheTableProduitRectif(data) {
+    const body = document.getElementById("tableProduitRectif");
+    clearElement(body);
+    for (var i = 0; i < data.length; i++) {
+      let deferent = $("#isQr").checked
+        ? data[i].ORIGQTYENTERED - data[i].QTYMOVEMENTED
+        : data[i].ORIGQTYENTERED - data[i].QTYMOVEMENTEDCTRL;
+
+      deferent =
+        data[i].QTYMOVEMENTED == null && data[i].QTYMOVEMENTEDCTRL == null
+          ? data[i].ORIGQTYENTERED - data[i].MOVEMENTQTY
+          : deferent;
+
+      const qty =
+        data[i].QTYMOVEMENTED == null && data[i].QTYMOVEMENTEDCTRL == null
+          ? `${data[i].ORIGQTYENTERED} (${data[i].MOVEMENTQTY})`
+          : data[i].ORIGQTYENTERED;
+
+      let deferentPrepared = data[i].QTYMOVEMENTED == null ? " " : data[i].ORIGQTYENTERED - data[i].QTYMOVEMENTED;
+      let deferentControled = data[i].QTYMOVEMENTEDCTRL == null ? " " : data[i].ORIGQTYENTERED - data[i].QTYMOVEMENTEDCTRL;
+
+      document.getElementById("tableProduitRectif").insertAdjacentHTML(
+        "beforeend",
+        `<tr
+            style="font-size: 14px; font-family: Verdana, sans-serif;">
+                <td>${i + 1}</td>
+                <td>${data[i].LOCATORSOURCE}</td>
+                <td>${data[i].GROUPREGION}</td>
+                <td>
+                  ${data[i].NAME} <br>
+                  <h5>
+                    <span class="badge badge-info">P: ${data[i].PREPARATEUR}</span>
+                    <span class="badge badge-info">C: ${data[i].CONTROLEUR}</span>
+                  </h5>
+                </td>
+                <td>${data[i].PPA.toFixed(2)}</td>
+                <td>${data[i].LOT}</td>
+                <td>${data[i].GUARANTEEDATE}</td>
+                <td width="150">${qty}</td>
+                <td>
+                  ${data[i].QTYMOVEMENTED == null ? data[i].ORIGQTYENTERED : data[i].QTYMOVEMENTED}
+                  <h5><span class="badge badge-danger">${deferentPrepared}</span></h5>
+                </td>
+                <td>
+                  ${data[i].QTYMOVEMENTEDCTRL}
+                  <h5><span class="badge badge-danger">${deferentControled}</span></h5>
+                </td>
+                <td  style="width:250px;">${data[i].DESCRIPTION_FLUTTER}</td>
+            </tr>`
+      );
+    }
+    chargementClose();
+  }
+
+  function getAdUserName(id, type, i) {
+    id
+      ? (chargement(),
+        $.ajax({
+          url: "easy/contentieux/getAdUserName",
+          method: "POST",
+          data: { id },
+        })
+          .then((reponse) => {
+            chargementClose();
+            document.getElementById(type + i).innerText = reponse[0].NAME;
+          })
+          .catch((error) => {
+            alert(error);
+            chargementClose();
+          }))
+      : (document.getElementById(type + i).innerHTML = "<span style='color: #ff0000'>Empty</span>");
+  }
+
+  function setFormValues(date, groupId, isQr) {
+    document.getElementById("dateExcel").value = date;
+    document.getElementById("groupIdExcel").value = groupId;
+    document.getElementById("isQrExcel").value = document.getElementById("isQr").checked ? "true" : "false";
+  }
+
+  $(document).ready(function () {
+    $("#rechercheProduct").on("keyup", function () {
+      var value = $(this).val().toLowerCase();
+      $("#tableProduct tr").filter(function () {
+        $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1);
+      });
+    });
+  });
+</script>

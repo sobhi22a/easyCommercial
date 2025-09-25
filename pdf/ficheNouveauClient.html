@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fiche Nouveau CLient</title>
+</head>
+<style>
+#maDiv {
+  float: left;
+text-align: left;
+height: 60px;
+width: 200px;
+}
+#maDiv1 {
+  float: right;
+text-align: left;
+height: 60px;
+width: 200px;
+}
+html,body{
+    width: 100%;
+    height: 100%;
+    margin: 0; /* Space from this element (entire page) and others*/
+    padding: 0; /*space from content and border*/
+    border: solid black;
+    border-width: thin;
+    overflow:hidden;
+    display:block;
+    box-sizing: border-box;
+}
+</style>
+<body>
+    <div style="text-align: center;"><h2><u>{{ad_org}}</u></h2></div> <br>
+<div id="maDiv">
+    &nbsp; &nbsp; &nbsp; &nbsp;    <strong>Opérateur :</strong> {{operateur}} <br> 
+    &nbsp; &nbsp; &nbsp; &nbsp;    <strong>Région :</strong> {{region}} <br>
+</div> <br>
+<div id="maDiv1">
+    <strong>Fait Le :</strong> {{dateCreation}}
+</div> <br>
+<br> <br> <br>
+&nbsp; &nbsp; &nbsp;<strong>Client :</strong> {{nomClient}} <br> <br>
+&nbsp; &nbsp; &nbsp;<strong>N° Tel :</strong> {{nTel1}}   &nbsp; &nbsp; &nbsp; &nbsp; <strong>N° Tel :</strong> {{nTel2}}  <br><br>
+&nbsp; &nbsp; &nbsp;<strong>Adresse :</strong> {{adresse}}  , {{wilaya}} <br> <br>
+&nbsp; &nbsp; &nbsp;<strong>Mot De Passe :</strong> {{mdp}} <br> <br>
+<div style="text-align: center;"><h2><u>COORDONNEES DU CLIENT</u></h2></div> <br>
+&nbsp; &nbsp; &nbsp;<strong>N° Register De Commerce :</strong> {{rc}} <br> <br>
+&nbsp; &nbsp; &nbsp;<strong>N° Identifiant Fiscal :</strong> {{nif}} <br> <br>
+&nbsp; &nbsp; &nbsp;<strong>N° Article D'Imposition : </strong>  {{ai}}
+<br> <br>
+&nbsp; &nbsp; &nbsp;<strong>Type De Vente : </strong><br>
+&nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp;  {{bl}}  &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; {{fact}} &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; {{para}}
+<br> <br> 
+<br> <br> 
+<br> <br> 
+<br> <br> 
+<div id="maDiv">
+    <strong>SuperViseur Commercial :</strong> <br> 
+    &nbsp; &nbsp; &nbsp; {{svc}}
+</div> <br>
+<div id="maDiv1">
+    <strong>SuperViseur Recouv :</strong> <br>
+    &nbsp; &nbsp; &nbsp; {{svr}}  
+</div>
+    <br><br>
+</body>
+</html>

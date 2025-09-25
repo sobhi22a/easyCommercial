@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <link rel="icon" type="image/png" sizes="16x16" href="assets/images/head.png">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Quota Attiryak</title>
+  <link rel="stylesheet" href="cssLogin/css.css">
+  <link rel="stylesheet" href="cssLogin/materialdesignicons.min.css">
+  <link rel="stylesheet" href="cssLogin/bootstrap.min.css">
+  <link rel="stylesheet" href="assets/css/login.css">
+</head>
+<body>
+  <main class="d-flex align-items-center min-vh-100 py-3 py-md-0">
+    <div class="container">
+      <div class="card login-card">
+        <div class="row no-gutters">
+          <div class="col-md-7">
+            <img src="assets/images/att.jpg" width="100%" height="100%" alt="login">
+          </div>
+          <div class="col-md-5">
+            <div class="card-body">
+              <div class="brand-wrapper">
+                <!-- <img src="assets/images/logo.svg" alt="logo" class="logo"> -->
+              </div>
+              <p class="login-card-description">Connectez-vous</p>
+              
+              <form action="/easy" method="POST">
+                <!-- <input type="text" id="message" value="<%=locals.message%>" readonly> -->
+                <% if (locals.message) { %>
+                  <div class="alert alert-danger" role="alert">
+                    INDICE ou MOT DE PASSE que vous avez saisi(e) n’est pas associé(e) à un compte.
+                  </div>
+                <% } %>
+                  <div class="form-group">
+                    <label for="indice" class="sr-only">Indice</label>
+                    <input type="text" name="indice" class="form-control" placeholder="Indice" required>
+                  </div>
+                  <div class="form-group mb-4">
+                    <label for="password" class="sr-only">Password</label>
+                    <input type="password" name="password" class="form-control" placeholder="***********" required>
+                  </div>
+                  <input id="login" class="btn btn-block login-btn mb-4" type="submit" value="Login">
+                </form>
+                <a href="" class="forgot-password-link">Mot de Passe Oublié ? : Contactez Service Informatique </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+  <script src="cssLogin/jquery-3.4.1.min.js"></script>
+  <script src="cssLogin/popper.min.js"></script>
+  <script src="cssLogin/bootstrap.min.js"></script>
+</body>
+</html>
+

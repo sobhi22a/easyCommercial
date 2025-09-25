@@ -1,0 +1,460 @@
+<div id="pageApprouve" class="pageLayout">
+  <div class="form-row wrap">
+    <div class="col-md-6">
+      <div class="card">
+        <div class="card-body">
+          <div class="form-row">
+            <div class="col-sm-6">
+              <input type="text" id="indiceOperRechercherNon" class="form-control form-control-sm"
+                placeholder="Recherche....">
+            </div>
+            <div class="col-5">
+              <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#exampleModalLong">
+                Demande Modification
+              </button>
+            </div>
+            <div class="col-1">
+              <button class="btn btn-success btn-sm" onclick="appelTableApprouve()"><i class="fas fa-sync"></i></button>
+            </div>
+          </div>
+          <div class="table-responsive-sm">
+            <div class="my-custom-scrollbar22A">
+              <table class="table table-sm table-hover" id="myTable1">
+                <thead class="thead thead-dark">
+                  <tr style="font-size: 13px; font-family: Verdana, sans-serif;">
+                    <th scope="col">Tiers</th>
+                    <th scope="col">Date&Time Creation</th>
+                    <th scope="col">Vend</th>
+                  </tr>
+                </thead>
+                <tbody id="tableNonApprouver">
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-body">
+          <div class="form-row">
+            <div class="col-sm-7">
+              <h5 class="card-title">Changer les couleurs des produits</h5>
+            </div>
+            <div class="col-sm-3">
+              <input type="text" class="form-control form-control-sm" id="rechercheParColor" placeholder="recherche ..">
+            </div>
+            <div class="col-sm-2">
+              <button class="btn btn-sm btn-primary" onclick="tableProductColor();">GET</button>
+            </div>
+          </div>
+          <div class="table-responsive-sm">
+            <div class="my-custom-scrollbar22A">
+              <table class="table table-sm table-hover">
+                <thead class="thead thead-dark">
+                  <tr style="font-size: 13px; font-family: Verdana, sans-serif;">
+                    <th scope="col">Produits</th>
+                    <th scope="col">Couleurs</th>
+                    <th scope="col">Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="tableProductColor">
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-6">
+      <div class="card">
+        <div class="card-body">
+          <div class="form-row">
+            <div class="col-sm-8">
+              <h5 class="card-title">Quota Reserver Par Opérateur</h5>
+            </div>
+            <div class="col-sm-4">
+              <input type="text" id="rechercheReserve" class="form-control form-control-sm" placeholder="Recherche....">
+            </div>
+          </div>
+          <div class="table-responsive-sm">
+            <div class="my-custom-scrollbar22A">
+              <table class="table table-sm table-hover">
+                <thead class="thead thead-dark">
+                  <tr style="font-size: 13px; font-family: Verdana, sans-serif;">
+                    <th scope="col">Oper</th>
+                    <th scope="col">Client</th>
+                    <th scope="col">Produits</th>
+                    <th scope="col">Qts</th>
+                    <th scope="col">Action</th>
+                  </tr>
+                </thead>
+                <tbody id="tblQuotaReserver">
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-body">
+          <h5 class="card-title">Quota Réserver Par Client </h5>
+          <div class="table-responsive-sm">
+            <div class="my-custom-scrollbar22d">
+              <table class="table table-sm table-hover">
+                <thead class="thead thead-dark">
+                  <tr style="font-size: 13px; font-family: Verdana, sans-serif;">
+                    <th scope="col">#</th>
+                    <th scope="col">Produits</th>
+                    <th scope="col">Qts SV</th>
+                    <th scope="col">Qts</th>
+                    <th scope="col">Action</th>
+                  </tr>
+                </thead>
+                <tbody id="tblQuotaDemander">
+                </tbody>
+              </table>
+            </div>
+            <hr>
+            <span>Montant Cmd : &nbsp;<strong id="mntBCCselectione"></strong></span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- Modal -->
+  <div class="modal fade" id="exampleModalLong" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle"
+    aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLongTitle">Donnez la main à Opérateur De Modifier OU Changer Bon De
+            Commande Quota</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <div class="form-row">
+            <div class="col-sm-6">
+              <input type="text" id="indiceOperRechercher" class="form-control form-control-sm"
+                placeholder="Recherche ....">
+            </div>
+            <div class="col-sm-1">
+            </div>
+            <div class="col-sm-3">
+            </div>
+            <div class="col-sm-1">
+              <button class="btn btn-success btn-sm" onclick="appelTableApprouve()"><i class="fas fa-sync"></i></button>
+            </div>
+          </div>
+          <div class="table-responsive-sm">
+            <div class="my-custom-scrollbar22122">
+              <table class="table table-sm table-hover" id="myTable">
+                <thead class="thead thead-dark">
+                  <tr style="font-size: 13px; font-family: Verdana, sans-serif;">
+                    <th scope="col" style="width: 50%;">Tiers</th>
+                    <th scope="col">Date</th>
+                    <th scope="col">Vend</th>
+                    <th scope="col">Action</th>
+                  </tr>
+                </thead>
+                <tbody id="tableApprouver">
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Fermer</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  function appelTableApprouve() {
+    tableApprouver()
+    setTimeout(() => {
+      tableNonApprouver()
+    }, 500)
+    qtsReserver()
+  }
+  function tableApprouver() {
+    chargement();
+    var ad_org = document.getElementById('ad_org').value
+    var id_user = document.getElementById('id_user').value
+    $.ajax({
+      url: 'easy/superViseur/comandeApprouver',
+      method: 'POST',
+      data: {
+        ad_org_id: ad_org,
+        confirme: 'Y',
+        traiter: 'Y',
+        id_user: id_user
+      },
+      success: (tblApprouver) => {
+        remplirTableApprouver(tblApprouver)
+        chargementClose();
+      }
+    })
+  }
+  function tableNonApprouver() {
+    chargement();
+    var ad_org_id = document.getElementById('ad_org').value
+    var id_user = document.getElementById('id_user').value
+    $.ajax({
+      url: 'easy/superViseur/comandeApprouver',
+      method: 'POST',
+      data: { ad_org_id, confirme: 'N', traiter: 'N', id_user },
+      success: (tblApprouver) => {
+        remplirTableNonApprouver(tblApprouver)
+        chargementClose();
+      }
+    })
+  }
+
+  function remplirTableApprouver(data) {
+    document.getElementById('tableApprouver').innerHTML = ""
+    for (var i = 0; i < data.length; i++) {
+      var date2 = data[i].dateCreation;
+      var date22 = date2.split("T")[0]
+      var org = ""
+      if (data[i].ad_org_id == 1000000) {
+        org = 'SARL ATTIRYAK'
+      } else if (data[i].ad_org_id == 1000416) {
+        org = 'EURL SEIF PHARM'
+      } else if (data[i].ad_org_id == 1000517) {
+        org = 'SARL PALMA PHARM'
+      }
+      document.getElementById('tableApprouver')
+        .insertAdjacentHTML('beforeend',
+          `<tr style="font-size: 15px; font-family: Verdana, sans-serif;">
+            <td>${data[i].nomTiers}</td>
+            <td>${date22}</td>
+            <td>${data[i].createby}</td>
+            <td>
+              <button onclick="updateCommande(${data[i].reference})" class="btn btn-primary btn-sm"><i class="fas fa-edit"></i></button>
+              </td>
+          </tr>`
+        );
+    }
+  }
+  function remplirTableNonApprouver(dataTbl) {
+    var data = dataTbl;
+    document.getElementById('tableNonApprouver').innerHTML = ""
+    for (var i = 0; i < data.length; i++) {
+      var date2 = data[i].dateCreation;
+      var date22 = date2.split("T")[0]
+      var org = ""
+      if (data[i].ad_org_id == 1000000) {
+        org = 'SARL ATTIRYAK'
+      } else if (data[i].ad_org_id == 1000416) {
+        org = 'EURL SEIF PHARM'
+      } else if (data[i].ad_org_id == 1000517) {
+        org = 'SARL PALMA PHARM'
+      }
+      document.getElementById('tableNonApprouver')
+        .insertAdjacentHTML('beforeend',
+          `<tr onclick='commandeReserve(${data[i].reference})' style="font-size: 15px; font-family: Verdana, sans-serif;">
+    <td>${data[i].nomTiers}</td>
+    <td>${date22}  & ${data[i].timeCreation} </td>
+    <td>${data[i].createby}</td>
+  </tr>`
+        );
+    }
+  }
+
+  function updateCommande(reference) {
+    let conf = confirm('Continue Opération ?')
+    if (conf == true) {
+      $.ajax({
+        url: 'easy/superViseur/updateCommande',
+        method: 'PUT',
+        data: { reference, reference },
+        success: (reponse) => {
+          if (reponse == 'Y') {
+            appelTableApprouve()
+          }
+        }
+      })
+    }
+  }
+
+  function commandeReserve(reference) {
+    $.ajax({
+      url: 'easy/superViseur/commandeReserve',
+      method: 'POST',
+      data: { reference: reference, ad_org_id: $('#ad_org').val() },
+      success: (reponse) => {
+        let mnt = parseFloat(reponse.mnt[0][0]).toFixed(2)
+        document.getElementById('mntBCCselectione').innerText = mnt
+        tblQuotaDemander(reponse.liste, reference)
+      }
+    })
+  }
+
+
+
+  function tblQuotaDemander(data, reference) {
+    document.getElementById('tblQuotaDemander').innerHTML = ""
+    for (var i = 0; i < data.length; i++) {
+      document.getElementById('tblQuotaDemander')
+        .insertAdjacentHTML('beforeend',
+          `<tr style="font-size: 15px; font-family: Verdana, sans-serif;">
+    <td>${i + 1}</td>
+    <td>${data[i].NAME}</td>
+    <td>${data[i].QUANTITY}</td>
+    <td>${data[i].QTYALLOCATED}</td>
+    <td><button class="btn btn-sm btn-danger" onclick="supprimerQuotaReserver22(${data[i].XX_QUOTA_ID},${reference})"><i class="fas fa-trash-alt"></i></button></td>
+    </tr>`
+        );
+    }
+  }
+
+
+  function qtsReserver() {
+    chargement();
+    let ad_org_id = $('#ad_org').val()
+    let id_dc = $('#id_user').val()
+    $.ajax({
+      url: 'easy/superViseur/qtsReserver',
+      method: 'POST',
+      data: { ad_org_id, id_dc },
+      success: (reponse) => {
+        tblQuotaReserver(reponse)
+        chargementClose();
+      }
+    })
+  }
+
+  function tblQuotaReserver(data) {
+    document.getElementById('tblQuotaReserver').innerHTML = ""
+    for (var i = 0; i < data.length; i++) {
+      document.getElementById('tblQuotaReserver')
+        .insertAdjacentHTML('beforeend',
+          `<tr style="font-size: 15px; font-family: Verdana, sans-serif;">
+    <td>${data[i].INDICE}</td>
+    <td>${data[i].CLIENT}</td>
+    <td>${data[i].PRODUCT}</td>
+    <td>${data[i].QTYALLOCATED}</td>
+    <td>
+      <button onclick="supprimerQuotaReserver22(${data[i].XX_QUOTA_ID},${data[i].REFERENCE})" class="btn btn-danger btn-sm"><i class="fas fa-trash-alt"></i></button>
+      </td>
+    </tr>`
+        );
+    }
+  }
+
+  function supprimerQuotaReserver22(xx_quota_id, reference) {
+    chargement();
+    let id_user = document.getElementById('id_user').value
+    $.ajax({
+      url: 'easy/superViseur/annulerLignereserver',
+      method: 'DELETE',
+      data: {
+        xx_quota_id: xx_quota_id,
+        id_dc: id_user,
+        ad_org_id: $('#ad_org').val()
+      },
+      success: (reponse) => {
+        if (reponse == 'ok') {
+          appelTableApprouve()
+          commandeReserve(reference)
+          chargementClose();
+        } else {
+          chargementClose();
+          document.getElementById('messageErrorSpan').innerText = reponse;
+          $("#ModalErrorMessage").modal()
+        }
+      }
+    })
+  }
+
+
+
+  function tableProductColor() {
+    chargement()
+    $.ajax({
+      url: 'easy/superViseur/getProductColor',
+      method: 'GET',
+    }).then((data) => {
+      remplirTableColor(data);
+    })
+  }
+  $(document).ready(function () {
+    $("#rechercheParColor").on("keyup", function () {
+      var value = $(this).val().toLowerCase();
+      $("#tableProductColor tr").filter(function () {
+        $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+      });
+    });
+  });
+  function remplirTableColor(data) {
+    document.getElementById('tableProductColor').innerHTML = ""
+    for (var i = 0; i < data.length; i++) {
+      document.getElementById('tableProductColor')
+        .insertAdjacentHTML('beforeend',
+          `<tr style="font-size: 15px; font-family: Verdana, sans-serif; background: ${data[i].COLOR !== null ? data[i].COLOR : 'transparent'}"">
+                <td>${data[i].NAME}</td>
+                  <td>
+                    <select class="form-select form-select-sm" id="selectProductColor-${i}">
+                        <option></option>
+                        <option ${(data[i].COLOR === '#F08080') ? 'selected' : ''} value="#F08080">Rouge</option>
+                        <option ${(data[i].COLOR === '#90EE90') ? 'selected' : ''} value="#90EE90">Vert</option>
+                        <option ${(data[i].COLOR === '#00FFFF') ? 'selected' : ''} value="#00FFFF">Bleu</option>
+                        <option ${(data[i].COLOR === 'FFA500') ? 'selected' : ''} value="#FFA500">Orange</option>
+                    </select>
+                  </td>
+                <td>
+                  <button onclick="changeProductColor(${data[i].M_PRODUCT_ID}, ${i})" class="btn btn-primary btn-sm"><i class="fas fa-edit"></i></button>
+                </td>
+              </tr>`
+        );
+    }
+    chargementClose()
+  }
+  function changeProductColor(M_PRODUCT_ID, index) {
+    const color = document.getElementById(`selectProductColor-${index}`).value;
+    $.ajax({
+      url: 'easy/superViseur/validerColor',
+      method: 'POST',
+      data: {
+        M_PRODUCT_ID,
+        color
+      },
+      success: (response) => {
+        if (response.result !== 1) alert("");
+        // tableProductColor();
+      }
+    })
+  }
+
+  $(document).ready(function () {
+    $("#indiceOperRechercher").on("keyup", function () {
+      var value = $(this).val().toLowerCase();
+      $("#tableApprouver tr").filter(function () {
+        $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+      });
+    });
+  });
+
+  $(document).ready(function () {
+    $("#indiceOperRechercherNon").on("keyup", function () {
+      var value = $(this).val().toLowerCase();
+      $("#tableNonApprouver tr").filter(function () {
+        $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+      });
+    });
+  });
+
+  $(document).ready(function () {
+    $("#rechercheReserve").on("keyup", function () {
+      var value = $(this).val().toLowerCase();
+      $("#tblQuotaReserver tr").filter(function () {
+        $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+      });
+    });
+  });
+
+</script>

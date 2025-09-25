@@ -1,0 +1,190 @@
+<div id="pagePsyOrdre" hidden>
+  <!-- <div id="snackbar">
+    <h5 class="fw-bold mb-1"><i class="fas" id="iconToast"></i> <span id="statusToast"></span></h5>
+    <p class="text-muted mb-0" id="messageToast"></p>
+  </div> -->
+  <!-- <div class="card" style="margin-top: 20px">
+    <div class="card-body">
+      <div class="row form">
+        <button class="btn btn-primary" onclick="getClientsOrder()">Actualiser</button>
+      </div>
+    </div>
+  </div>
+  <div class="card" style="margin-top: 20px">
+    <div class="card-body">
+      <div class="row form">
+        <div class="col-md-4">
+          <input type="text" class="form-control" id="xx_quota_idOrder" hidden />
+          <input type="text" class="form-control" id="nameProductOrdre" readonly />
+        </div>
+        <div class="col-md-2">
+          <input type="number" class="form-control" id="qtyModifyOrder" />
+        </div>
+        <div class="col-md-2">
+          <button class="btn btn-success" onclick="modifyQuantity()">Modify</button>
+        </div>
+      </div>
+      <div class="row form" style="margin-top: 20px">
+        <table class="table">
+          <thead class="thead-dark">
+            <tr>
+              <th scope="col">#</th>
+              <th scope="col">Clients</th>
+              <th scope="col">Produits</th>
+              <th scope="col">Quantité</th>
+              <th scope="col">Qte Accepter</th>
+              <th scope="col">Action</th>
+            </tr>
+          </thead>
+          <tbody id="clientPsyOrder"></tbody>
+        </table>
+      </div>
+    </div>
+  </div> -->
+
+  <div class="card">
+    <div class="card-body">
+      <div class="row form">
+        <div class="col-sm-4">
+          <input type="date" id="date11" class="form-control form-control-md" />
+        </div>
+        <div class="col-sm-1">
+          <button class="btn btn-primary btn-md" onclick="getParametreDt()">Load</button>
+        </div>
+        <div class="col-sm-1">
+          <button class="btn btn-primary btn-md" onclick="getListCorrectionToDt()">GET</button>
+        </div>
+        <div class="col-sm-1">
+          <div class="form-group form-check">
+            <input type="checkbox" class="form-check-input" id="isQr" />
+            <label class="form-check-label" for="isQr" style="margin-top: 4px">IS QR</label>
+          </div>
+        </div>
+        <div class="col-sm-3">
+          <div hidden class="input-group">
+            <select type="text" id="paramsId" class="form-control"></select>
+          </div>
+          <input type="text" class="form-control form-control-md" id="rechercheProduct" placeholder="Recherche ..." />
+        </div>
+        <div class="col-sm-2">
+          <input type="hidden" id="id_userExcel" value="<%= locals.id %>" />
+          <input type="hidden" id="dateExcel" />
+          <input type="hidden" id="groupIdExcel" />
+          <input type="hidden" id="isQrExcel" />
+
+          <button class="btn btn-sm btn-primary" type="button" onclick="downloadExcel()">Télécharger Excel Préparateurs</button>
+        </div>
+      </div>
+      <div class="dropdown-divider"></div>
+      <div class="row form">
+        <div class="col-sm-4">
+          <input type="date" name="dateProgramme" id="dateProgramme" class="form-control form-control-md" />
+        </div>
+        <button class="btn btn-sm btn-primary" type="button" onclick="downloadExcelDetails('p')">
+          Télécharger Excel Préparateurs Detail
+        </button>
+        &nbsp; &nbsp; &nbsp;
+        <button class="btn btn-sm btn-primary" type="button" onclick="downloadExcelDetails('c')">
+          Télécharger Excel Contrôleurs Detail
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+  async function downloadExcelDetails(type) {
+    const dateProgramme = document.getElementById("dateProgramme").value;
+
+    const url = `easy/contentieux/getStatPreparationDetail?type=${encodeURIComponent(type)}&date=${encodeURIComponent(
+      dateProgramme
+    )}`;
+
+    try {
+      chargement();
+      const response = await fetch(url, { method: "GET" });
+      if (!response.ok) throw new Error("Download failed");
+
+      // Get file as blob
+      const blob = await response.blob();
+      const link = document.createElement("a");
+      link.href = URL.createObjectURL(blob);
+      const nameFile = type === "p" ? "statPreparateursDetail" : "statControleursDetail";
+      link.download = `${nameFile}_${datea()}.xlsx`; // <-- file name
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(link.href);
+      chargementClose();
+    } catch (err) {
+      chargementClose();
+      console.error("Error downloading Excel:", err);
+      alert("Failed to download file.");
+    }
+  }
+</script>
+<!-- <script>
+    function getClientsOrder() {
+        $.ajax({
+            url: 'easy/contentieux/getClientOrder',
+            method: 'POST',
+        }).then((reponse) => {
+            remplirTableClientOrder(reponse);
+        })
+    }
+
+    function remplirTableClientOrder(data) {
+        document.getElementById("clientPsyOrder").innerHTML = "";
+        for (var i = 0; i < data.length; i++) {
+            document.getElementById('clientPsyOrder').insertAdjacentHTML('beforeend', `<tr
+        style="font-size: 14px; font-family: Verdana, sans-serif;">
+            <td>${i + 1}</td>
+            <td onclick="selectProductOrder(${data[i].XX_QUOTA_ID})">${data[i].CLIENT}</td>
+            <td>${data[i].NAME}</td>
+            <td>${data[i].QTYALLOCATED}</td>
+            <td>${data[i].QUANTITY}</td>
+            <td>
+                <button class="btn btn-sm btn-success" onclick="updateQuantityOrder(${data[i].XX_QUOTA_ID})">Accept</button>
+            </td>
+        </tr>`
+            );
+        }
+        chargementClose();
+    }
+
+    function updateQuantityOrder(xx_quota_id) {
+        $.ajax({
+            url: 'easy/contentieux/updateQuantityOrder',
+            method: 'POST',
+            data: { xx_quota_id, ad_user_id: $('#id_user').val() }
+        }).then((reponse) => {
+            getClientsOrder();
+        })
+    }
+
+    function selectProductOrder(xx_quota_id){
+        $('#xx_quota_idOrder').val(xx_quota_id);
+        $.ajax({
+            url:'easy/contentieux/selectProductOrder',
+            method:'POST',
+            data:{xx_quota_id},
+        }).then((reponse)=>{
+            $('#nameProductOrdre').val(reponse[0].NAME)
+        })
+    }
+
+    function modifyQuantity(){
+        if($('#xx_quota_idOrder').val() != '' && $('#qtyModifyOrder').val() != ''){
+             console.log("ueueu")
+            $.ajax({
+                url:'easy/contentieux/modifyQuantity',
+                method:'POST',
+                data:{
+                    xx_quota_id:$('#xx_quota_idOrder').val(),
+                    quantity:$('#qtyModifyOrder').val()
+                }
+            }).then((reponse)=>{
+                getClientsOrder();
+            })
+         }
+    }
+</script> -->

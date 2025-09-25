@@ -1,0 +1,635 @@
+<div id="pageListDemandeQuota" class="pageLayout">
+  <div>
+    <div class="card" style="padding: 15px 20px 0px 20px; margin-bottom: 15px;">
+        <div class="form-row">
+          <div class="form-group col-md-3">
+            <select class="form-control form-control-sm" size="3" id="referenceDC" onclick="listeBccDemander1();">
+            </select>
+            <input type="text" id="referenceSauver" readonly hidden>
+            <input type="text" id="getIndiceOper" hidden readonly>
+          </div>
+          <div class="form-group col-md-3">
+            <select class="form-control form-control-sm" size="3" id="referenceDC1" onclick="listeBccDemander11();">
+            </select>
+            <small id="referenceDC1" class="form-text text-muted">Avec Condition. </small>
+          </div>
+          <div class="form-group col-md-1">
+            <div class="form-row">
+              <button style="margin-left: 5px;" class="btn btn-success btn-sm" onclick=" aZeroDC()"><i class="fas fa-sync"></i></button>
+            </div>
+            <h3><span class="badge badge-primary" id="sommeCommande"></span></h3>
+          </div>
+          <div class="form-group col-md-5">
+            <select class="form-control form-control-sm" size="3" id="documentnoDC" onchange="getProduitBcc()">
+            </select>
+            <small hidden id="documentnoDC" class="form-text text-muted" style="display: flex; gap: 10;font-size: medium;">Nombre de commandes restantes =>&nbsp;&nbsp; <div style="font-weight: bold;" id="nbrCmd"></div></small>
+            <input type="text" id="c_order_idSauver" hidden readonly>
+          </div>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="col-md-7">
+        <div class="card">
+          <div class="card-body">
+            <div class="form-row" style="margin-bottom: 10px;">
+              <div class="col-md-4">
+                <div class="alert alert-secondary" id="alertStatus" role="alert" style="padding: 4px; margin:0px;">
+                  <span>StatusCmd: <span style="margin: 10px;" id="statusCmdSpan"></span></span>
+                </div>
+              </div>
+              <div class="col-md-4">
+                <div><span id="ug_vf"></span></div>
+              </div>
+              <div class="col-md-4">
+                <div><span id="ug_n"></span></div>
+              </div>
+            </div>
+            <div>
+              <div class="center-body" id="loaderTableBccSvc" hidden>
+                <div class="loader-circle-21"><span></span></div>
+              </div>
+              <div class="table-responsive" id="tableBccSvc">
+                <div class="my-custom-scrollbar22d">
+                  <table class="table table-sm">
+                    <thead class="thead-dark">
+                      <tr style="font-size: 14px;">
+                        <th scope="col">Ctx</th>
+                        <th scope="col">Produits</th>
+                        <th scope="col" class="tdtd">Qts</th>
+                        <th scope="col" class="tdtd">UG</th>
+                        <th scope="col" class="tdtd">TT Ligne</th>
+                      </tr>
+                    </thead>
+                    <tbody id="lineBcc">
+                    </tbody>
+                  </table>
+                </div>
+                <hr>
+                <div class="form-row">
+                  <div class="col-4">
+                    <div class="card">
+                      <div style="margin: 10px;" class="card-title">
+                        <h6>BCCs</h6>
+                        <span id="totalBcc"></span>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-4">
+                    <div class="card">
+                      <div style="margin: 10px;" class="card-title">
+                        <h6>M.BCC</h6>
+                        <span id="mntBcc"></span>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-4">
+                    <div class="card">
+                      <div style="margin: 10px;" class="card-title">
+                        <h6>Marge (%)</h6>
+                        <span id="margeBcc"></span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="form-row" id="informationBcc" style="margin-top: 20px;"></div>
+              </div>
+            </div>
+
+
+
+          </div>
+        </div>
+      </div>
+      <div class="col-md-5">
+        <div class="card">
+          <div class="card-body">
+            <div class="form-group row">
+              <div class="col-md-7">
+                <input type="text" class="form-control form-control-sm" id="m_product" readonly>
+                <input type="text" id="xx_quota_idMod" hidden readonly>
+                <input type="text" id="qtyAllocatedMod" hidden readonly>
+                <input type="text" id="m_product_idMod" hidden readonly>
+              </div>
+              <div class="col-md-3">
+                <input type="number" min="0" class="form-control form-control-sm" id="qtyOrdered">
+              </div>
+              <div class="col-md-1">
+                <button class="btn btn-success btn-sm" id="modifyQtyButton" onclick="modifierQuotaDemander()" title="Modifier Qts"><i
+                    class="fas fa-edit"></i></button>
+              </div>
+            </div>
+            <div class="center-body" id="mm-loader" hidden>
+              <div class="loader-circle-21"><span></span></div>
+            </div>
+            <div class="table-responsive" id="table-mm-loader">
+              <div class="my-custom-scrollbar22d">
+                <table class="table table-sm">
+                  <thead class="table thead-dark">
+                    <tr style="font-size: 14px;">
+                      <th scope="col">Produits</th>
+                      <th scope="col">Qts</th>
+                      <th scope="col">Qts Vendu</th>
+                    </tr>
+                  </thead>
+                  <tbody id="mm">
+                  </tbody>
+                </table>
+              </div>
+            </div>
+            <hr>
+            <div class="form-row">
+              <div class="col-md-1">
+                <button class="btn btn-danger btn-sm" title="confirmer Le Bon Complet"
+                  onclick="confirmerQuotaFinalTT()"><i class="fas fa-cogs"></i></button>
+              </div>
+              <div class="col-2">
+              </div>
+              <div class="col-md-2">
+                <button class="btn btn-warning btn-sm" title="Status de la commande"
+                  onclick="statusCommande()">Status</button>
+              </div>
+              <div class="col-md-2">
+                <button class="btn btn-Light btn-sm" title="Coloriser la commande"
+                  onclick="couleurCommande()">Couleur</button>
+              </div>
+              <div class="col-md-4">
+                <button class="btn btn-info btn-sm" title="Coloriser la commande"
+                  onclick="couleurCommandeConfirmer()">Couleur Confirmer</button>
+              </div>
+              <div class="col-md-1">
+                <button class="btn btn-primary btn-sm" title="Confirmer Quota" onclick="confirmerQuotaFinal()"><i
+                    class="fas fa-cog"></i></button>
+              </div>
+            </div>
+            <hr>
+            <div class="form-row" id="gestionColorView">
+            </div>
+            <br>
+            <div class="form-row" id="gestionColorViewConfirmer">
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+
+  function couleurCommande() {
+    $.ajax({
+      url: 'easy/superViseur/couleurCommande',
+      data: { reference: $('#referenceSauver').val() },
+      method: 'POST'
+    }).then((reponse) => {
+
+    })
+  }
+  function couleurCommandeConfirmer() {
+    $.ajax({
+      url: 'easy/superViseur/couleurCommandeConfirmer',
+      data: { reference: $('#referenceSauver').val() },
+      method: 'POST'
+    }).then((reponse) => {
+      gestionColorConfirmer(reponse);
+    })
+  }
+  function listeDemandeDC() {
+    chargement()
+    let getIndiceOper = document.getElementById('getIndiceOper').value
+    if (getIndiceOper != '') {
+      document.getElementById('getIndiceOper').value = ""
+    }
+    $.ajax({
+      url: 'easy/superViseur/listeDemande',
+      method: 'POST',
+      data: {
+        ad_org_id: $('#ad_org').val(),
+        ad_use_id: $('#id_user').val()
+      }
+    }).then((reponse) => {
+      fillListOfAsked(reponse.listDemande);
+      fillListOfAsked1(reponse.listDemandeCondition);
+      document.getElementById('sommeCommande').innerText = reponse.sommeDemande[0].sommeDemande;
+    })
+  }
+  function fillListOfAsked(data) {
+    document.getElementById('referenceDC').innerHTML = ""
+    var body_cadre = document.getElementById('referenceDC')
+    for (var i = 0; i < data.length; i++) {
+      var btn = document.createElement('OPTION')
+      if (data[i].modifierDC == 'Y') {
+        btn.style.background = "#00FFFF"
+      }
+      if (data[i].STATUS == 'Y') {
+        btn.style.background = "#FFA500";
+      }
+      ii = data[i].reference + '__' + data[i].createby
+      btn.innerHTML = ii
+      btn.value = data[i].reference
+      body_cadre.appendChild(btn)
+    }
+    chargementClose()
+  }
+  function fillListOfAsked1(data) {
+    document.getElementById('referenceDC1').innerHTML = ""
+    var body_cadre = document.getElementById('referenceDC1')
+    for (var i = 0; i < data.length; i++) {
+      var btn = document.createElement('OPTION')
+      if (data[i].modifierDC == 'Y') {
+        btn.style.background = "#00FFFF"
+      }
+      if (data[i].STATUS == 'Y') {
+        btn.style.background = "#FFA500";
+      }
+      ii = data[i].reference + '__' + data[i].createby
+      btn.innerHTML = ii
+      btn.value = data[i].reference
+      body_cadre.appendChild(btn)
+    }
+    chargementClose()
+  }
+  function listeBccDemander1() {
+    let reference = document.getElementById('referenceDC')
+    let referenceSauver = document.getElementById('referenceSauver')
+    document.getElementById('lineBcc').innerHTML = ""
+    if (referenceSauver.value == '') {
+      referenceSauver.value = reference.value;
+      listeBccDemander(referenceSauver.value);
+    } else if (reference.value != referenceSauver.value) {
+      referenceSauver.value = reference.value;
+      listeBccDemander(referenceSauver.value);
+    }
+  }
+  function listeBccDemander11() {
+    let reference = document.getElementById('referenceDC1')
+    let referenceSauver = document.getElementById('referenceSauver')
+    document.getElementById('lineBcc').innerHTML = ""
+    if (referenceSauver.value == '') {
+      referenceSauver.value = reference.value
+      listeBccDemander(referenceSauver.value)
+    } else if (reference.value != referenceSauver.value) {
+      referenceSauver.value = reference.value
+      listeBccDemander(referenceSauver.value)
+    }
+  }
+  // total Bcc montant
+  var totalMntBccs = 0;
+  function listeBccDemander(reference) {
+    chargement()
+    // let reference = document.getElementById("referenceDC").value;
+    let ad_org_id = $('#ad_org').val()
+    if (reference != '') {
+      $.ajax({
+        url: 'easy/superViseur/listeBccDemander',
+        type: "POST",
+        data: {reference: reference, ad_org_id: ad_org_id },
+      }).then((reponse) => {
+        // document.getElementById('nbrCmd').innerText = // reponse.nbrCommandeOper - 1;
+        fillListBcc(reponse, reference);
+      })
+    } else {
+      chargementClose()
+    }
+  }
+
+  function fillListBcc(reponse, reference) {
+    let data = reponse.liste
+    document.getElementById('documentnoDC').innerHTML = ""
+    let mnt = reponse.mntBcc[0][0]
+    totalMntBccs = mnt;
+    mnt = parseFloat(mnt).toFixed(2)
+    document.getElementById('totalBcc').innerText = numberWithSpaces(mnt)
+    let documentnoDC = document.getElementById('documentnoDC')
+    let status = ""
+    listeProduitQuotaDemander(reference)
+    for (var i = 0; i < data.length; i++) {
+      if (data[i].statusCmd == "CO") {
+        status = "Valider"
+      } else {
+        status = "EnCours"
+      }
+      let option = document.createElement('OPTION')
+      option.innerHTML = data[i].documentno
+      option.value = data[i].c_order_id
+      option.name = data[i].reference
+      documentnoDC.appendChild(option)
+    }
+    chargementClose()
+  }
+
+  function getBccClient1() {
+    var funcGetBccClient = document.getElementById('funcGetBccClient')
+    var body_oper = document.getElementById('body-oper')
+    if (funcGetBccClient.value == '') {
+      getBccClient()
+      funcGetBccClient.value = body_oper.value
+    } else if (funcGetBccClient.value != body_oper.value) {
+      getBccClient()
+      funcGetBccClient.value = body_oper.value
+    }
+  }
+
+  var json11;
+  function getVenteFlash() {
+    $.ajax({
+      url: 'easy/superViseur/getVenteFlashListe',
+      method: 'GET',
+    }).then((reponse) => {
+      json11 = reponse
+    })
+  }
+  function getProduitBcc() {
+    loaderOfBox('loaderTableBccSvc', 'tableBccSvc', true, false)
+    document.getElementById('lineBcc').innerHTML = ""
+    if ($('#documentnoDC').val() != '') {
+      $.ajax({
+        url: 'easy/superViseur/getProduitBcc',
+        type: 'POST',
+        data: { c_order_id: $('#documentnoDC').val() },
+      }).then((reponse) => {
+        fillTableBcc(reponse);
+        fillCtxOrder(reponse.values);
+      })
+    } else {
+      loaderOfBox('loaderTableBccSvc', 'tableBccSvc', false, true);
+    }
+  }
+
+  function fillCtxOrder(data) {
+    let row = document.getElementById('informationBcc');
+    row.innerHTML = "";
+    data.forEach(element => {
+      let ctx = element.VALUE;
+      let mntLine = element.LINENETAMT;
+      let nbrBoite = element.QTYENTERED;
+      let pourcentage = parseFloat((parseFloat(element.LINENETAMT) * 100) / parseFloat(totalMntBccs)).toFixed(2)
+      let div = document.createElement('DIV')
+      div.classList.add('col-3')
+      let divCard = document.createElement('DIV');
+      divCard.classList.add('card')
+      let divCardBody = document.createElement('DIV');
+      let span = document.createElement('SPAN');
+      let span1 = document.createElement('SPAN');
+      span.innerText = ctx + ': '
+      span.style.background = "#00FFFF";
+      divCardBody.classList.add('card-body')
+      div.appendChild(divCard);
+      divCard.appendChild(divCardBody);
+      span1.innerText = numberWithSpaces(parseFloat(mntLine).toFixed(2)) + '  ' + `(B: ${nbrBoite}) ` + `(${pourcentage}%)`
+      divCardBody.appendChild(span);
+      divCardBody.appendChild(span1);
+      row.appendChild(div);
+    });
+  }
+  // remplir table Bcc
+  function fillTableBcc(reponse) {
+    let data = reponse.reponse1
+    document.getElementById('lineBcc').innerHTML = ""
+    for (var i = 0; i < data.length; i++) {
+      document.getElementById('lineBcc')
+        .insertAdjacentHTML('beforeend',
+          `<tr style="font-size: 13px; font-family: Verdana, sans-serif;" id='pp${i}' onclick='getUgVenteFlashParProduit(${data[i][4]})'>
+                <td>${data[i][5]}</td>
+                <td>${data[i][0]}</td>
+                <td class="tdtd">${data[i][1]}</td>
+                <td class="tdtd"><strong>${data[i][3]}</strong></td>
+                <td class="tdtd">${parseFloat(data[i][2]).toFixed(2)}</td>
+              </tr>`
+        );
+      // condition vente flash
+      if (_isContains(json11, data[i][4]) == true) {
+        document.getElementById('pp' + i).style.background = '#FF7F50'
+      }
+    }
+    let TTmnt = reponse.mntOrdre1[0][0];
+    let status = '';
+    let classAlertSatut = '';
+    if (reponse.mntOrdre1[0][1] == 'CO') {
+      status = "Valider"
+      classAlertSatut = "alert-primary";
+    } else {
+      status = "EnCours"
+      classAlertSatut = "alert-danger";
+    }
+
+    let consomationPoucentage = parseFloat(((TTmnt - reponse.mntOrdre1[0][2]) * 100) / TTmnt).toFixed(2)
+    let consomation = numberWithSpaces(parseFloat(TTmnt - reponse.mntOrdre1[0][2]).toFixed(2))
+    let el = document.getElementById('alertStatus')
+    el.removeAttribute('class');
+    el.classList.add('alert', classAlertSatut);
+    document.getElementById('statusCmdSpan').innerText = status
+    document.getElementById('mntBcc').innerText = numberWithSpaces(parseFloat(TTmnt).toFixed(2))
+    document.getElementById('margeBcc').innerText = `${consomation} (${consomationPoucentage}%) `
+    loaderOfBox('loaderTableBccSvc', 'tableBccSvc', false, true)
+  }
+  function getUgVenteFlashParProduit(m_product_id) {
+    $.ajax({
+      url: 'easy/superViseur/getUgVenteFlashParProduit',
+      method: 'POST',
+      data: { m_product_id: m_product_id }
+    }).then((reponse) => {
+      if (reponse.length) {
+        let ug_vf = reponse[0][1]
+        let ug_n = reponse[0][2]
+        document.getElementById('ug_vf').innerText = 'UG_VF  ' + ug_vf
+        document.getElementById('ug_n').innerText = 'Last_UG  ' + ug_n
+      }
+    }).catch((error) => {
+      alert(error);
+    })
+  }
+  function listeProduitQuotaDemander(reference) {
+    // chargement()
+    loaderOfBox('mm-loader', 'table-mm-loader', true, false)
+    let ad_org_id = $('#ad_org').val()
+    $.ajax({
+      url: 'easy/superViseur/getProduitQuotaClient',
+      method: 'POST',
+      data: { reference: reference, ad_org_id: ad_org_id },
+    }).then((reponse) => {
+      data = reponse.list;
+    gestionColor(reponse.sommeColor);
+    
+    document.getElementById('mm').innerHTML = "";
+    
+    for (var i = 0; i < data.length; i++) {
+      document.getElementById('mm').insertAdjacentHTML('beforeend',
+        `<tr style="font-size: 13px; font-family: Verdana, sans-serif; background: ${data[i].COLOR !== null ? data[i].COLOR : 'transparent'}" 
+          id='${i}paz' onclick="getProduitModifier(${data[i].XX_QUOTA_ID})">
+          <td>${data[i].NAME}</td>
+          <td>${data[i].QTYALLOCATED}</td>
+          <td>${data[i].QUANTITY}</td>
+        </tr>`
+      );
+    }
+    loaderOfBox('mm-loader', 'table-mm-loader', false, true);
+    })
+  }
+  function gestionColor(sommeColor) {
+    let row = document.getElementById('gestionColorView');
+    row.innerHTML = "";
+    sommeColor.forEach(element => {
+      let div = document.createElement('DIV')
+      div.classList.add('col-3')
+      div.style.background = element.COLOR
+      div.innerText = element.QTYALLOCATED
+      row.appendChild(div);
+    });
+  }
+  function gestionColorConfirmer(sommeColor) {
+    let row = document.getElementById('gestionColorViewConfirmer');
+    row.innerHTML = "";
+    sommeColor.forEach(element => {
+      let div = document.createElement('DIV')
+      div.classList.add('col-3')
+      div.style.background = element.COLOR
+      div.innerText = element.QUANTITY
+      row.appendChild(div);
+    });
+  }
+
+  document.addEventListener('keydown', function (event) {
+    if (event.keyCode == 13) modifierQuotaDemander();
+  });
+
+  function getProduitModifier(xx_quota_id) {
+    chargement()
+    if (xx_quota_id != '') {
+      $.ajax({
+        url: 'easy/superViseur/getProduitModifier',
+        method: 'POST',
+        data: { xx_quota_id: xx_quota_id },
+        success: (reponse) => {
+          document.getElementById('qtyOrdered').focus();
+          if (reponse[0][4] > 0) {
+            document.getElementById('qtyAllocatedMod').value = reponse[0][4]
+          } else {
+            document.getElementById('qtyAllocatedMod').value = reponse[0][2]
+          }
+          document.getElementById('m_product').value = reponse[0][1]
+          // document.getElementById('qtsMod').value=data[0][2]
+          document.getElementById('xx_quota_idMod').value = reponse[0][0]
+          document.getElementById('m_product_idMod').value = reponse[0][3]
+
+          chargementClose()
+        }
+      })
+    } else {
+      chargementClose()
+    }
+  }
+  function modifierQuotaDemander() {
+    if ($('#qtyOrdered').val() != "" & $('#m_product_idMod').val() != "") {
+      let qtyOrdered = $('#qtyOrdered').val();
+      qtyOrdered = parseInt(qtyOrdered)
+      let xx_quota_id = $('#xx_quota_idMod').val()
+      let id_dc = document.getElementById('id_dc').value
+      let m_product_id = $('#m_product_idMod').val();
+      let qtyAllocated = document.getElementById('qtyAllocatedMod').value
+      qtyAllocated = parseInt(qtyAllocated)
+      let reference = $('#referenceSauver').val()
+      let qtyDC = 0
+      if (qtyOrdered != qtyAllocated) {
+        qtyDC = (-1) * (qtyAllocated - qtyOrdered)
+      }
+      let jsonM = { qtyOrdered: qtyOrdered, xx_quota_id: xx_quota_id, id_dc: id_dc, m_product_id: m_product_id, qtyAllocated: qtyAllocated, qtyDC: qtyDC }
+      loaderOfBox('mm-loader', 'table-mm-loader', true, false)
+      $.ajax({
+        url: 'easy/routeVente/modifierProduitsQuota',
+        method: 'POST',
+        data: {
+          qtyOrdered: qtyOrdered,
+          xx_quota_id: xx_quota_id,
+          id_dc: id_dc,
+          m_product_id: m_product_id,
+          qtyAllocated: qtyAllocated,
+          qtyDC: qtyDC,
+          ad_org_id: $('#ad_org').val(),
+          id_user: $('#id_user').val(),
+        },
+      }).then((reponse) => {
+        if (reponse == 'ok') {
+          document.getElementById('qtyOrdered').value = "";
+          document.getElementById('xx_quota_idMod').value = "";
+          document.getElementById('m_product_idMod').value = "";
+          document.getElementById('qtyAllocatedMod').value = "";
+          document.getElementById('m_product').value = "";
+          listeProduitQuotaDemander(reference);
+          couleurCommandeConfirmer();
+        } else {
+          loaderOfBox('mm-loader', 'table-mm-loader', false, true)
+          alert(reponse)
+        }
+      })
+    }
+  }
+
+  function confirmerQuotaFinal() {
+    chargement()
+    let reference = $('#referenceSauver').val()
+    if (reference != '') {
+      $.ajax({
+        url: 'easy/superViseur/confirmerQuotaFinal',
+        method: 'PUT',
+        data: { reference: reference },
+        success: (reponse) => {
+          console.log(reponse);
+          reponse.message == 'ok'
+            ? aZeroDC() && chargementClose()
+            : alert(reponse.message) && chargementClose();
+        }
+      })
+    } else {
+      chargementClose()
+    }
+  }
+
+  function confirmerQuotaFinalTT() {
+    chargement()
+    let reference = $('#referenceSauver').val()
+    let id_user = $('#id_user').val()
+    $.ajax({
+      url: 'easy/superViseur/confirmerQuotaFinalTT',
+      method: 'PUT',
+      data: { reference: reference, id_dc: id_user },
+    }).then((reponse) => {
+      if (reponse.message == 'ok') {
+        aZeroDC()
+        chargementClose()
+      } else {
+        alert1(reponse.message)
+        chargementClose()
+      }
+    })
+  }
+  function statusCommande() {
+    let reference = $('#referenceSauver').val()
+    if (reference != '') {
+      $.ajax({
+        url: 'easy/superViseur/statusCommande',
+        method: 'PUT',
+        data: { reference: reference },
+        success: (reponse) => {
+          aZeroDC()
+        }
+      })
+    }
+  }
+  function aZeroDC() {
+    document.getElementById('qtyOrdered').value = ""
+    document.getElementById('c_order_idSauver').value = ""
+    document.getElementById('xx_quota_idMod').value = ""
+    document.getElementById('m_product_idMod').value = ""
+    document.getElementById('qtyAllocatedMod').value = ""
+    document.getElementById('m_product').value = ""
+    document.getElementById('documentnoDC').innerHTML = ""
+    document.getElementById('lineBcc').innerHTML = ""
+    document.getElementById('mm').innerHTML = ""
+    document.getElementById('totalBcc').innerText = ""
+    document.getElementById('mntBcc').innerText = ""
+    document.getElementById('referenceSauver').value = ""
+    document.getElementById('statusCmdSpan').innerText = ""
+    document.getElementById('nbrCmd').innerText = ""
+    listeDemandeDC()
+  }
+</script>
