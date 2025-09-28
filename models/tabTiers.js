@@ -160,41 +160,41 @@ class tabTiers {
         console.error(err);
       });
   }
-  static findOne(idu, cb) {
-    connect
-      .then(function (conn) {
-        return conn
-          .execute(
-            //  "select c_order_id,documentno, DATEORDERED from c_order WHERE AD_User_ID=1047108 AND DATEORDERED=:da",{da:d}
-            // "select distinct o.c_bpartner_id,p.name from c_order o inner join c_bpartner p on o.c_bpartner_id=p.c_bpartner_id where o.salesrep_id=:id and o.docstatus ='IP'",{id:idu}
-            " SELECT Distinct o.c_bpartner_id,bp.name,o.docstatus,i.docstatus,o.SALESREP_ID,o.ad_orgTrx_id,bp.zcreditmessage " +
-              " FROM c_order o " +
-              " FULL outer JOIN m_inout i " +
-              " ON o.c_order_id=i.c_order_id " +
-              " FULL outer join  C_BPARTNER bp " +
-              " on o.C_BPARTNER_ID=bp.C_BPARTNER_ID " +
-              " WHERE o.DOCSTATUS =:IP and o.salesrep_id=:id " +
-              " and o.c_doctype_id in (1000539,1000540,1000542,1002679,1001851,1002662,1002664,1003102) " +
-              " OR(o.DOCSTATUS =:CO  " +
-              " AND i.docstatus=:IP " +
-              " AND i.created >:dt " +
-              " AND o.salesrep_id=:id " +
-              " and o.c_doctype_id in (1000539,1000540,1000542,1002679,1001851,1002662,1002664,1003102)) " +
-              " order by o.ad_orgTrx_id ",
-            { id: idu.ad_user_id, dt: idu.dt, CO: "CO", IP: "IP" },
-            { outFormat: oracledb.OUT_FORMAT_OBJECT }
-          )
-          .then(function (result) {
-            //console.log(result.rows);
-            cb(result.rows);
-          })
-          .catch(function (err) {
-            console.error(err);
-          });
-      })
-      .catch(function (err) {
-        console.error(err);
-      });
+  static findOne(idu) {
+    return new Promise((resolve, reject) => {
+      connect
+        .then(function (conn) {
+          return conn
+            .execute(
+              //  "select c_order_id,documentno, DATEORDERED from c_order WHERE AD_User_ID=1047108 AND DATEORDERED=:da",{da:d}
+              // "select distinct o.c_bpartner_id,p.name from c_order o inner join c_bpartner p on o.c_bpartner_id=p.c_bpartner_id where o.salesrep_id=:id and o.docstatus ='IP'",{id:idu}
+              ` SELECT Distinct o.c_bpartner_id,bp.name,o.docstatus,i.docstatus,o.SALESREP_ID,o.ad_orgTrx_id,bp.zcreditmessage
+                 FROM c_order o 
+                 FULL outer JOIN m_inout i ON o.c_order_id=i.c_order_id 
+                 FULL outer join  C_BPARTNER bp on o.C_BPARTNER_ID=bp.C_BPARTNER_ID 
+                 WHERE o.DOCSTATUS = 'IP' and o.salesrep_id=${idu.ad_user_id} 
+                 and o.c_doctype_id in (1000539,1000540,1000542,1002679,1001851,1002662,1002664,1003102) 
+                 OR(o.DOCSTATUS ='CO'  
+                 AND i.docstatus='IP' 
+                 AND i.created > TO_DATE('${idu.dt}', 'DD-MM-YYYY')
+                 AND o.salesrep_id= ${idu.ad_user_id}
+                 and o.c_doctype_id in (1000539,1000540,1000542,1002679,1001851,1002662,1002664,1003102))
+                 order by o.ad_orgTrx_id `,
+              {},
+              { outFormat: oracledb.OUT_FORMAT_OBJECT }
+            )
+            .then(function (result) {
+              //console.log(result.rows);
+              resolve(result.rows);
+            })
+            .catch(function (err) {
+              console.error(err);
+            });
+        })
+        .catch(function (err) {
+          console.error(err);
+        });
+    });
   }
 
   static select(e, cb) {

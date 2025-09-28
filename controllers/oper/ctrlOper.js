@@ -33,16 +33,16 @@ module.exports = {
       await cb(liste);
     });
   },
-  listeClientParOper: (req, res) => {
+  listeClientParOper: async (req, res) => {
     try {
-      let json10 = {
+      const json = {
         ad_user_id: req.body.ad_user_id,
         ad_org_id: req.body.ad_org_id,
         dt: datea(),
       };
-      tabTiers.findOne(json10, async (listeClient) => {
-        res.status(200).send(listeClient);
-      });
+      console.log(json);
+      const response = await tabTiers.findOne(json);
+      res.status(200).send(response);
     } catch (error) {
       res.status(400).send(error);
     }
@@ -59,24 +59,22 @@ module.exports = {
         return new Promise((resolve, reject) => {
           let sql = `select max(ISCONDITION) as isCondition from xx_quota where reference = ${reference} `;
           tabXx_quota.selectAll(sql, (reponse) => {
-           resolve(reponse[0].ISCONDITION);
+            resolve(reponse[0].ISCONDITION);
           });
-        })
+        });
       }
       function traiterCommande(isCondition) {
-      let json = {
-        indice: 2,
-        traiter: req.body.traiter,
-        dateTraiter: sysDate(),
-        reference: req.body.reference,
-        confirme: req.body.confirme,
-        isCondition
-      };
-      tabXx_quotaRef.update(json, (reponse) => {
-        reponse > 0
-          ? res.status(200).send([reponse])
-          : res.status(200).send("No Rows Affected");
-      });
+        let json = {
+          indice: 2,
+          traiter: req.body.traiter,
+          dateTraiter: sysDate(),
+          reference: req.body.reference,
+          confirme: req.body.confirme,
+          isCondition,
+        };
+        tabXx_quotaRef.update(json, (reponse) => {
+          reponse > 0 ? res.status(200).send([reponse]) : res.status(200).send("No Rows Affected");
+        });
       }
     } catch (error) {
       res.status(400).send(error);
@@ -217,7 +215,7 @@ module.exports = {
         await runInsert(nameClient, req.body.id_svc, docStatus, ad_org_id);
       }
       function runGetOrganization() {
-        return new Promise(async (resolve, reject) =>{
+        return new Promise(async (resolve, reject) => {
           let sql = `select ad_orgTrx_id from c_order where c_order_id=${c_order_id}`;
           let result = await tabTiers.selectPromise(sql);
           resolve(result[0].AD_ORGTRX_ID);
@@ -289,9 +287,7 @@ module.exports = {
     try {
       let sql = `select * from xx_quotaref where c_pbartner_id=${
         req.body.C_BPARTNER_ID
-      } and dateCreation='${dateOracle()}' and confirme='N' and ad_org_id=${
-        req.body.ad_org_id
-      }`;
+      } and dateCreation='${dateOracle()}' and confirme='N' and ad_org_id=${req.body.ad_org_id}`;
       tabXx_quotaRef.featuresSelect(sql, (result) => {
         res.status(200).send({
           c_bpartner_id: req.body.C_BPARTNER_ID,
@@ -423,9 +419,7 @@ module.exports = {
                 res.status(200).send(bcc);
               });
             } else {
-              res
-                .status(200)
-                .send("Liste des BCC confirmée par la directrice commerciale");
+              res.status(200).send("Liste des BCC confirmée par la directrice commerciale");
             }
           });
         });
@@ -448,9 +442,7 @@ module.exports = {
     let id_userExcel = req.query.id_userExcel;
     runExcel();
     async function runExcel() {
-      let quotaa = req.query.hasOwnProperty('id_svc') 
-        ? await getDonneeOper(req.query)
-        : await getDonneeDC();
+      let quotaa = req.query.hasOwnProperty("id_svc") ? await getDonneeOper(req.query) : await getDonneeDC();
       await constExcel(quotaa, req.query);
     }
     function getDonneeDC() {
@@ -472,7 +464,7 @@ module.exports = {
         tabXx_quota.findProduitDC(sql, (result) => {
           resole(result);
         });
-      })
+      });
     }
     function constExcel(quota, json) {
       return new Promise((resolve, reject) => {
@@ -491,17 +483,11 @@ module.exports = {
           { header: "Produits", key: "NAME", width: 50 },
           { header: "QTS", key: "QUANTITY", width: 10 },
         ];
-        worksheet.columns = json.hasOwnProperty('id_svc') ? sheetOper : sheetDC;
+        worksheet.columns = json.hasOwnProperty("id_svc") ? sheetOper : sheetDC;
         // Add Array Rows
         worksheet.addRows(quota);
-        res.setHeader(
-          "Content-Type",
-          "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-        );
-        res.setHeader(
-          "Content-Disposition",
-          "attachment; filename=" + `quota_${datea()}.xlsx`
-        );
+        res.setHeader("Content-Type", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+        res.setHeader("Content-Disposition", "attachment; filename=" + `quota_${datea()}.xlsx`);
         return workbook.xlsx.write(res).then(function () {
           res.status(200).end();
         });

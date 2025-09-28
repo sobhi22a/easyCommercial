@@ -3,7 +3,7 @@
     <div class="card-body">
       <div class="row form">
         <div class="col-sm-4">
-          <input type="date" id="date11" class="form-control form-control-md" />
+          <input type="date" id="dateTransfert" class="form-control form-control-md" />
         </div>
         <div class="col-sm-1">
           <button class="btn btn-primary btn-md" onclick="getParametreDt()">Load</button>
@@ -17,19 +17,11 @@
             <label class="form-check-label" for="isQr" style="margin-top: 4px">IS QR</label>
           </div>
         </div>
-        <div class="col-sm-3">
+        <div class="col-sm-4">
           <div hidden class="input-group">
             <select type="text" id="paramsId" class="form-control"></select>
           </div>
           <input type="text" class="form-control form-control-md" id="rechercheProduct" placeholder="Recherche ..." />
-        </div>
-        <div class="col-sm-2">
-          <input type="hidden" id="id_userExcel" value="<%= locals.id %>" />
-          <input type="hidden" id="dateExcel" />
-          <input type="hidden" id="groupIdExcel" />
-          <input type="hidden" id="isQrExcel" />
-
-          <button class="btn btn-sm btn-primary" type="button" onclick="downloadExcel()">Excel Stat</button>
         </div>
       </div>
     </div>
@@ -64,6 +56,17 @@
   </style>
 </div>
 <script>
+
+  $(document).ready(function () {
+    $("#rechercheProduct").on("keyup", function () {
+      var value = $(this).val().toLowerCase();
+      console.log(value);
+      $("#tableProduct tr").filter(function () {
+        $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1);
+      });
+    });
+  });
+  
   async function downloadExcel() {
     const id_userExcel = document.getElementById("id_userExcel").value;
     const dateExcel = document.getElementById("dateExcel").value;
@@ -111,7 +114,7 @@
       url: "easy/contentieux/getParametreDt",
       method: "POST",
       data: {
-        dateD: $("#date11").val(),
+        dateD: $("#dateTransfert").val(),
       },
     })
       .then((reponse) => {
@@ -140,7 +143,7 @@
       url: "easy/contentieux/getListCorrectionToDt",
       method: "POST",
       data: {
-        date: $("#date11").val(),
+        date: $("#dateTransfert").val(),
         groupId: $("#paramsId").val(),
         isQr: document.getElementById("isQr").checked,
       },
@@ -233,18 +236,4 @@
       : (document.getElementById(type + i).innerHTML = "<span style='color: #ff0000'>Empty</span>");
   }
 
-  function setFormValues(date, groupId, isQr) {
-    document.getElementById("dateExcel").value = date;
-    document.getElementById("groupIdExcel").value = groupId;
-    document.getElementById("isQrExcel").value = document.getElementById("isQr").checked ? "true" : "false";
-  }
-
-  $(document).ready(function () {
-    $("#rechercheProduct").on("keyup", function () {
-      var value = $(this).val().toLowerCase();
-      $("#tableProduct tr").filter(function () {
-        $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1);
-      });
-    });
-  });
 </script>

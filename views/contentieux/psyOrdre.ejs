@@ -46,23 +46,23 @@
     <div class="card-body">
       <div class="row form">
         <div class="col-sm-4">
-          <input type="date" id="date11" class="form-control form-control-md" />
+          <input type="date" id="dateTransfertExcel" class="form-control form-control-md" />
         </div>
         <div class="col-sm-1">
-          <button class="btn btn-primary btn-md" onclick="getParametreDt()">Load</button>
+          <button class="btn btn-primary btn-md" onclick="getParametreDtExcel()">Load</button>
         </div>
         <div class="col-sm-1">
-          <button class="btn btn-primary btn-md" onclick="getListCorrectionToDt()">GET</button>
+          <button class="btn btn-primary btn-md" onclick="getListCorrectionToDtExcel()">GET</button>
         </div>
         <div class="col-sm-1">
           <div class="form-group form-check">
-            <input type="checkbox" class="form-check-input" id="isQr" />
-            <label class="form-check-label" for="isQr" style="margin-top: 4px">IS QR</label>
+            <input type="checkbox" class="form-check-input" id="isQrTransfertExcel" />
+            <label class="form-check-label" for="isQrTransfertExcel" style="margin-top: 4px">IS QR</label>
           </div>
         </div>
         <div class="col-sm-3">
           <div hidden class="input-group">
-            <select type="text" id="paramsId" class="form-control"></select>
+            <select type="text" id="paramsIdExcel" class="form-control"></select>
           </div>
           <input type="text" class="form-control form-control-md" id="rechercheProduct" placeholder="Recherche ..." />
         </div>
@@ -92,6 +92,64 @@
   </div>
 </div>
 <script>
+  function getParametreDtExcel() {
+    chargement();
+    $.ajax({
+      url: "easy/contentieux/getParametreDt",
+      method: "POST",
+      data: {
+        dateD: $("#dateTransfertExcel").val(),
+      },
+    })
+      .then((reponse) => {  
+        fillListOfParamsExcel(reponse);
+      })
+      .catch((error) => {
+        alert(error);
+        chargementClose();
+      });
+  }
+
+  function fillListOfParamsExcel(data) {
+    document.getElementById("paramsIdExcel").innerHTML = "";
+    var body_cadre = document.getElementById("paramsIdExcel");
+    for (var i = 0; i < data.length; i++) {
+      var btn = document.createElement("OPTION");
+      ii = data[i][1];
+      btn.innerHTML = ii;
+      btn.value = data[i][0];
+      body_cadre.appendChild(btn);
+    }
+    chargementClose();
+  }
+
+  function getListCorrectionToDtExcel() {
+    chargement();
+    $.ajax({
+      url: "easy/contentieux/getListCorrectionToDt",
+      method: "POST",
+      data: {
+        date: $("#dateTransfertExcel").val(),
+        groupId: $("#paramsIdExcel").val(),
+        isQr: document.getElementById("isQrTransfertExcel").checked,
+      },
+    })
+      .then((reponse) => {
+        // afficheTableProduitRectif(reponse);
+        setFormValues($("#dateTransfertExcel").val(), $("#paramsIdExcel").val(), document.getElementById("isQrTransfertExcel").checked);
+        chargementClose();
+      })
+      .catch((error) => {
+        alert(error);
+        chargementClose();
+      });
+  }
+
+  function setFormValues(date, groupId, isQr) {
+    document.getElementById("dateExcel").value = date;
+    document.getElementById("groupIdExcel").value = groupId;
+    document.getElementById("isQrExcel").value = document.getElementById("isQr").checked ? "true" : "false";
+  }
   async function downloadExcelDetails(type) {
     const dateProgramme = document.getElementById("dateProgramme").value;
 
