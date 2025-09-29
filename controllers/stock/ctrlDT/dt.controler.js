@@ -121,9 +121,7 @@ async function getDataRectif(body) {
     userSelected: "1047552",
     ad_role_id: "1003471",
   };
-
-  const result =
-    body.isQr === "true" ? await tabTransfer.selectProductToDtQRY(json) : await tabTransfer.selectProductToDtQRN(json);
+  const result = body.isQr === "Y" ? await tabTransfer.selectProductToDtQRY(json) : await tabTransfer.selectProductToDtQRN(json);
   return result;
 }
 

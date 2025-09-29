@@ -217,6 +217,7 @@
       }
 
       function calculePrimeLivreur() {
+        chargement();
         AzeroLiv();
         if ($("#id_livreur").val() != "") {
           $.ajax({
@@ -226,6 +227,7 @@
             success: (reponse) => {
               if (reponse.success == false) {
                 alert(reponse.message);
+                chargementClose();
                 return;
               }
               const data = reponse.data;
@@ -239,9 +241,11 @@
               document.getElementById("primeMoisColis").value = data.primeMoisColis;
 
               document.getElementById("totalPrimeLivreur").value = numberWithSpaces(parseFloat(data.totalNumber).toFixed(2));
+              chargementClose();
             },
             error: (err) => {
               alert(err.responseJSON.message);
+              chargementClose();
             },
           });
         }

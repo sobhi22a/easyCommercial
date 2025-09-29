@@ -40,7 +40,6 @@ module.exports = {
         ad_org_id: req.body.ad_org_id,
         dt: datea(),
       };
-      console.log(json);
       const response = await tabTiers.findOne(json);
       res.status(200).send(response);
     } catch (error) {

@@ -20,11 +20,10 @@ class tabXxbonRoute {
             FROM xx_bonroute
             WHERE XX_SHIPPER_ID = ${shipperId}
               AND isactive = 'Y'
-              AND DATEREPORT >= '${startDate}'
-              AND DATEREPORT <= '${endDate}'
-              and isactive='Y'
-            GROUP BY TO_CHAR(DATEREPORT, 'DD/MM/YYYY')
-            ORDER BY TO_DATE(DATEREPORT, 'DD/MM/YYYY')
+              AND DATEREPORT >= TO_DATE('${startDate}', 'DD/MM/YYYY')
+              AND DATEREPORT <= TO_DATE('${endDate}', 'DD/MM/YYYY')
+            GROUP BY TO_CHAR(DATEREPORT, 'DD/MM/YYYY'), DATEREPORT
+            ORDER BY DATEREPORT
             `,
               {},
               { outFormat: OracleDB.OUT_FORMAT_OBJECT }

@@ -188,7 +188,7 @@ async function numberOfPackages(results) {
   return result;
 }
 async function formatDate(date) {
-  return date.split("-").reverse().join("-");
+  return date.split("-").reverse().join("/");
 }
 
 function getChiffreRecouverement(id_livreur, dateA, dateB) {
