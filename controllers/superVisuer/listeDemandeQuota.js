@@ -7,10 +7,10 @@ const XxQuotaRepository = require("../../repositories/XxQuotaRepository");
 module.exports = {
   listeDemandeQuota: async (req, res) => {
     try {
-      let listDemandeNonCondition = await getListDemandeNonCondition('N');
-      let listDemandeCondition = await getListDemandeNonCondition('Y');
-      let sommeDemande = [{sommeDemande: listDemandeNonCondition.length + listDemandeCondition.length}]
-      res.status(200).send({ listDemande: listDemandeNonCondition,listDemandeCondition, sommeDemande });
+      let listDemandeNonCondition = await getListDemandeNonCondition("N");
+      let listDemandeCondition = await getListDemandeNonCondition("Y");
+      let sommeDemande = [{ sommeDemande: listDemandeNonCondition.length + listDemandeCondition.length }];
+      res.status(200).send({ listDemande: listDemandeNonCondition, listDemandeCondition, sommeDemande });
 
       function getListDemandeNonCondition(isCondition) {
         return new Promise((resolve, reject) => {
@@ -21,10 +21,10 @@ module.exports = {
             AND isCondition='${isCondition}' 
             AND dateCreation='${dateOracl()}' 
             ORDER BY dateTraiter`;
-        tabXx_quotaRef.featuresSelect(sql, (result) => {
-          resolve(result);
+          tabXx_quotaRef.featuresSelect(sql, (result) => {
+            resolve(result);
+          });
         });
-      });
       }
     } catch (error) {
       res.status(400).send(error);
@@ -36,7 +36,7 @@ module.exports = {
       where reference='${req.body.reference}' 
       and dateCreation='${dateOracl()}'`;
     // let nbrCommandSql = `SELECT COUNT(DISTINCT reference) nbrCommande FROM xx_quotaref
-    //     WHERE ad_user_id = (SELECT ad_user_id FROM xx_quotaref WHERE reference = '${parseInt(req.body.reference)}') 
+    //     WHERE ad_user_id = (SELECT ad_user_id FROM xx_quotaref WHERE reference = '${parseInt(req.body.reference)}')
     //     AND traiter = 'Y' AND confirme = 'N' AND dateCreation = '${dateOracl()}'`;
     // const nbrCommande = await tabXx_quota1.select(nbrCommandSql);
     tabXx_quotaRef.featuresSelect(sql, (liste) => {
@@ -51,7 +51,7 @@ module.exports = {
       }
       idBccListe = "(" + idBccListe + ")";
       tabCorder.mntBcc(idBccListe, (mnt) => {
-        res.status(200).send({ liste, mntBcc: mnt, nbrCommandeOper:  0});
+        res.status(200).send({ liste, mntBcc: mnt, nbrCommandeOper: 0 });
       });
     });
   },
@@ -169,25 +169,29 @@ module.exports = {
   },
 
   confirmerQuotaFinal: (req, res) => {
-    let sql = `update xx_quotaref set confirme="Y",dateConfirme='${sysDate1()}' where reference='${req.body.reference}' and traiter="Y"`
+    let sql = `update xx_quotaref set confirme="Y",dateConfirme='${sysDate1()}' where reference='${
+      req.body.reference
+    }' and traiter="Y"`;
     tabXx_quotaRef.featuresUpdate(sql, (reponse) => {
-      reponse >= 1 && res.status(200).send({ message: "ok" })
-    })
+      reponse >= 1 && res.status(200).send({ message: "ok" });
+    });
   },
 
   confirmerQuotaFinalTT: async (req, res) => {
     // Update all line of product quota reference
     await XxQuotaRepository.ModifyAllProductQuotaBySVAsync(req.body.reference, req.body.id_dc);
-    let sql1 = `update xx_quotaref set confirme="Y",dateConfirme='${sysDate1()}' where reference='${req.body.reference}' and traiter="Y"`;
+    let sql1 = `update xx_quotaref set confirme="Y",dateConfirme='${sysDate1()}' where reference='${
+      req.body.reference
+    }' and traiter="Y"`;
     let response = await tabXx_quotaRef.featuresPromise(sql1);
     if (response >= 1) {
       let sql = `update xx_quota set 
         quantity=qtyallocated, 
         updatedby = ${req.body.id_dc} 
         where reference = '${req.body.reference}' and updatedby=0 `;
-      tabXx_quota1.updateFeature(sql,(repp) => {});
-      res.status(200).send({message: "ok"});
-    }    
+      tabXx_quota1.updateFeature(sql, (repp) => {});
+      res.status(200).send({ message: "ok" });
+    }
   },
 
   comandeApprouver: (req, res) => {
@@ -237,15 +241,15 @@ function heure() {
 
 function sysDate1() {
   const now = new Date();
-  
+
   const year = now.getFullYear();
-  const month = String(now.getMonth() + 1).padStart(2, '0'); // Add 1 to month because it's zero-based
-  const day = String(now.getDate()).padStart(2, '0');
-  const hours = String(now.getHours()).padStart(2, '0');
-  const minutes = String(now.getMinutes()).padStart(2, '0');
-  const seconds = String(now.getSeconds()).padStart(2, '0');
-  
+  const month = String(now.getMonth() + 1).padStart(2, "0"); // Add 1 to month because it's zero-based
+  const day = String(now.getDate()).padStart(2, "0");
+  const hours = String(now.getHours()).padStart(2, "0");
+  const minutes = String(now.getMinutes()).padStart(2, "0");
+  const seconds = String(now.getSeconds()).padStart(2, "0");
+
   const formattedDate = `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
-  
+
   return formattedDate;
 }

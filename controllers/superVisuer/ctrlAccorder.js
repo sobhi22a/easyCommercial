@@ -3,7 +3,6 @@ const tabXx_quotaRef = require("../../models/tabXx_quotaRef");
 const tabXx_quota = require("../../models/tabXx_quota");
 const tabUsers = require("../../models/tabUsers");
 const tabAd_User = require("../../models/ad_user");
-const tabWanaAnalyseStockAtt = require("../../models/wana_analyse_stock_att");
 const tabNclient = require("../../models/tabNclients");
 const tabM_product = require("../../models/tabM_product");
 const XxQuotaRepository = require("../../repositories/XxQuotaRepository");
@@ -64,8 +63,8 @@ module.exports = {
   qtsReserver: (req, res) => {
     runQtyReserve();
     async function runQtyReserve() {
-      let listIndice = await getlistIndice();
-      let productQtyReserve = await getProductQtyReserve();
+      const listIndice = await getlistIndice();
+      const productQtyReserve = await getProductQtyReserve();
       let listFinal = productQtyReserve.filter((m) => {
         if (_isContains(listIndice, m.AD_USER_ID)) {
           return m;
@@ -135,14 +134,11 @@ module.exports = {
     });
   },
   deleteReservationLine: async (req, res) => {
-    const {
-      xx_quota_id,
-      id_dc,
-    } = req.body;
+    const { xx_quota_id, id_dc } = req.body;
 
     // get line xx_quota
     let lineXxQuota = await XxQuotaRepository.GetListProductById(xx_quota_id);
-    
+
     // test product if partage
     let ifPartage = await runIfPartager(lineXxQuota.M_PRODUCT_ID);
     let final_id_dc = ifPartage > 1 ? id_dc : 1032294;
@@ -159,9 +155,9 @@ module.exports = {
         parseInt(final_id_dc),
         parseInt(lineXxQuota.M_PRODUCT_ID)
       );
-      if(manageQuantityQuota == 1) {
+      if (manageQuantityQuota == 1) {
         await XxQuotaRepository.DeleteProductAsync(lineXxQuota.REFERENCE, lineXxQuota.M_PRODUCT_ID);
-        return res.status(200).send('ok');
+        return res.status(200).send("ok");
       }
       return res.status(200).send(`La suppression du produit ${lineXxQuota.NAME} a échoué`);
     }
@@ -249,9 +245,7 @@ module.exports = {
   listeNvClientSV: (req, res) => {
     let json = {
       indice: 4,
-      clause: `(valide=${"'N'"} OR valide=${"'S'"}) AND ad_org=${
-        req.body.ad_org_id
-      }`,
+      clause: `(valide=${"'N'"} OR valide=${"'S'"}) AND ad_org=${req.body.ad_org_id}`,
     };
     tabNclient.select(json, (reponse) => {
       res.send(reponse);
@@ -353,10 +347,7 @@ function sysDate() {
 function _isContains(json, value) {
   let contains = false;
   Object.keys(json).some((key) => {
-    contains =
-      typeof json[key] === "object"
-        ? _isContains(json[key], value)
-        : json[key] === value;
+    contains = typeof json[key] === "object" ? _isContains(json[key], value) : json[key] === value;
     return contains;
   });
   return contains;

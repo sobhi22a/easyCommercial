@@ -382,6 +382,11 @@
     });
   }
   // remplir table Bcc
+
+  function hasName(list, value) {
+    return list.some(item => item.name === value);
+  }
+  
   function fillTableBcc(reponse) {
     let data = reponse.reponse1
     document.getElementById('lineBcc').innerHTML = ""
@@ -397,7 +402,7 @@
               </tr>`
         );
       // condition vente flash
-      if (_isContains(json11, data[i][4]) == true) {
+      if (hasName(json11, data[i][4]) == true) {
         document.getElementById('pp' + i).style.background = '#FF7F50'
       }
     }

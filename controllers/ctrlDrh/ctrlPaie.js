@@ -28,7 +28,8 @@ module.exports = {
     if (!livreurId) {
       return res.status(400).send({ error: "Invalid livreur ID" });
     }
-    const results = await tabXx_bonRoute.FindBonRouteByShipperAndDate(livreurId, startDate, endDate);
+    const results = await tabXx_bonRoute.FindBonRouteByShipperAndDate(parseInt(livreurId), startDate, endDate);
+
     if (results.length === 0) {
       return res.status(200).send({
         success: true,
@@ -44,7 +45,7 @@ module.exports = {
     const chiffre = await getChiffreRecouverement(livreurId, startDate, endDate);
 
     // Calculate primes
-    const primeMoisRecou = (chiffre || 0) * 0.0005 || 0;
+    const primeMoisRecou = chiffre.PRIMEAMT;
     const primeClient = (someClients || 0) * 50 || 0;
     const primeMoisColis = (Collisage[0].NBRCOLIS || 0) * 2 || 0;
     const totalNumber = primeMoisRecou + primeClient + primeMoisColis;
@@ -105,19 +106,16 @@ async function GetIsFarRegion(regionId) {
 }
 
 function parseRegions(regionId) {
+  if (!regionId) {
+    return [0];
+  }
   const hasComma = regionId.includes(",");
-
   if (hasComma) {
     const regions = regionId.split(",").map((id) => {
       const parsed = parseInt(id.trim());
       if (isNaN(parsed)) throw new Error(`ID de région invalide: ${id}`);
       return parsed;
     });
-
-    if (regions.length !== 2) {
-      throw new Error("Exactement deux régions sont requises lorsqu'une virgule est présente");
-    }
-
     return regions;
   } else {
     const parsed = parseInt(regionId.trim());
@@ -157,6 +155,7 @@ function applyBusinessLogic(regionCount, results) {
 }
 
 async function numberOfClients(results) {
+  console.log("results", results.length);
   let smc = 0;
   for (const result of results) {
     const nbrClients = await tabXx_bonRoute.FindNumberOfClients(result.X_BONROUTE_IDS);
@@ -196,7 +195,7 @@ function getChiffreRecouverement(id_livreur, dateA, dateB) {
     let json = { c_bpartner_id: id_livreur, dateA: dateA, dateB: dateB };
     const result = await tabXx_bonRoute.getChiffreRecouv(json);
     if (result.length === 0) return resolve(0);
-    return resolve(result[0].AMT);
+    return resolve(result[0]);
   });
 }
 function getCollisage(liste) {

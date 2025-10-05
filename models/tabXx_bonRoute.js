@@ -20,10 +20,11 @@ class tabXxbonRoute {
             FROM xx_bonroute
             WHERE XX_SHIPPER_ID = ${shipperId}
               AND isactive = 'Y'
-              AND DATEREPORT >= TO_DATE('${startDate}', 'DD/MM/YYYY')
-              AND DATEREPORT <= TO_DATE('${endDate}', 'DD/MM/YYYY')
-            GROUP BY TO_CHAR(DATEREPORT, 'DD/MM/YYYY'), DATEREPORT
-            ORDER BY DATEREPORT
+              AND DATEREPORT >= '${startDate}'
+              AND DATEREPORT <= '${endDate}'
+              and isactive='Y'
+            GROUP BY TO_CHAR(DATEREPORT, 'DD/MM/YYYY')
+            ORDER BY TO_DATE(DATEREPORT, 'DD/MM/YYYY')
             `,
               {},
               { outFormat: OracleDB.OUT_FORMAT_OBJECT }
@@ -225,16 +226,16 @@ class tabXxbonRoute {
           return conn
             .execute(
               `
-              SELECT round(SUM(PAYAMT),2) AS AMT  FROM C_Payment P
+              SELECT round(SUM(PAYAMT),2) AS AMT, round(SUM(CASE WHEN P.C_BankAccount_ID=1000915 THEN  PAYAMT*0.0007 ELSE PAYAMT*0.0005 END),2) AS PRIMEAMT  FROM C_Payment P
               INNER JOIN AD_USER U ON P.CREATEDBY=U.AD_USER_ID
               INNER JOIN C_DOCTYPE DT ON DT.C_DOCTYPE_ID=P.C_DOCTYPE_ID
               INNER JOIN C_BPARTNER BPC ON BPC.C_BPARTNER_ID=P.C_BPARTNER_ID
-              INNER JOIN C_BPARTNER BP ON BP.C_BPARTNER_ID=U.C_BPARTNER_ID 
+              INNER JOIN C_BPARTNER BP ON BP.C_BPARTNER_ID=U.C_BPARTNER_ID
               INNER JOIN C_BANKACCOUNT BC ON BC.C_BANKACCOUNT_ID=P.C_BANKACCOUNT_ID
               INNER JOIN C_BANK BK ON BK.C_BANK_ID=BC.C_BANK_ID
               INNER JOIN AD_ORG ORG ON ORG.AD_ORG_ID=P.AD_ORG_ID
               WHERE DOCSTATUS IN ('CO','CL')  AND  DATEACCT>='${e.dateA}' AND DATEACCT<='${e.dateB}'
-              AND BPC.ISCUSTOMER='Y' AND DT.DOCBASETYPE='ARR' AND P.C_BankAccount_ID=1000915 
+              AND BPC.ISCUSTOMER='Y' AND DT.DOCBASETYPE='ARR'
               AND P.ISINDISPUTE='N' AND BP.C_BP_Group_ID=1000625
               AND BP.C_BPARTNER_ID=${e.c_bpartner_id}
               GROUP BY BP.NAME

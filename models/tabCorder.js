@@ -10,7 +10,7 @@ class tabCorder {
       .then(function (conn) {
         return conn
           .execute(
-             `select distinct o.DOCUMENTNO,o.GRANDTOTAL 
+            `select distinct o.DOCUMENTNO,o.GRANDTOTAL 
                from C_ORDER o 
                full outer join m_inout io on io.C_ORDER_ID=o.C_ORDER_ID 
                where o.c_bpartner_id=:idClient and o.docstatus='IP' 
@@ -22,7 +22,7 @@ class tabCorder {
                AND io.ad_orgTrx_id in (${d.ad_org_id}, 1000518) 
                AND o.c_bpartner_id=:idClient 
                and o.c_doctype_id in (1000539,1000540,1000542,1002679,1001851,1002662,1002664,1000541,1003102,1002678,1001845,1002679))`,
-              { idClient: d.idClient, dt: d.dt}
+            { idClient: d.idClient, dt: d.dt }
           )
           .then(function (result) {
             cb(result.rows);
@@ -189,9 +189,7 @@ class tabCorder {
     connect
       .then(function (conn) {
         return conn
-          .execute(
-            `select sum(GRANDTOTAL) from c_order where  c_order_id in ${e} `
-          )
+          .execute(`select sum(GRANDTOTAL) from c_order where  c_order_id in ${e} `)
           .then(function (result) {
             cb(result.rows);
           })
@@ -207,9 +205,7 @@ class tabCorder {
     connect
       .then(function (conn) {
         return conn
-          .execute(
-            `select GRANDTOTAL,docstatus,CONSOMMATION_ORDER(${d}) as consomation from c_order WHERE c_order_id=${d}`
-          )
+          .execute(`select GRANDTOTAL,docstatus,CONSOMMATION_ORDER(${d}) as consomation from c_order WHERE c_order_id=${d}`)
           .then(function (result) {
             cb(result.rows);
           })
@@ -259,7 +255,7 @@ class tabCorder {
         return conn
           .execute(
             `select m_product_id,xx_ug,lastug 
-      from XX_Arrivageline where XX_Arrivage_ID in (1064714)`
+      from XX_Arrivageline where XX_Arrivage_ID in (1354385,1354384)`
           )
           .then(function (result) {
             cb(result.rows);
@@ -279,7 +275,7 @@ class tabCorder {
           .execute(
             `select m_product_id,xx_ug,lastug 
               from XX_Arrivageline 
-              where XX_Arrivage_ID in (1059178) and m_product_id=${m_product_id}`
+              where XX_Arrivage_ID in (1354385,1354384) and m_product_id=${m_product_id}`
           )
           .then(function (result) {
             cb(result.rows);

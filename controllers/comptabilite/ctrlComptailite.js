@@ -22,24 +22,21 @@ module.exports = {
         resolve(c_bpartner_id);
       });
     }
-    function appelTransporteur(c_bpartner_id) {
-      let date1 = req.body.date1;
-      let date2 = req.body.date2;
+    async function appelTransporteur(c_bpartner_id) {
+      const { date1, date2 } = req.body;
       if ((date1 == "") & (date2 == "")) {
-        let json = { indice: 1, c_bpartner_id: c_bpartner_id };
-        order_mission.select(json, (reponse) => {
-          res.send(reponse);
-        });
+        const json = { indice: 1, c_bpartner_id: c_bpartner_id };
+        const result = await order_mission.selectListOrdreMission(json);
+        return res.status(200).send(result);
       } else if ((date1 != "") & (date2 != "")) {
-        let json1 = {
+        const json1 = {
           indice: 2,
           c_bpartner_id: c_bpartner_id,
           date1: inverserDate(date1),
           date2: inverserDate(date2),
         };
-        order_mission.select(json1, (reponse) => {
-          res.send(reponse);
-        });
+        const result = await order_mission.selectListOrdreMissionByDate(json1);
+        return res.status(200).send(result);
       }
     }
   },

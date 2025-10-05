@@ -52,15 +52,6 @@
             document.getElementById(id).hidden = isOpen;
             document.getElementById(idBlur).style = blur
         }
-        function _isContains(json, value) {
-            let contains = false;
-            Object.keys(json).some(key => {
-                contains = typeof json[key] === 'object' ?
-                    _isContains(json[key], value) : json[key] === value;
-                return contains;
-            });
-            return contains;
-        }
 
       function showModal(message) {
         document.getElementById('messageErrorSpan').innerHTML = message;
