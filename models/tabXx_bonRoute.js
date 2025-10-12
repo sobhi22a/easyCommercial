@@ -20,8 +20,8 @@ class tabXxbonRoute {
             FROM xx_bonroute
             WHERE XX_SHIPPER_ID = ${shipperId}
               AND isactive = 'Y'
-              AND DATEREPORT >= '${startDate}'
-              AND DATEREPORT <= '${endDate}'
+              AND DATEREPORT >= (date '${startDate}')
+              AND DATEREPORT <= (date '${endDate}')
               and isactive='Y'
             GROUP BY TO_CHAR(DATEREPORT, 'DD/MM/YYYY')
             ORDER BY TO_DATE(DATEREPORT, 'DD/MM/YYYY')
@@ -203,9 +203,9 @@ class tabXxbonRoute {
         return conn
           .execute(
             `select count(distinct inv.C_BPARTNER_ID) as nbr from xx_bonroute br
-    inner join xx_bonrouteline brl on br.xx_bonroute_id=brl.XX_BONROUTE_ID
-    INNER join C_Invoice inv on brl.C_Invoice_ID=inv.C_Invoice_ID
-    WHERE ${e.value} `
+                inner join xx_bonrouteline brl on br.xx_bonroute_id=brl.XX_BONROUTE_ID
+                INNER join C_Invoice inv on brl.C_Invoice_ID=inv.C_Invoice_ID
+                WHERE ${e.value} `
           )
           .then(function (result) {
             cb(result.rows);
@@ -234,7 +234,7 @@ class tabXxbonRoute {
               INNER JOIN C_BANKACCOUNT BC ON BC.C_BANKACCOUNT_ID=P.C_BANKACCOUNT_ID
               INNER JOIN C_BANK BK ON BK.C_BANK_ID=BC.C_BANK_ID
               INNER JOIN AD_ORG ORG ON ORG.AD_ORG_ID=P.AD_ORG_ID
-              WHERE DOCSTATUS IN ('CO','CL')  AND  DATEACCT>='${e.dateA}' AND DATEACCT<='${e.dateB}'
+              WHERE DOCSTATUS IN ('CO','CL')  AND  DATEACCT >= (date '${e.dateA}') AND DATEACCT <= (date '${e.dateB}')
               AND BPC.ISCUSTOMER='Y' AND DT.DOCBASETYPE='ARR'
               AND P.ISINDISPUTE='N' AND BP.C_BP_Group_ID=1000625
               AND BP.C_BPARTNER_ID=${e.c_bpartner_id}

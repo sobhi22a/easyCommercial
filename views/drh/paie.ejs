@@ -216,40 +216,53 @@
         });
       }
 
-      function calculePrimeLivreur() {
-        // chargement();
-        AzeroLiv();
-        if ($("#id_livreur").val() != "") {
-          $.ajax({
-            url: "easy/drhroute/calculePrimeLivreur",
-            method: "POST",
-            data: { id_livreur: $("#id_livreur").val(), dateA: $("#dateA").val(), dateB: $("#dateB").val() },
-            success: (reponse) => {
-              if (reponse.success == false) {
-                alert(reponse.message);
-                chargementClose();
-                return;
-              }
-              const data = reponse.data;
-              document.getElementById("totalClient").value = data.smc;
-              document.getElementById("primeTotal").value = numberWithSpaces(parseFloat(data.primeClient).toFixed(2));
+    function calculePrimeLivreur() {
+      const idLivreur = $("#id_livreur").val();
+      if (!idLivreur) return;
 
-              document.getElementById("chiffreRecouv").value = data.chiffre;
-              document.getElementById("primeMoisRecou").value = numberWithSpaces(parseFloat(data.primeMoisRecou).toFixed(2));
+      chargement();
+      AzeroLiv();
 
-              document.getElementById("nbrColis").value = data.Collisage;
-              document.getElementById("primeMoisColis").value = data.primeMoisColis;
+      $.ajax({
+        url: "easy/drhroute/calculePrimeLivreur",
+        method: "POST",
+        data: {
+          id_livreur: idLivreur,
+          dateA: $("#dateA").val(),
+          dateB: $("#dateB").val()
+        },
+        success: ({ success, message, data }) => {
+          if (success === false) {
+            alert(message);
+            chargementClose();
+            return;
+          }
 
-              document.getElementById("totalPrimeLivreur").value = numberWithSpaces(parseFloat(data.totalNumber).toFixed(2));
-              chargementClose();
-            },
-            error: (err) => {
-              alert(err.responseJSON.message);
-              chargementClose();
-            },
-          });
+          const setValue = (id, value, format = true) => {
+            const element = document.getElementById(id);
+            if (!element) return;
+            element.value = format && !isNaN(value)
+              ? numberWithSpaces(parseFloat(value).toFixed(2))
+              : value;
+          };
+
+          setValue("totalClient", data.smc, false);
+          setValue("primeTotal", data.primeClient);
+          setValue("chiffreRecouv", data.chiffre);
+          setValue("primeMoisRecou", data.primeMoisRecou);
+          setValue("nbrColis", data.Collisage, false);
+          setValue("primeMoisColis", data.primeMoisColis, false);
+          setValue("totalPrimeLivreur", data.totalNumber);
+
+          chargementClose();
+        },
+        error: (err) => {
+          alert(err?.responseJSON?.message || "Une erreur est survenue");
+          chargementClose();
         }
-      }
+      });
+    }
+
 
       function AzeroLiv() {
         document.getElementById("nbrClientOuest").value = "";

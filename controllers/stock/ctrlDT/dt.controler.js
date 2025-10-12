@@ -38,18 +38,22 @@ module.exports = {
     await constExcel(res, response);
   },
   getStatPreparationDetail: async (req, res) => {
-    if (!req.query.date || !req.query.type) {
+    const { startDate, endDate, type } = req.query;
+
+    if (!startDate || !endDate || !type) {
       return res.status(400).send("Missing required parameters");
     }
-    const programme = await tabPreparation.FindProgrammeJourRepository(req.query.date);
+    const programme = await tabPreparation.FindProgrammeJourRepository(startDate, endDate);
     if (!programme || programme.length === 0) {
       return res.status(404).send("No programme found for the given date");
     }
 
+    const XX_ProgrammeJour_IDs = programme.map((p) => p.XX_PROGRAMMEJOUR_ID).join(",");
+
     const result =
       req.query.type === "p"
-        ? await tabPreparation.FindStatRectifPreparateurRepository(programme[0].XX_PROGRAMMEJOUR_ID)
-        : await tabPreparation.FindStatRectifControleurRepository(programme[0].XX_PROGRAMMEJOUR_ID);
+        ? await tabPreparation.FindStatRectifPreparateurRepository(XX_ProgrammeJour_IDs)
+        : await tabPreparation.FindStatRectifControleurRepository(XX_ProgrammeJour_IDs);
     await constExcelDetail(res, req.query.type, result);
   },
   getAdUserName: (req, res) => {

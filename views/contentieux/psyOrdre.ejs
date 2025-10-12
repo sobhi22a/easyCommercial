@@ -77,8 +77,11 @@
       </div>
       <div class="dropdown-divider"></div>
       <div class="row form">
-        <div class="col-sm-4">
-          <input type="date" name="dateProgramme" id="dateProgramme" class="form-control form-control-md" />
+        <div class="col-sm-3">
+          <input type="date" name="dateProgrammeStart" id="dateProgrammeStart" class="form-control form-control-md" />
+        </div>
+        <div class="col-sm-3">
+          <input type="date" name="dateProgrammeEnd" id="dateProgrammeEnd" class="form-control form-control-md" />
         </div>
         <button class="btn btn-sm btn-primary" type="button" onclick="downloadExcelDetails('p')">
           Télécharger Excel Préparateurs Detail
@@ -151,11 +154,12 @@
     document.getElementById("isQrExcel").value = document.getElementById("isQr").checked ? "true" : "false";
   }
   async function downloadExcelDetails(type) {
-    const dateProgramme = document.getElementById("dateProgramme").value;
+    const dateProgrammeStart = document.getElementById("dateProgrammeStart").value;
+    const dateProgrammeEnd = document.getElementById("dateProgrammeEnd").value;
 
-    const url = `easy/contentieux/getStatPreparationDetail?type=${encodeURIComponent(type)}&date=${encodeURIComponent(
-      dateProgramme
-    )}`;
+    const url = `easy/contentieux/getStatPreparationDetail?type=${encodeURIComponent(type)}
+    &startDate=${encodeURIComponent(dateProgrammeStart)}
+    &endDate=${encodeURIComponent(dateProgrammeEnd)}`;
 
     try {
       chargement();
@@ -167,7 +171,7 @@
       const link = document.createElement("a");
       link.href = URL.createObjectURL(blob);
       const nameFile = type === "p" ? "statPreparateursDetail" : "statControleursDetail";
-      link.download = `${nameFile}_${datea()}.xlsx`; // <-- file name
+      link.download = `${nameFile}_${inversedDate(dateProgrammeStart)}_to_${inversedDate(dateProgrammeEnd)}.xlsx`; // <-- file name
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
@@ -178,6 +182,10 @@
       console.error("Error downloading Excel:", err);
       alert("Failed to download file.");
     }
+  }
+
+  function inversedDate(date) {
+    return date.split("-").reverse().join("/");
   }
 </script>
 <!-- <script>

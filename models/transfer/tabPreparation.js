@@ -6,14 +6,18 @@ class tabPreparation {
     this.row = row;
   }
   //feature
-  static FindProgrammeJourRepository(date) {
+  static FindProgrammeJourRepository(startDate, endDate) {
     return new Promise((resolve, reject) => {
       connect
         .then(function (conn) {
           return conn
             .execute(
-              `select * from XX_ProgrammeJour where TRUNC(datecreated) = TRUNC(TO_DATE('${date}', 'YYYY/MM/DD'))`,
-              {},
+              `SELECT *
+                  FROM XX_ProgrammeJour
+                  WHERE TRUNC(datecreated) BETWEEN 
+                        TO_DATE(:startDate, 'YYYY/MM/DD') 
+                    AND TO_DATE(:endDate, 'YYYY/MM/DD')`,
+              { startDate, endDate },
               { outFormat: OracleDB.OUT_FORMAT_OBJECT }
             )
             .then(function (result) {
@@ -44,7 +48,7 @@ class tabPreparation {
                   sum(ingl.Orig_QtyEntered) - sum(ingl.QtyCount) as DiffQty
               from M_InOutGroupLine ingl
               left outer join ad_user u on ingl.XX_Preparateur_ID = u.ad_user_id
-              where ingl.M_InOutGroup_ID in (select M_InOutGroup_ID from M_InOutGroup  where XX_ProgrammeJour_ID = ${XX_ProgrammeJour_ID}) and ingl.Orig_QtyEntered <> ingl.QtyCount
+              where ingl.M_InOutGroup_ID in (select M_InOutGroup_ID from M_InOutGroup  where XX_ProgrammeJour_ID IN (${XX_ProgrammeJour_ID})) and ingl.Orig_QtyEntered <> ingl.QtyCount
               group by ingl.XX_Preparateur_ID
               order by name`,
               {},
@@ -79,7 +83,7 @@ class tabPreparation {
                   sum(ingl.Orig_QtyEntered) - sum(ingl.QtyDelivered) as DiffQty
               from M_InOutGroupLine ingl
               left outer join ad_user u on ingl.XX_Controleur_ID = u.ad_user_id
-              where ingl.M_InOutGroup_ID in (select M_InOutGroup_ID from M_InOutGroup  where XX_ProgrammeJour_ID = ${XX_ProgrammeJour_ID}) and ingl.Orig_QtyEntered <> ingl.QtyDelivered
+              where ingl.M_InOutGroup_ID in (select M_InOutGroup_ID from M_InOutGroup  where XX_ProgrammeJour_ID IN (${XX_ProgrammeJour_ID})) and ingl.Orig_QtyEntered <> ingl.QtyDelivered
               group by ingl.XX_Controleur_ID
               order by name`,
               {},

@@ -21,15 +21,13 @@ module.exports = {
     const { dateA, dateB, id_livreur } = req.body;
 
     // Normalize dates
-    const startDate = await formatDate(dateA);
-    const endDate = await formatDate(dateB);
     const livreurId = id_livreur?.split("_")[0] || null;
 
     if (!livreurId) {
       return res.status(400).send({ error: "Invalid livreur ID" });
     }
-    const results = await tabXx_bonRoute.FindBonRouteByShipperAndDate(parseInt(livreurId), startDate, endDate);
 
+    const results = await tabXx_bonRoute.FindBonRouteByShipperAndDate(parseInt(livreurId), dateA, dateB);
     if (results.length === 0) {
       return res.status(200).send({
         success: true,
@@ -42,7 +40,7 @@ module.exports = {
 
     let Collisage = await numberOfPackages(results);
 
-    const chiffre = await getChiffreRecouverement(livreurId, startDate, endDate);
+    const chiffre = await getChiffreRecouverement(livreurId, dateA, dateB);
 
     // Calculate primes
     const primeMoisRecou = chiffre.PRIMEAMT;
@@ -55,45 +53,12 @@ module.exports = {
       primeClient,
       Collisage: Collisage[0].NBRCOLIS || 0,
       primeMoisColis,
-      chiffre: chiffre || 0,
+      chiffre: chiffre.AMT || 0,
       primeMoisRecou,
       totalNumber,
     };
 
     res.status(200).send({ success: true, data: resJson });
-  },
-
-  calculePrimeLivreur: (req, res) => {
-    runCalculePrimeLivreur();
-    async function runCalculePrimeLivreur() {
-      let dateA = req.body.dateA;
-      let dateB = req.body.dateB;
-      dateA = dateA.split("-").reverse().join("");
-      dateB = dateB.split("-").reverse().join("");
-      console.log("dateA", dateA);
-      console.log("dateB", dateB);
-      let id_livreur = req.body.id_livreur;
-      id_livreur = id_livreur.split("_")[0];
-      let liste = await getLivreurById(id_livreur, dateA, dateB);
-      // let sommeClient = await getSommeClient(liste,id_livreur)
-      let c_bpartner_id = liste[0][3].split(",")[0];
-      let dateSortie = await getListeDateSortieParMois(liste);
-      let isFar = await getIsFar(c_bpartner_id);
-      let smc = await getListeClientBRjour(id_livreur, dateSortie, isFar);
-      // colisage
-      let listeBonroute_id = await getListeBonRouteId(id_livreur, dateA, dateB);
-      let Collisage = await getCollisage(listeBonroute_id);
-      let chiffre = await getChiffreRecouverement(id_livreur, dateA, dateB);
-      let resJson = {
-        isFar: isFar,
-        smc: smc,
-        Collisage: Collisage,
-        chiffre: chiffre,
-      };
-      console.log("resJson", resJson);
-      res.send(resJson);
-      // let id_bonRouteMois = await getIdBonRoute()
-    }
   },
 };
 async function GetIsFarRegion(regionId) {
@@ -155,7 +120,6 @@ function applyBusinessLogic(regionCount, results) {
 }
 
 async function numberOfClients(results) {
-  console.log("results", results.length);
   let smc = 0;
   for (const result of results) {
     const nbrClients = await tabXx_bonRoute.FindNumberOfClients(result.X_BONROUTE_IDS);
@@ -186,9 +150,6 @@ async function numberOfPackages(results) {
   if (result.length === 0) return [{ NBRCOLIS: 0 }];
   return result;
 }
-async function formatDate(date) {
-  return date.split("-").reverse().join("/");
-}
 
 function getChiffreRecouverement(id_livreur, dateA, dateB) {
   return new Promise(async (resolve, reject) => {
@@ -198,143 +159,3 @@ function getChiffreRecouverement(id_livreur, dateA, dateB) {
     return resolve(result[0]);
   });
 }
-function getCollisage(liste) {
-  return new Promise((resolve, reject) => {
-    tabXx_bonRoute.collisage(liste, (reponse) => {
-      resolve(reponse[0][0]);
-    });
-  });
-}
-function getListeBonRouteId(id_livreur, dateA, dateB) {
-  return new Promise((resolve, reject) => {
-    let json = {
-      value: ` XX_SHIPPER_ID=${id_livreur} and isactive='Y' and DATEREPORT>='${dateA}' AND  DATEREPORT <='${dateB}' `,
-    };
-    let par = "";
-    tabXx_bonRoute.select(json, (reponse) => {
-      for (var i = 0; i < reponse.length; i++) {
-        if (par == "") {
-          par = reponse[i][4];
-        } else {
-          par = par + "," + reponse[i][4];
-        }
-      }
-      par = "(" + par + ")";
-      resolve(par);
-    });
-  });
-}
-function getLivreurById(id_shipper, dateA, dateB) {
-  return new Promise((resolve, reject) => {
-    let json = {
-      value: ` XX_SHIPPER_ID=${id_shipper} and isactive='Y' and DATEREPORT>='${dateA}' AND  DATEREPORT <='${dateB}' order by DATEREPORT`,
-    };
-    tabXx_bonRoute.select(json, (reponse) => {
-      resolve(reponse);
-    });
-  });
-}
-
-// calcule nombre client par date
-
-function getListeDateSortieParMois(liste) {
-  listeDate = [];
-  return new Promise((resolve, reject) => {
-    for (var ii = 0; ii < liste.length; ii++) {
-      if (listeDate.includes(liste[ii][2]) == false) {
-        listeDate.push(liste[ii][2]);
-      }
-    }
-    resolve(listeDate);
-  });
-}
-function getIsFar(id_client) {
-  return new Promise((resolve, reject) => {
-    tabXx_bonRoute.selectIsFar(id_client, (reponse) => {
-      if (
-        reponse[0][1] == 1000001 ||
-        reponse[0][1] == 1000003 ||
-        reponse[0][1] == 1000004 ||
-        reponse[0][1] == 1000009 ||
-        reponse[0][1] == 1000010
-      ) {
-        resolve(0);
-      } else {
-        resolve(1);
-      }
-    });
-  });
-}
-var nbrClient = 0;
-function getListeClientBRjour(id_livreur, dateJour, isFar) {
-  var compte = 0;
-  return new Promise((resolve, reject) => {
-    for (var i = 0; i < dateJour.length; i++) {
-      let bool = i + 1 == dateJour.length;
-      let json = {
-        value: ` br.XX_SHIPPER_ID=${id_livreur} and br.DATEREPORT like to_date('${dateJour[i]}','dd/mm/yyyy') `,
-      };
-      tabXx_bonRoute.countClients(json, (brJour) => {
-        if (isFar == 1) {
-          if (brJour[0][0] >= 40) {
-            compte = compte + brJour[0][0];
-          }
-        } else if (isFar == 0) {
-          if (brJour[0][0] >= 20) {
-            compte = compte + brJour[0][0];
-          }
-        }
-        if (bool == true) {
-          setTimeout(() => {
-            returnn(compte);
-          }, 1000);
-        }
-      });
-    }
-    function returnn(compte) {
-      resolve(compte);
-    }
-  });
-}
-
-function getCountClient(sm, isFar) {
-  return new Promise((resolve, reject) => {
-    tabTiers.countClient(sm, (reponse) => {
-      if (isFar == 1) {
-        if (reponse[0][0] >= 40) {
-          nbrClient = nbrClient + reponse[0][0];
-          resolve(nbrClient);
-        }
-      } else if (isFar == 0) {
-        if (reponse[0][0] >= 20) {
-          nbrClient = nbrClient + reponse[0][0];
-          resolve(nbrClient);
-        }
-      }
-    });
-  });
-}
-
-function getDateA() {
-  return new Promise((resolve, reject) => {
-    var today = new Date();
-    var dd = today.getDate();
-    var yy = today.getFullYear();
-    var mm = today.getMonth();
-    resolve(1 + "/" + mm + "/" + yy);
-  });
-}
-function getDateB() {
-  return new Promise((resolve, reject) => {
-    var today = new Date();
-    var dd = today.getDate();
-    var yy = today.getFullYear();
-    var mm = today.getMonth();
-    if (mm == 1 || mm == 3 || mm == 5 || mm == 7 || mm == 8 || mm == 10 || mm == 12) {
-      resolve(31 + "/" + mm + "/" + yy);
-    } else {
-      resolve(30 + "/" + mm + "/" + yy);
-    }
-  });
-}
-// fin calcule nombre client par date

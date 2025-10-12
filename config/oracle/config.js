@@ -7,6 +7,6 @@ module.exports.database = {
   password: process.env.ORACLE_DB_PASSWORD_PROD,
   logging: false,
   dialectOptions: {
-    connectString: `${process.env.ORACLE_DB_HOST_REMOTE_PROD}:${process.env.ORACLE_DB_PORT}/${process.env.ORACLE_DB_SERVICENAME_PROD}`,
+    connectString: `${process.env.ORACLE_DB_HOST_LOCAL_PROD}:${process.env.ORACLE_DB_PORT}/${process.env.ORACLE_DB_SERVICENAME_PROD}`,
   },
 };
